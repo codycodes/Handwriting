@@ -19,27 +19,32 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
   - A large model letter on the left draws itself stroke by stroke. Numbered circles show where each stroke starts (1, 2, 3...), and arrows show which way it goes. **Play** on the panel replays it; **Hide** tucks the panel away for more writing room, and the **Aa** tab in the margin brings it back.
   - Trace over the big letter and the panel coaches you live: "Good! Next: stroke 2", "Stroke 2 goes the other way", or "came out of order". Each stroke you write gets a marker with the stroke it matched: green is right, ↺ means backwards, amber means out of order.
   - Beside it are rows of the letter to trace, fading row by row, then a blank row to write it on your own. With Grade on, every letter you write is also checked for stroke order and direction, and that counts toward its score.
-  - Letter sets: English a–z, A–Z and 0–9 (print), and Devanagari स्वर (vowels, including अं and अः), व्यंजन (consonants, including क्ष, त्र and ज्ञ) and अंक (numerals). **Letters from my text** picks out the letters in your practice text.
+  - Letter sets: English a–z, A–Z and 0–9 (print), and Devanagari स्वर (vowels, including अं and अः), व्यंजन (consonants, including क्ष, त्र and ज्ञ) and अंक (numerals). **Custom text** shows the text box (the same text you use in the other modes) and teaches the letters in it.
   - Devanagari follows the order usually taught in Indian schools: the body of the letter first, then the vertical line (खड़ी पाई), then the headline (शिरोरेखा) last. The letter shapes follow the Kalam handwriting font, so a teacher's version may differ a little.
 - **Paper:** plain Lines, **Slant** (diagonal guide lines between the rules, like British handwriting paper, to keep every letter leaning the same way) or **Grid** (squared paper lined up with the baseline)
 - **Cross-dot margin (× •):** one mark in the left margin on each writing line, alternating × and •
-- **Grade:** scores each row as you write. A badge on the row shows the score, and the sheet marks ink that strayed off the letters in red and parts of letters you missed in amber. The summary at the bottom gives:
-  - **On the letters:** how much of your ink lands on the guide letters
-  - **Letters covered:** how much of the guide letters your ink went over
-  - **Accuracy:** the balance of the two, so scribbling everywhere or tracing only one letter both score low
-  - **Stroke order & direction** (Tutor mode): how many strokes were written in the right order and the right way
+- **Grade:** scores each row as you write. A badge on the row shows the score, and the sheet marks ink that strayed off the letters in red and parts of letters you missed in amber. The summary at the bottom breaks the score down:
+  - **Shape:** your ink on the letters, and the letters covered by your ink. Ink within a hair of the letter (about 2 px on the large size) counts fully, a little further out counts half, beyond that it's a miss
+  - **Stroke path** (Tutor): strokes written in the right order and the right direction
+  - **Smooth lines:** steady strokes without wobble
+  - **Straight lines** (Tutor): strokes that should be straight (like the vertical line and headline in Devanagari, or l and t) stay straight
+  - **Size & baseline:** letters the same height as the guide, sitting on the same lines
+  - **Connected** (Cursive): each word in one stroke, lifting only for dots and crosses (i, j, t, x)
 
-  Grading is strict on purpose. Ink within a hair of the letter (about 2 px on the large size) counts fully, ink a little further out counts half, and beyond that it counts as a miss. Roughly: 4 px off scores about 90%, 7 px about 65%. 100% takes careful writing.
+  **Accuracy** is Shape multiplied by the others, so 100% means everything is right. Roughly: a tracing 4 px off scores about 90%, 7 px about 65%.
+- **Progress:** when you finish a page (Clear, turn the page, or change the text), its score is saved for that text or letter. The summary then shows how you did against last time (▲ or ▼), your best, and a small chart of recent attempts
 
   Freehand rows (Trace + copy, and the last row of Repeat & fade) are compared with the line above, lined up with where you started writing.
-- **Full screen:** the corner button hides the toolbar so the sheet fills the screen like a plain page. A small floating bar keeps Undo, page arrows and Exit (Esc also exits). If Safari drops its own full screen (for example after a swipe near the top edge), the app stays in full-screen layout until you tap Exit. For no Safari bars at all, use **Add to Home Screen**
+- **Scroll:** set Fingers to **Scroll** (or tap **Scroll** on the page) and long text like *Happy 70th birthday, Dad* stays on one line; drag with a finger to see the rest. Drag up past the last row to add more rows. A flick keeps the page gliding. The Pencil always writes
+- **On-page buttons:** the bottom-right corner of the page has the Scroll switch and the page arrows
+- **Full screen:** the corner button hides the toolbar so the sheet fills the screen like a plain page. A small floating bar keeps Undo and Exit (Esc also exits). If Safari drops its own full screen (for example after a swipe near the top edge), the app stays in full-screen layout until you tap Exit. For no Safari bars at all, use **Add to Home Screen**
 - **Tips:** a tip bar under the toolbar with advice on grip, posture, letter sizes and stroke order, chosen for the script and mode you're using. Flip through with the arrows, or hide it with × (the **Tips** button brings it back)
 - Pressure-sensitive ink, eraser, undo/redo, clear, and 3 ink colors
 
 ## Apple Pencil handling
 | Issue on iPad | What the app does |
 | --- | --- |
-| Telling the Pencil from fingers | Safari reports Apple Pencil as a pen and fingers as touch. With **Pencil only** on, fingers never draw on the page, but they can still tap buttons. With it off, both draw |
+| Telling the Pencil from fingers | Safari reports Apple Pencil as a pen and fingers as touch. **Fingers** sets what a finger does on the page: **Draw**, **Scroll** (the Pencil still writes) or **Off**. Fingers can always tap buttons |
 | Palm already drawing when the Pencil lands | The Pencil cancels the finger stroke and takes over |
 | Palm resting on the toolbar presses buttons | Finger taps on the toolbar are ignored only while the Pencil is mid-stroke |
 | Long press brings up the magnifier, text selection or callout menu | Turned off on the writing sheet |

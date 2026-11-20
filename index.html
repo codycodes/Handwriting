@@ -132,7 +132,19 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
 .sheet canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
 #grade, #demo { pointer-events: none; }
 #scrollbar { position: absolute; bottom: 4px; height: 5px; border-radius: 3px; background: var(--muted); opacity: .45; pointer-events: none; }
-#scrollbar[hidden] { display: none; }
+#vscrollbar { position: absolute; right: 4px; width: 5px; border-radius: 3px; background: var(--muted); opacity: .45; pointer-events: none; }
+#scrollbar[hidden], #vscrollbar[hidden] { display: none; }
+#navCtl { right: 12px; bottom: 12px; display: flex; gap: 6px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 4px; box-shadow: 0 2px 10px rgba(20, 30, 50, .12); }
+#navCtl .navpages { display: inline-flex; gap: 4px; align-items: center; }
+#navCtl .navpages[hidden] { display: none; }
+#navCtl button { min-height: 44px; min-width: 44px; justify-content: center; }
+#navCtl #pageLabel { min-width: 56px; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
+#score { max-width: min(620px, 62%); line-height: 1.45; }
+#score .crit { color: var(--muted); font-size: 12.5px; }
+#score .crit b { color: var(--text); font-size: 12.5px; }
+#score .trend { font-size: 12.5px; }
+#score svg { vertical-align: middle; }
+body.tutor.tutor-text #text { display: block; }
 body.tutor #text, body.tutor #preset { display: none; }
 body:not(.tutor) .tutor-only { display: none !important; }
 #tutorSet { flex: 1 1 220px; }
@@ -155,7 +167,7 @@ body:not(.tutor) .tutor-only { display: none !important; }
 }
 #score b { font-size: 15px; }
 #hint {
-  position: absolute; right: 14px; bottom: 10px; font-size: 12px; color: var(--muted);
+  position: absolute; right: 14px; bottom: 70px; white-space: nowrap; font-size: 12px; color: var(--muted);
   pointer-events: none; background: var(--paper); padding: 2px 6px; border-radius: 6px;
 }
 @media (max-width: 700px) { .brand { display: none; } }
@@ -229,12 +241,9 @@ body.fs #fsbar { display: flex; }
         <option value="vyanjan">व्यंजन · consonants</option>
         <option value="ank">अंक · numerals</option>
       </optgroup>
-      <option value="text">Letters from my text</option>
+      <option value="text">Custom text (type it in the box)</option>
     </select>
     <div class="pager">
-      <button id="prev" aria-label="Previous page"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-      <span id="pageLabel">1 / 1</span>
-      <button id="next" aria-label="Next page"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
       <button id="fsBtn" aria-label="Full screen" title="Full screen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     </div>
   </div>
@@ -300,6 +309,15 @@ body.fs #fsbar { display: flex; }
   <canvas id="grade"></canvas>
   <div id="score" hidden></div>
   <div id="scrollbar" hidden></div>
+  <div id="vscrollbar" hidden></div>
+  <div id="navCtl" class="ui">
+    <button id="scrollBtn" class="toggle" aria-pressed="false" title="Finger scrolls the page (the Pencil still writes). Tap to turn scrolling on or off."><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg><span>Scroll</span></button>
+    <span class="navpages">
+      <button id="prev" aria-label="Previous page"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <span id="pageLabel">1 / 1</span>
+      <button id="next" aria-label="Next page"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+    </span>
+  </div>
   <div id="panelCtl" class="ui" hidden>
     <button id="panelPlay"><svg viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></svg>Play</button>
     <button id="panelHide" title="Hide the big letter"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>Hide</button>
@@ -310,9 +328,6 @@ body.fs #fsbar { display: flex; }
 </main>
 <div id="fsbar">
   <button id="fsUndo" aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></svg></button>
-  <button id="fsPrev" aria-label="Previous page"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-  <span id="fsPage"></span>
-  <button id="fsNext" aria-label="Next page"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
   <button id="fsExit" aria-label="Exit full screen" title="Exit full screen"><svg viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button>
 </div>
 
@@ -358,7 +373,8 @@ body.fs #fsbar { display: flex; }
   const bctx = bg.getContext('2d'), ictx = inkC.getContext('2d'), gctxOut = gradeC.getContext('2d');
   const mctx = document.createElement('canvas').getContext('2d');
   let W = 0, H = 0, dpr = 1;
-  let SX = 0;          // horizontal scroll of the page (Scroll mode), in CSS px
+  let SX = 0, SY = 0;  // scroll of the page (Scroll mode), in CSS px
+  let extra = [];      // extra rows added to each page by scrolling down
   let L = null;        // layout metrics
   let pages = [[]];    // rows per page: {t: string|null, a: alpha, copy?: text to write freehand}
   let ink = [];        // ink[page] = [stroke]
@@ -428,6 +444,7 @@ body.fs #fsbar { display: flex; }
     L.CW = W;
     if (scrolling) for (const t of lines) L.CW = Math.max(L.CW, Math.ceil(textX + mctx.measureText(t).width + unit * 1.5));
     SX = Math.min(SX, L.CW - W);
+    SY = Math.min(SY, Math.max(0, CH() - H));
     const blank = () => ({ t: null, a: 0 });
     const chunk = (rows, n) => { const out = []; for (let i = 0; i < rows.length; i += n) out.push(rows.slice(i, i + n)); return out; };
     let pg;
@@ -453,9 +470,23 @@ body.fs #fsbar { display: flex; }
       }));
     }
     pages = pg.map((rows) => { const r = rows.slice(); while (r.length < perPage) r.push(blank()); return r; });
+    pages.forEach((rows, i) => { for (let k = 0; k < (extra[i] || 0); k++) rows.push(moreRow(rows)); });
     while (ink.length < pages.length) { ink.push([]); hist.push({ undo: [], redo: [] }); }
     S.page = Math.min(Math.max(0, S.page), pages.length - 1);
   }
+
+  // Rows added by scrolling past the bottom follow the page's pattern.
+  function moreRow(rows) {
+    const f = rows.find((r) => r.t || r.copy || r.tutor);
+    if (!f) return { t: null, a: 0 };
+    if (f.tutor) return { tutor: f.tutor, a: 0.35 };
+    const t = f.t || f.copy;
+    if (S.mode === 'copy') return rows.length % 2 === 0 ? { t, a: 1 } : { t: null, a: 0, copy: t };
+    if (S.mode === 'repeat') return { t: null, a: 0, copy: t };
+    return { t, a: 1 };
+  }
+  const rowsH = () => L.top * 2 + (pages[S.page] ? pages[S.page].length : 0) * L.pitch;
+  const CH = () => Math.max(H, rowsH());
 
   /* ---------- Tutor: letter data ---------- */
   const STK = window.STROKES || null;
@@ -727,20 +758,22 @@ body.fs #fsbar { display: flex; }
 
   function drawBg() {
     const c = bctx;
-    c.setTransform(dpr, 0, 0, dpr, -SX * dpr, 0);
-    c.fillStyle = css('--paper'); c.fillRect(0, 0, L.CW, H);
-    const W = L.CW; // the drawing below covers the whole (possibly wider than the screen) page
+    c.setTransform(dpr, 0, 0, dpr, -SX * dpr, -SY * dpr);
+    const W = L.CW, Hc = CH(); // the page can be wider and taller than the screen
+    c.fillStyle = css('--paper'); c.fillRect(0, 0, W, Hc);
     const rule = css('--rule'), soft = css('--rule-soft'), band = css('--band');
+    const seen = (y0, y1) => y1 >= SY && y0 <= SY + H;
     if (S.paper === 'grid') {
       // Squared paper: half an x-height per square, lined up with the baselines.
       const step = L.xPx / 2, y0 = (L.top + L.gapTop + L.ascPx) % step, x0 = L.marginX % step;
       c.beginPath(); c.strokeStyle = css('--grid'); c.lineWidth = 1;
-      for (let x = x0; x <= W; x += step) { c.moveTo(x, 0); c.lineTo(x, H); }
-      for (let y = y0; y <= H; y += step) { c.moveTo(0, y); c.lineTo(W, y); }
+      for (let x = x0; x <= W; x += step) { c.moveTo(x, SY); c.lineTo(x, SY + H); }
+      for (let y = y0 + Math.floor((SY - y0) / step) * step; y <= SY + H; y += step) { c.moveTo(0, y); c.lineTo(W, y); }
       c.stroke();
     }
     pages[S.page].forEach((r, i) => {
       const base = L.top + i * L.pitch + L.gapTop + L.ascPx;
+      if (!seen(base - L.ascPx - L.gapTop, base + L.descPx + L.gapTop)) return;
       c.fillStyle = band; c.fillRect(0, base - L.xPx, W, L.xPx);
       if (S.paper === 'slant') {
         // Slant lines between the ascender and descender lines, leaning right.
@@ -758,13 +791,14 @@ body.fs #fsbar { display: flex; }
       else if (r.tutor && !r.free) drawTutorGuide(c, r.tutor, tutorXs(r.tutor, L.textX, null, L.tutorX), base, r.a);
     });
     c.beginPath(); c.strokeStyle = css('--margin'); c.lineWidth = 1.5;
-    c.moveTo(L.marginX, 0); c.lineTo(L.marginX, H); c.stroke();
+    c.moveTo(L.marginX, 0); c.lineTo(L.marginX, Hc); c.stroke();
     if (S.marks) {
       // Cross-dot margin: one mark per writing line, alternating × and • down the margin.
       const r = Math.max(3, Math.min(6, L.xPx * 0.14)), x = L.marginX / 2;
       c.strokeStyle = c.fillStyle = css('--margin'); c.lineWidth = 1.8; c.lineCap = 'round';
       pages[S.page].forEach((_, i) => {
         const y = L.top + i * L.pitch + L.gapTop + L.ascPx - L.xPx / 2;
+        if (!seen(y - 10, y + 10)) return;
         if (i % 2 === 0) { c.beginPath(); c.moveTo(x - r, y - r); c.lineTo(x + r, y + r); c.moveTo(x + r, y - r); c.lineTo(x - r, y + r); c.stroke(); }
         else { c.beginPath(); c.arc(x, y, r * 0.6, 0, Math.PI * 2); c.fill(); }
       });
@@ -800,12 +834,14 @@ body.fs #fsbar { display: flex; }
     for (let k = 1; k < s.pts.length; k++) drawSegment(c, s, k);
     drawTail(c, s);
   }
+  // Strokes on the page scroll with it; strokes on the tutor panel stay put with the panel.
+  const inkXform = (panel) => panel ? ictx.setTransform(dpr, 0, 0, dpr, 0, 0) : ictx.setTransform(dpr, 0, 0, dpr, -SX * dpr, -SY * dpr);
   function drawInk() {
     ictx.setTransform(1, 0, 0, 1, 0, 0);
     ictx.clearRect(0, 0, inkC.width, inkC.height);
-    ictx.setTransform(dpr, 0, 0, dpr, -SX * dpr, 0);
-    for (const s of ink[S.page]) if (visibleStroke(s)) drawStroke(ictx, s);
-    if (active && active.stroke) drawStroke(ictx, active.stroke);
+    for (const s of ink[S.page]) if (visibleStroke(s)) { inkXform(s.panel); drawStroke(ictx, s); }
+    if (active && active.stroke) { inkXform(active.stroke.panel); drawStroke(ictx, active.stroke); }
+    else inkXform(false);
     if (!active) { drawGrade(); if (S.mode === 'tutor') drawDemo(performance.now()); }
   }
 
@@ -841,9 +877,55 @@ body.fs #fsbar { display: flex; }
   }
   const rgb = (hex) => { const h = hex.replace('#', ''); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); };
 
+  const clamp01 = (v) => Math.max(0, Math.min(1, v));
+  // Smooth lines: wobble shows up as jumps in the third difference of the path.
+  function smoothness(strokes) {
+    let tot = 0, n = 0;
+    for (const s of strokes) {
+      const pts = s.pts.map((q) => [q[0], q[1]]), len = polyLen(pts);
+      if (len < L.xPx * 0.6) continue;
+      const R = resample(pts, Math.max(8, Math.round(len / 4)));
+      for (let i = 1; i < R.length - 2; i++) {
+        tot += Math.hypot(R[i - 1][0] - 3 * R[i][0] + 3 * R[i + 1][0] - R[i + 2][0], R[i - 1][1] - 3 * R[i][1] + 3 * R[i + 1][1] - R[i + 2][1]); n++;
+      }
+    }
+    return n ? clamp01(1 - Math.max(0, tot / n - 0.2) / (0.12 * L.xPx)) : null;
+  }
+  // Straight lines: how far a stroke that should be straight bows away from its chord.
+  function straightness(u) {
+    const a = u[0], b = u[u.length - 1], len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (len < 4) return null;
+    let dev = 0; for (const p of u) dev = Math.max(dev, Math.abs((b[0] - a[0]) * (a[1] - p[1]) - (a[0] - p[0]) * (b[1] - a[1])) / len);
+    return clamp01(1 - (dev / len) / 0.08);
+  }
+  const isStraight = (e) => { const len = polyLen(e); return len > L.xPx * 0.4 && Math.hypot(e[e.length - 1][0] - e[0][0], e[e.length - 1][1] - e[0][1]) / len > 0.985; };
+  // Connected letters (cursive): each word should be one stroke, plus dots and crosses (i j t x).
+  function connectedness(target, x, mine) {
+    mctx.font = `${L.fontSize}px ${L.family}`;
+    const inkR = Math.max(...mine.flatMap((s) => s.pts.map((q) => q[0])));
+    let expect = 0, pre = '';
+    for (const w of target.split(' ')) {
+      const start = x + mctx.measureText(pre).width; pre += w + ' ';
+      if (start > inkR - L.xPx * 0.3) break;
+      expect += 1 + (w.match(/[ijtx]/g) || []).length;
+    }
+    return expect ? clamp01(expect / mine.length) : null;
+  }
+  const CRIT = [
+    ['shape', 'Shape', 0.45], ['path', 'Stroke path', 0.15], ['smooth', 'Smooth lines', 0.1],
+    ['straight', 'Straight lines', 0.1], ['size', 'Size & baseline', 0.12], ['connected', 'Connected', 0.08],
+  ];
+  // Overall score: Shape times the weighted geometric mean of the other criteria, so the
+  // letters have to be right and any weak area (wobbly, too big, wrong strokes) pulls it down.
+  function overall(crit) {
+    let w = 0, t = 0;
+    for (const [k, , wt] of CRIT) if (k !== 'shape' && crit[k] != null) { w += wt; t += wt * Math.log(Math.max(0.01, crit[k])); }
+    return crit.shape * (w ? Math.exp(t / w) : 1);
+  }
+
   function gradePage() {
     const rows = pages[S.page], strokes = ink[S.page];
-    const gw = Math.ceil(L.CW * GK), gh = Math.ceil(H * GK);
+    const gw = Math.ceil(L.CW * GK);
     if (gcan.width !== gw) gcan.width = gw;
     const bh = Math.ceil(L.pitch * GK) + 2;
     if (gcan.height !== bh) gcan.height = bh;
@@ -857,7 +939,11 @@ body.fs #fsbar { display: flex; }
       const i = Math.floor((my - L.top) / L.pitch);
       if (i >= 0 && i < rows.length) byRow[i].push(s);
     }
-    const over = new ImageData(gw, gh), od = over.data;
+    // The colour overlay only covers the rows you wrote on.
+    const used = byRow.map((b, i) => (b.length ? i : -1)).filter((i) => i >= 0);
+    const r0 = used.length ? Math.min(...used) : 0, r1 = used.length ? Math.max(...used) : 0;
+    const oOff = Math.round((L.top + r0 * L.pitch) * GK), oh = Math.ceil((r1 - r0 + 1) * L.pitch * GK) + 2;
+    const over = new ImageData(gw, oh), od = over.data;
     const off = rgb(css('--grade-off')), miss = rgb(css('--grade-miss'));
     const font = `${L.fontSize}px ${L.family}`;
     const results = rows.map((r, i) => {
@@ -865,6 +951,7 @@ body.fs #fsbar { display: flex; }
       if ((!target && !r.tutor) || !mine.length) return null;
       const y0 = L.top + i * L.pitch, base = y0 + L.gapTop + L.ascPx;
       let x = L.textX, text, order = null;
+      const straight = [];
       if (r.tutor) {
         // Compare with the copies of the letter your writing spans (freehand rows start where you started).
         const g = glyph(r.tutor), k = tk();
@@ -886,10 +973,11 @@ body.fs #fsbar { display: flex; }
           const exp = g.s.map((st) => st.map((q) => toPx(q, xs[j], base, k)));
           const chk = strokeCheck(user, exp, L.xPx);
           order.ok += chk.ok; order.n++; order.marks.push({ user, chk, exp });
+          chk.per.forEach((pp, u) => { if (pp.i >= 0 && isStraight(exp[pp.i])) { const v = straightness(user[u]); if (v != null) straight.push(v); } });
         });
         // Only the copies you actually wrote on count toward coverage.
-        const used = xs.filter((_, j) => groups[j].length);
-        text = (c, grow) => { c.lineWidth = penW() + grow; for (const x0 of used) for (const s of g.s) { strokePath(c, s, x0, base); c.stroke(); } };
+        const usedXs = xs.filter((_, j) => groups[j].length);
+        text = (c, grow) => { c.lineWidth = penW() + grow; for (const x0 of usedXs) for (const s of g.s) { strokePath(c, s, x0, base); c.stroke(); } };
       } else if (!r.t) {
         // Freehand row: line the letters up with where your writing starts.
         mctx.font = font;
@@ -904,26 +992,74 @@ body.fs #fsbar { display: flex; }
       const I = maskOf(gw, bh, y0, (c) => inkPath(c, mine, 0));
       const It = maskOf(gw, bh, y0, (c) => inkPath(c, mine, tol1 * 2));
       const Il = maskOf(gw, bh, y0, (c) => inkPath(c, mine, tol2 * 2));
-      let a = 0, aHit = 0, n = 0, nHit = 0;
-      const rowOff = Math.round(y0 * GK);
+      // Where your ink is, left to right, to compare heights with the letters in the same span.
+      let ix0 = gw, ix1 = -1;
+      for (let j = 0; j < I.length; j++) if (I[j]) { const xx = j % gw; if (xx < ix0) ix0 = xx; if (xx > ix1) ix1 = xx; }
+      let a = 0, aHit = 0, n = 0, nHit = 0, ty0 = bh, ty1 = -1, iy0 = bh, iy1 = -1;
+      const rowOff = Math.round(y0 * GK) - oOff;
       const paint = (o, col, al) => { od[o] = col[0]; od[o + 1] = col[1]; od[o + 2] = col[2]; od[o + 3] = Math.max(od[o + 3], al); };
       for (let j = 0; j < A.length; j++) {
-        const yy = rowOff + Math.floor(j / gw); if (yy < 0 || yy >= gh) continue;
-        const o = (yy * gw + (j % gw)) * 4;
-        if (A[j]) { a++; if (It[j]) aHit++; else if (Il[j]) { aHit += 0.5; paint(o, miss, 60); } else paint(o, miss, 130); }
-        if (I[j]) { n++; if (At[j]) nHit++; else if (Al[j]) { nHit += 0.5; paint(o, off, 110); } else paint(o, off, 235); }
+        const ry = Math.floor(j / gw), xx = j % gw, yy = rowOff + ry;
+        const o = yy >= 0 && yy < oh ? (yy * gw + xx) * 4 : -1;
+        if (A[j]) {
+          a++; if (xx >= ix0 && xx <= ix1) { if (ry < ty0) ty0 = ry; if (ry > ty1) ty1 = ry; }
+          if (It[j]) aHit++; else if (Il[j]) { aHit += 0.5; if (o >= 0) paint(o, miss, 60); } else if (o >= 0) paint(o, miss, 130);
+        }
+        if (I[j]) {
+          n++; if (ry < iy0) iy0 = ry; if (ry > iy1) iy1 = ry;
+          if (At[j]) nHit++; else if (Al[j]) { nHit += 0.5; if (o >= 0) paint(o, off, 110); } else if (o >= 0) paint(o, off, 235);
+        }
       }
       if (!n || !a) return null;
       const on = nHit / n, cov = aHit / a;
+      const crit = {};
       // Shape: F1 of the two, squared, so only careful writing gets close to 100%.
-      let score = on + cov ? ((2 * on * cov) / (on + cov)) ** 2 : 0;
-      let dir = null;
-      if (order && order.n) { dir = order.ok / order.n; score *= 0.5 + 0.5 * dir; }
-      return { i, base, on, cov, score, dir, marks: order ? order.marks : [] };
+      crit.shape = on + cov ? ((2 * on * cov) / (on + cov)) ** 2 : 0;
+      if (order && order.n) crit.path = order.ok / order.n;
+      crit.smooth = smoothness(mine);
+      if (straight.length) crit.straight = straight.reduce((t, v) => t + v, 0) / straight.length;
+      if (ty1 > ty0) {
+        // Size & baseline: same height as the letters, sitting on the same lines.
+        const hT = ty1 - ty0, hI = iy1 - iy0, xg = L.xPx * GK;
+        crit.size = clamp01(1 - 1.5 * Math.abs(hI / hT - 1) - 1.2 * (Math.abs(iy1 - ty1) + Math.abs(iy0 - ty0)) / (2 * xg));
+      }
+      if (S.style === 'cursive' && !r.tutor) crit.connected = connectedness(target, x, mine);
+      const dir = crit.path ?? null;
+      return { i, base, on, cov, crit, dir, score: overall(crit), marks: order ? order.marks : [] };
     });
-    ocan.width = gw; ocan.height = gh; octx.putImageData(over, 0, 0);
+    ocan.width = gw; ocan.height = oh; octx.putImageData(over, 0, 0);
+    gradePage.oy = oOff / GK; gradePage.oh = oh / GK;
     return results;
   }
+
+  /* ---------- Score history ---------- */
+  // Each time you finish with a page (clear it, turn the page, change the text), its score
+  // is saved for that text or letter, so you can see whether you're improving.
+  const SCORES = 'penmanship-pad:scores';
+  let scores = {}; try { scores = JSON.parse(localStorage.getItem(SCORES) || '{}') || {}; } catch (_) {}
+  let pageDirty = false;
+  function pageKey() {
+    const rows = pages[S.page] || [], f = rows.find((r) => r.t || r.copy || r.tutor);
+    return `${S.mode}|${S.mode === 'tutor' ? '' : S.style}|${f ? f.tutor || f.t || f.copy : ''}`;
+  }
+  const pageScore = (res) => res && res.length ? Math.round(100 * res.reduce((t, r) => t + r.score, 0) / res.length) : null;
+  function recordAttempt() {
+    if (!pageDirty || !S.grade) return;
+    pageDirty = false;
+    const v = pageScore(lastGrade); if (v == null) return;
+    const k = pageKey(), list = scores[k] || (scores[k] = []);
+    list.push(v); if (list.length > 30) list.splice(0, list.length - 30);
+    try { localStorage.setItem(SCORES, JSON.stringify(scores)); } catch (_) {}
+  }
+  function sparkline(vals) {
+    if (vals.length < 2) return '';
+    const w = 70, h = 18, step = w / (vals.length - 1);
+    const pts = vals.map((v, i) => `${(i * step).toFixed(1)},${(h - 1 - (v / 100) * (h - 2)).toFixed(1)}`).join(' ');
+    const last = pts.split(' ').pop().split(',');
+    return `<svg width="${w + 4}" height="${h}" viewBox="-2 0 ${w + 4} ${h}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round"/><circle cx="${last[0]}" cy="${last[1]}" r="2.4" fill="var(--accent)"/></svg>`;
+  }
+  addEventListener('pagehide', recordAttempt);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) recordAttempt(); });
 
   function drawGrade() {
     gctxOut.setTransform(1, 0, 0, 1, 0, 0);
@@ -934,9 +1070,9 @@ body.fs #fsbar { display: flex; }
     const res = gradePage().filter(Boolean);
     lastGrade = res;
     const c = gctxOut;
-    c.setTransform(dpr, 0, 0, dpr, -SX * dpr, 0);
+    c.setTransform(dpr, 0, 0, dpr, -SX * dpr, -SY * dpr);
     c.imageSmoothingEnabled = true;
-    c.drawImage(ocan, 0, 0, L.CW, H);
+    c.drawImage(ocan, 0, gradePage.oy, L.CW, gradePage.oh);
     const col = (v) => css(v >= 0.85 ? '--grade-good' : v >= 0.65 ? '--grade-miss' : '--grade-off');
     c.font = `700 13px ${css('--font-ui')}`; c.textBaseline = 'middle'; c.textAlign = 'right';
     for (const r of res) {
@@ -947,16 +1083,28 @@ body.fs #fsbar { display: flex; }
       c.fillStyle = col(r.score); c.fillText(label, xr - 6, y + 0.5);
     }
     for (const r of res) for (const mk of r.marks) drawStrokeMarks(c, mk.user, mk.chk, 8, mk.exp);
-    if (!res.length) { box.innerHTML = 'Write on a row to get a score'; box.hidden = false; return; }
-    const avg = (k) => Math.round(100 * res.reduce((s, r) => s + r[k], 0) / res.length);
-    const dirs = res.filter((r) => r.dir !== null);
-    const dirTxt = dirs.length ? ` · stroke order &amp; direction ${Math.round(100 * dirs.reduce((t, r) => t + r.dir, 0) / dirs.length)}%` : '';
-    box.innerHTML = `Accuracy <b>${avg('score')}%</b> · on the letters ${avg('on')}% · letters covered ${avg('cov')}%${dirTxt}`;
+    const past = scores[pageKey()] || [];
+    if (!res.length) {
+      box.innerHTML = past.length ? `Write on a row to get a score · best so far <b>${Math.max(...past)}%</b>` : 'Write on a row to get a score';
+      box.hidden = false; return;
+    }
+    const now = pageScore(res);
+    const parts = CRIT.map(([k, label]) => {
+      const v = res.filter((r) => r.crit[k] != null);
+      return v.length ? `${label} <b>${Math.round(100 * v.reduce((t, r) => t + r.crit[k], 0) / v.length)}</b>` : null;
+    }).filter(Boolean);
+    let trend = '';
+    if (past.length) {
+      const d = now - past[past.length - 1], best = Math.max(...past);
+      const arrow = d > 0 ? `<span style="color:var(--grade-good)">▲ ${d}</span>` : d < 0 ? `<span style="color:var(--grade-off)">▼ ${-d}</span>` : '=';
+      trend = `<span class="trend">${arrow} vs last time (${past[past.length - 1]}%) · best ${Math.max(best, now)}%</span> ${sparkline([...past.slice(-9), now])}`;
+    }
+    box.innerHTML = `Accuracy <b>${now}%</b> ${trend}<div class="crit">${parts.join(' · ')}</div>`;
     box.hidden = false;
   }
 
   /* ---------- History ---------- */
-  function record(action) { const h = hist[S.page]; h.undo.push(action); h.redo.length = 0; updateButtons(); }
+  function record(action) { const h = hist[S.page]; h.undo.push(action); h.redo.length = 0; pageDirty = true; updateButtons(); }
   function apply(action, reverse) {
     const arr = ink[S.page];
     if (action.type === 'add') {
@@ -980,33 +1128,42 @@ body.fs #fsbar { display: flex; }
   // Safari reports Apple Pencil as pointerType 'pen' and fingers as 'touch'.
   // Fingers: 'draw' draws, 'scroll' scrolls the page sideways, 'off' does nothing on the page.
   const fingersIgnored = () => S.fingers !== 'draw';
-  let pan = null;      // finger scroll in progress: {id, x0, sx0, lastX, lastT, v}
-  function setScroll(x) {
-    const nx = Math.max(0, Math.min(L.CW - W, x));
-    if (nx === SX) return false;
-    SX = nx; drawBg(); drawInk(); placeScrollbar(); return true;
+  let pan = null;      // finger scroll in progress: {id, x0, y0, sx0, sy0, lastX, lastY, lastT, vx, vy}
+  // Scrolls the page. Pulling past the last row adds more rows, so you can keep going down.
+  function setScroll(x, y) {
+    if (y > CH() - H + 1 && S.fingers === 'scroll') {
+      while (CH() - H < y && pages[S.page].length < 400) { pages[S.page].push(moreRow(pages[S.page])); extra[S.page] = (extra[S.page] || 0) + 1; }
+    }
+    const nx = Math.max(0, Math.min(L.CW - W, x)), ny = Math.max(0, Math.min(CH() - H, y));
+    if (nx === SX && ny === SY) return false;
+    SX = nx; SY = ny; drawBg(); drawInk(); placeScrollbar(); return true;
   }
   function placeScrollbar() {
-    const bar = $('scrollbar'), over = L && L.CW > W + 1;
-    bar.hidden = !over; if (!over) return;
-    const w = Math.max(40, W * W / L.CW), x = (W - w) * SX / (L.CW - W);
-    bar.style.width = `${w}px`; bar.style.left = `${x}px`;
+    const bar = $('scrollbar'), vbar = $('vscrollbar'), over = L && L.CW > W + 1, vover = L && CH() > H + 1;
+    bar.hidden = !over; vbar.hidden = !vover;
+    if (over) { const w = Math.max(40, W * W / L.CW); bar.style.width = `${w}px`; bar.style.left = `${(W - w) * SX / (L.CW - W)}px`; }
+    if (vover) { const h = Math.max(40, H * H / CH()); vbar.style.height = `${h}px`; vbar.style.top = `${(H - h) * SY / (CH() - H)}px`; }
   }
   // A flick keeps the page gliding for a moment.
   let glide = 0;
-  function glideFrom(v) {
+  function glideFrom(vx, vy) {
     cancelAnimationFrame(glide);
-    const step = () => { v *= 0.94; if (Math.abs(v) < 0.02 || !setScroll(SX - v * 16)) return; glide = requestAnimationFrame(step); };
+    const step = () => {
+      vx *= 0.94; vy *= 0.94;
+      if (Math.hypot(vx, vy) < 0.02 || !setScroll(SX - vx * 16, SY - vy * 16)) return;
+      glide = requestAnimationFrame(step);
+    };
     glide = requestAnimationFrame(step);
   }
   const cursor = $('cursor');
 
-  // Pointer position in page coordinates (the page can be scrolled sideways).
-  function pos(e) { const r = rect || (rect = inkC.getBoundingClientRect()); return [e.clientX - r.left + SX, e.clientY - r.top]; }
+  // Pointer position on screen, and in page coordinates (the page can be scrolled).
+  function screenPos(e) { const r = rect || (rect = inkC.getBoundingClientRect()); return [e.clientX - r.left, e.clientY - r.top]; }
+  function pos(e) { const [x, y] = screenPos(e); return [x + SX, y + SY]; }
   function showCursor(x, y) {
     cursor.hidden = false;
     cursor.className = S.tool === 'eraser' ? 'erase' : '';
-    cursor.style.transform = `translate(${x - SX}px, ${y}px)`;
+    cursor.style.transform = `translate(${x - SX}px, ${y - SY}px)`;
   }
 
   function pressureOf(e) {
@@ -1020,7 +1177,8 @@ body.fs #fsbar { display: flex; }
     for (let i = arr.length - 1; i >= 0; i--) {
       const s = arr[i], rr = r + s.w;
       if (!visibleStroke(s)) continue;
-      if (s.pts.some((p) => (p[0] - x) ** 2 + (p[1] - y) ** 2 <= rr * rr)) {
+      const px = s.panel ? x - SX : x, py = s.panel ? y - SY : y;
+      if (s.pts.some((p) => (p[0] - px) ** 2 + (p[1] - py) ** 2 <= rr * rr)) {
         active.erased.push({ i, s }); arr.splice(i, 1); hit = true;
       }
     }
@@ -1050,7 +1208,7 @@ body.fs #fsbar { display: flex; }
       if (touches.size > 2 && twoTap) twoTap.ok = false;
       if (S.fingers === 'scroll' && touches.size === 1) {
         cancelAnimationFrame(glide);
-        pan = { id: e.pointerId, x0: e.clientX, sx0: SX, lastX: e.clientX, lastT: performance.now(), v: 0 };
+        pan = { id: e.pointerId, x0: e.clientX, y0: e.clientY, sx0: SX, sy0: SY, lastX: e.clientX, lastY: e.clientY, lastT: performance.now(), vx: 0, vy: 0 };
         try { inkC.setPointerCapture(e.pointerId); } catch (_) {}
         return;
       }
@@ -1068,16 +1226,17 @@ body.fs #fsbar { display: flex; }
     if (active) return;
     e.preventDefault();
     try { inkC.setPointerCapture(e.pointerId); } catch (_) {}
-    const [x, y] = pos(e);
+    const [x, y] = pos(e), [sx, sy] = screenPos(e);
     if (S.tool === 'eraser') {
       active = { id: e.pointerId, type: e.pointerType, erased: [] };
       showCursor(x, y);
       eraseAt(x, y);
     } else {
       cursor.hidden = true;
-      const s = { color: S.color, w: X_HEIGHT[S.size] * 0.11 + 1.2, pts: [[x, y, pressureOf(e)]], by: e.pointerType, at: performance.now(), panel: onPanelAt(x, y) };
+      const panel = onPanelAt(sx, sy);
+      const s = { color: S.color, w: X_HEIGHT[S.size] * 0.11 + 1.2, pts: [panel ? [sx, sy, pressureOf(e)] : [x, y, pressureOf(e)]], by: e.pointerType, at: performance.now(), panel };
       active = { id: e.pointerId, type: e.pointerType, stroke: s };
-      prep(ictx, s); drawTail(ictx, s);
+      inkXform(panel); prep(ictx, s); drawTail(ictx, s);
     }
   }
 
@@ -1085,8 +1244,9 @@ body.fs #fsbar { display: flex; }
     if (pan && e.pointerId === pan.id) {
       e.preventDefault();
       const now = performance.now(), dt = Math.max(1, now - pan.lastT);
-      pan.v = 0.7 * pan.v + 0.3 * (e.clientX - pan.lastX) / dt; pan.lastX = e.clientX; pan.lastT = now;
-      setScroll(pan.sx0 - (e.clientX - pan.x0));
+      pan.vx = 0.7 * pan.vx + 0.3 * (e.clientX - pan.lastX) / dt; pan.vy = 0.7 * pan.vy + 0.3 * (e.clientY - pan.lastY) / dt;
+      pan.lastX = e.clientX; pan.lastY = e.clientY; pan.lastT = now;
+      setScroll(pan.sx0 - (e.clientX - pan.x0), pan.sy0 - (e.clientY - pan.y0));
       return;
     }
     const t = touches.get(e.pointerId);
@@ -1099,7 +1259,7 @@ body.fs #fsbar { display: flex; }
     if (active.erased) { const [x, y] = pos(e); showCursor(x, y); }
     const evs = (e.getCoalescedEvents && e.getCoalescedEvents().length) ? e.getCoalescedEvents() : [e];
     for (const ev of evs) {
-      const [x, y] = pos(ev);
+      const [x, y] = active.stroke && active.stroke.panel ? screenPos(ev) : pos(ev);
       if (active.erased) { eraseAt(x, y); continue; }
       const s = active.stroke, p = s.pts, last = p[p.length - 1];
       if (Math.hypot(x - last[0], y - last[1]) < 0.6) continue;
@@ -1128,7 +1288,7 @@ body.fs #fsbar { display: flex; }
   }
 
   function onUp(e) {
-    if (pan && e.pointerId === pan.id) { if (performance.now() - pan.lastT < 80) glideFrom(pan.v); pan = null; }
+    if (pan && e.pointerId === pan.id) { if (performance.now() - pan.lastT < 80) glideFrom(pan.vx, pan.vy); pan = null; }
     if (touches.has(e.pointerId)) {
       touches.delete(e.pointerId);
       if (touches.size === 0 && twoTap) {
@@ -1155,13 +1315,14 @@ body.fs #fsbar { display: flex; }
   for (const ev of ['gesturestart', 'gesturechange']) document.addEventListener(ev, (e) => e.preventDefault(), { passive: false });
   sheet.addEventListener('contextmenu', (e) => e.preventDefault());
   sheet.addEventListener('wheel', (e) => {
-    const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.shiftKey ? e.deltaY : 0;
-    if (d && L && L.CW > W) { e.preventDefault(); cancelAnimationFrame(glide); setScroll(SX + d); }
+    if (!L || S.fingers !== 'scroll') return;
+    e.preventDefault(); cancelAnimationFrame(glide);
+    if (e.shiftKey) setScroll(SX + e.deltaY, SY); else setScroll(SX + e.deltaX, SY + e.deltaY);
   }, { passive: false });
 
   // A palm resting on the toolbar while you write shouldn't press buttons.
   let blockClick = false;
-  for (const bar of [document.querySelector('header'), $('fsbar'), $('panelCtl'), $('panelShow')]) {
+  for (const bar of [document.querySelector('header'), $('fsbar'), $('panelCtl'), $('panelShow'), $('navCtl')]) {
     bar.addEventListener('pointerdown', (e) => {
       // Fingers can always tap buttons, except a palm landing while the Pencil is mid-stroke.
       blockClick = e.pointerType === 'touch' && !!active && active.type === 'pen';
@@ -1175,7 +1336,7 @@ body.fs #fsbar { display: flex; }
   const textEl = $('text'), preset = $('preset');
   const CONTENT_KEYS = ['style', 'mode', 'size'];
 
-  function resetInk() { ink = []; hist = []; S.page = 0; SX = 0; }
+  function resetInk() { recordAttempt(); ink = []; hist = []; extra = []; S.page = 0; SX = SY = 0; }
 
   function updateButtons() {
     document.body.classList.toggle('tutor', S.mode === 'tutor');
@@ -1186,10 +1347,11 @@ body.fs #fsbar { display: flex; }
     $('clear').disabled = !(ink[S.page] && ink[S.page].length);
     $('prev').disabled = S.page <= 0;
     $('next').disabled = S.page >= pages.length - 1;
-    $('pageLabel').textContent = $('fsPage').textContent = `${S.page + 1} / ${pages.length}`;
+    $('pageLabel').textContent = `${S.page + 1} / ${pages.length}`;
     $('fsUndo').disabled = $('undo').disabled;
-    $('fsPrev').disabled = $('prev').disabled; $('fsNext').disabled = $('next').disabled;
-    for (const id of ['fsPrev', 'fsPage', 'fsNext']) $(id).hidden = pages.length < 2;
+    document.querySelector('#navCtl .navpages').hidden = pages.length < 2;
+    $('scrollBtn').setAttribute('aria-pressed', String(S.fingers === 'scroll'));
+    document.body.classList.toggle('tutor-text', S.mode === 'tutor' && S.tutorSet === 'text');
     document.querySelectorAll('.seg').forEach((seg) => {
       seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(S[seg.dataset.key] === b.dataset.v)));
     });
@@ -1259,12 +1421,21 @@ body.fs #fsbar { display: flex; }
   $('redo').addEventListener('click', redo);
   $('clear').addEventListener('click', () => {
     const arr = ink[S.page]; if (!arr.length) return;
+    recordAttempt();
     record({ type: 'clear', strokes: arr.slice() }); arr.length = 0; drawInk(); updateButtons();
   });
-  const prevPage = () => { if (S.page > 0) { S.page--; SX = 0; render(); } };
-  const nextPage = () => { if (S.page < pages.length - 1) { S.page++; SX = 0; render(); } };
-  $('prev').addEventListener('click', prevPage); $('fsPrev').addEventListener('click', prevPage);
-  $('next').addEventListener('click', nextPage); $('fsNext').addEventListener('click', nextPage);
+  const prevPage = () => { if (S.page > 0) { recordAttempt(); S.page--; SX = SY = 0; render(); } };
+  const nextPage = () => { if (S.page < pages.length - 1) { recordAttempt(); S.page++; SX = SY = 0; render(); } };
+  $('prev').addEventListener('click', prevPage);
+  $('next').addEventListener('click', nextPage);
+  // On-page scroll switch: flips Fingers between Scroll and what it was before.
+  $('scrollBtn').addEventListener('click', () => {
+    if (S.fingers === 'scroll') S.fingers = S.fingersPrev && S.fingersPrev !== 'scroll' ? S.fingersPrev : 'off';
+    else { S.fingersPrev = S.fingers; S.fingers = 'scroll'; }
+    S.fingersSet = true;
+    if (active && active.type === 'touch' && S.fingers !== 'draw') active = null;
+    relayout(false);
+  });
   $('fsUndo').addEventListener('click', undo);
 
   // Tutor: keep the letter set in step with the Style (Devanagari vs English).
@@ -1362,6 +1533,7 @@ body.fs #fsbar { display: flex; }
   // Test hook: only with #test in the URL, exposes letter geometry so automated tests can trace it.
   if (location.hash === '#test') window.__pad = {
     model: () => modelGeom(),
+    scroll: () => ({ SX, SY, rows: pages[S.page].length, CH: CH(), H }),
     row: (i) => { const r = pages[S.page][i], g = glyph(r.tutor), k = tk(), base = L.top + i * L.pitch + L.gapTop + L.ascPx;
       return tutorXs(r.tutor, L.textX, null, L.tutorX).map((x) => g.s.map((st) => st.map((q) => toPx(q, x, base, k)))); },
   };
