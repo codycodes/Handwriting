@@ -35,6 +35,11 @@
   --ink: #18243b;
   --ink-blue: #2f5fb3;
   --ink-red: #c2412f;
+  --grid: #e1e8f2;          /* squared paper */
+  --slant: #c9d6e8;         /* slant guide lines */
+  --grade-off: #d6453a;     /* ink outside the letters */
+  --grade-miss: #e0a11b;    /* parts of letters not traced */
+  --grade-good: #2e8a57;
   --font-ui: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
   --font-brand: "Playwrite US Trad", "Snell Roundhand", cursive;
   color-scheme: light;
@@ -45,6 +50,7 @@
     --accent: #84a9ec; --accent-soft: #24334d; --paper: #192029; --rule: #3f5f8a; --rule-soft: #2f4563;
     --band: rgba(132, 169, 236, 0.06); --margin: #8c4c48; --guide: #a3b0c4;
     --ink: #eef2f8; --ink-blue: #8fb3f2; --ink-red: #f08a76; color-scheme: dark;
+    --grid: #222b37; --slant: #2c3a4e; --grade-off: #ff7b6b; --grade-miss: #f0c14e; --grade-good: #5fcf8e;
   }
 }
 :root[data-theme="dark"] {
@@ -52,6 +58,7 @@
   --accent: #84a9ec; --accent-soft: #24334d; --paper: #192029; --rule: #3f5f8a; --rule-soft: #2f4563;
   --band: rgba(132, 169, 236, 0.06); --margin: #8c4c48; --guide: #a3b0c4;
   --ink: #eef2f8; --ink-blue: #8fb3f2; --ink-red: #f08a76; color-scheme: dark;
+    --grid: #222b37; --slant: #2c3a4e; --grade-off: #ff7b6b; --grade-miss: #f0c14e; --grade-good: #5fcf8e;
 }
 
 html, body { height: 100%; }
@@ -123,6 +130,13 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
   overflow: hidden; touch-action: none;
 }
 .sheet canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+#grade { pointer-events: none; }
+#score {
+  position: absolute; left: 14px; bottom: 10px; font-size: 13px; color: var(--text);
+  pointer-events: none; background: var(--paper); padding: 3px 8px; border-radius: 6px;
+  box-shadow: 0 0 0 1px var(--line); font-variant-numeric: tabular-nums;
+}
+#score b { font-size: 15px; }
 #hint {
   position: absolute; right: 14px; bottom: 10px; font-size: 12px; color: var(--muted);
   pointer-events: none; background: var(--paper); padding: 2px 6px; border-radius: 6px;
@@ -186,6 +200,8 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
       <div class="seg" data-key="guide"><button data-v="outline">Outline</button><button data-v="dotted">Dotted</button><button data-v="faded">Faded</button></div></div>
     <div class="group"><span class="label">Practice</span>
       <div class="seg" data-key="mode"><button data-v="trace">Trace</button><button data-v="copy">Trace + copy</button><button data-v="repeat">Repeat &amp; fade</button></div></div>
+    <div class="group"><span class="label">Paper</span>
+      <div class="seg" data-key="paper"><button data-v="lines">Lines</button><button data-v="slant" title="Slant lines to keep letters leaning the same way">Slant</button><button data-v="grid" title="Squared paper">Grid</button></div></div>
     <div class="group"><span class="label">Size</span>
       <div class="seg" data-key="size"><button data-v="s">S</button><button data-v="m">M</button><button data-v="l">L</button></div></div>
     <div class="group"><span class="label">Tool</span>
@@ -207,6 +223,8 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
       </div></div>
     <div class="group"><span class="label">Fingers</span>
       <button id="palm" class="toggle" aria-pressed="true" title="When on, fingers are ignored once the Pencil has been used">Pencil only</button></div>
+    <div class="group"><span class="label">Check</span>
+      <button id="gradeBtn" class="toggle" aria-pressed="false" title="Score how closely your writing follows the letters">Grade</button></div>
     <div class="group"><span class="label">Theme</span>
       <div class="seg" data-key="theme">
         <button data-v="auto">Auto</button>
@@ -218,6 +236,8 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
 <main class="sheet" id="sheet">
   <canvas id="bg"></canvas>
   <canvas id="ink"></canvas>
+  <canvas id="grade"></canvas>
+  <div id="score" hidden></div>
   <div id="cursor" hidden></div>
   <div id="hint">Two-finger tap to undo</div>
 </main>
@@ -231,6 +251,7 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
     devanagari: '"Kalam", "Kohinoor Devanagari", "Devanagari Sangam MN", sans-serif',
   };
   const X_HEIGHT = { s: 20, m: 30, l: 44 }; // x-height in CSS px
+  const SLANT = 15 * Math.PI / 180;           // slant line angle from vertical
   const STORE = 'penmanship-pad:v2';
   const DEVANAGARI = /[ऀ-ॿ]/;
 
@@ -238,6 +259,7 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
     text: 'Cody codes',
     style: 'cursive', guide: 'outline', mode: 'trace', size: 'l',
     tool: 'pen', color: 'ink', palm: true, page: 0, theme: 'auto',
+    paper: 'lines', grade: false,
   };
   let S = { ...defaults };
   try { Object.assign(S, JSON.parse(localStorage.getItem(STORE) || '{}')); } catch (_) {}
@@ -253,12 +275,12 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
   applyTheme();
 
   const $ = (id) => document.getElementById(id);
-  const sheet = $('sheet'), bg = $('bg'), inkC = $('ink');
-  const bctx = bg.getContext('2d'), ictx = inkC.getContext('2d');
+  const sheet = $('sheet'), bg = $('bg'), inkC = $('ink'), gradeC = $('grade');
+  const bctx = bg.getContext('2d'), ictx = inkC.getContext('2d'), gctxOut = gradeC.getContext('2d');
   const mctx = document.createElement('canvas').getContext('2d');
   let W = 0, H = 0, dpr = 1;
   let L = null;        // layout metrics
-  let pages = [[]];    // rows per page: {t: string|null, a: alpha}
+  let pages = [[]];    // rows per page: {t: string|null, a: alpha, copy?: text to write freehand}
   let ink = [];        // ink[page] = [stroke]
   let hist = [];       // hist[page] = {undo: [], redo: []}
   let penSeen = false;
@@ -319,12 +341,12 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
     else if (S.mode === 'trace') pg = chunk(lines.map((t) => ({ t, a: 1 })), perPage);
     else if (S.mode === 'copy') {
       if (perPage < 2) pg = chunk(lines.map((t) => ({ t, a: 1 })), 1);
-      else pg = chunk(lines, Math.floor(perPage / 2)).map((ls) => ls.flatMap((t) => [{ t, a: 1 }, blank()]));
+      else pg = chunk(lines, Math.floor(perPage / 2)).map((ls) => ls.flatMap((t) => [{ t, a: 1 }, { t: null, a: 0, copy: t }]));
     } else {
       // Repeat & fade: one page per line, the guide fades row by row to a blank final row.
       pg = lines.map((t) => Array.from({ length: perPage }, (_, i) => {
         const a = perPage > 1 ? 1 - i / (perPage - 1) : 1;
-        return a < 0.05 ? blank() : { t, a };
+        return a < 0.05 ? { t: null, a: 0, copy: t } : { t, a };
       }));
     }
     pages = pg.map((rows) => { const r = rows.slice(); while (r.length < perPage) r.push(blank()); return r; });
@@ -363,9 +385,25 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
     c.setTransform(dpr, 0, 0, dpr, 0, 0);
     c.fillStyle = css('--paper'); c.fillRect(0, 0, W, H);
     const rule = css('--rule'), soft = css('--rule-soft'), band = css('--band');
+    if (S.paper === 'grid') {
+      // Squared paper: half an x-height per square, lined up with the baselines.
+      const step = L.xPx / 2, y0 = (L.top + L.gapTop + L.ascPx) % step, x0 = L.marginX % step;
+      c.beginPath(); c.strokeStyle = css('--grid'); c.lineWidth = 1;
+      for (let x = x0; x <= W; x += step) { c.moveTo(x, 0); c.lineTo(x, H); }
+      for (let y = y0; y <= H; y += step) { c.moveTo(0, y); c.lineTo(W, y); }
+      c.stroke();
+    }
     pages[S.page].forEach((r, i) => {
       const base = L.top + i * L.pitch + L.gapTop + L.ascPx;
       c.fillStyle = band; c.fillRect(0, base - L.xPx, W, L.xPx);
+      if (S.paper === 'slant') {
+        // Slant lines between the ascender and descender lines, leaning right.
+        const top = base - L.ascPx, h = L.ascPx + L.descPx, dx = Math.tan(SLANT) * h, step = L.xPx * 0.9;
+        c.save(); c.beginPath(); c.rect(L.marginX, top, W - L.marginX, h); c.clip();
+        c.beginPath(); c.strokeStyle = css('--slant'); c.lineWidth = 1;
+        for (let x = L.marginX - dx; x < W + dx; x += step) { c.moveTo(x + dx, top); c.lineTo(x, top + h); }
+        c.stroke(); c.restore();
+      }
       hline(c, base - L.ascPx, rule, 1);
       hline(c, base - L.xPx, soft, 1, [7, 6]);
       hline(c, base, rule, 1.8);
@@ -411,6 +449,116 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
     ictx.setTransform(dpr, 0, 0, dpr, 0, 0);
     for (const s of ink[S.page]) drawStroke(ictx, s);
     if (active && active.stroke) drawStroke(ictx, active.stroke);
+    if (!active) drawGrade();
+  }
+
+  /* ---------- Grading ---------- */
+  // Each row is scored by comparing two masks at half resolution:
+  //   on guide  = share of your ink that lands on the letters (within a small tolerance)
+  //   covered   = share of the letters that your ink passes over (within the same tolerance)
+  // The row score is the balance of the two (F1, curved), so scribbling over everything and
+  // tracing only one letter both score low. Freehand rows (Trace + copy, last Repeat row)
+  // are compared with the line above, lined up with where you started writing.
+  const GK = 0.5;
+  const gcan = document.createElement('canvas'), gctx = gcan.getContext('2d', { willReadFrequently: true });
+  const ocan = document.createElement('canvas'), octx = ocan.getContext('2d');
+  let lastGrade = null;
+
+  function maskOf(bw, bh, y0, draw) {
+    gctx.setTransform(1, 0, 0, 1, 0, 0); gctx.clearRect(0, 0, bw, bh);
+    gctx.setTransform(GK, 0, 0, GK, 0, -y0 * GK);
+    gctx.fillStyle = gctx.strokeStyle = '#000'; gctx.lineCap = gctx.lineJoin = 'round';
+    draw(gctx);
+    const d = gctx.getImageData(0, 0, bw, bh).data, m = new Uint8Array(bw * bh);
+    for (let i = 0; i < m.length; i++) m[i] = d[i * 4 + 3] > 100 ? 1 : 0;
+    return m;
+  }
+  function inkPath(c, strokes, extra) {
+    for (const s of strokes) {
+      const p = s.pts; c.lineWidth = s.w + extra;
+      if (p.length === 1) { c.beginPath(); c.arc(p[0][0], p[0][1], c.lineWidth / 2, 0, Math.PI * 2); c.fill(); continue; }
+      c.beginPath(); c.moveTo(p[0][0], p[0][1]);
+      for (let k = 1; k < p.length; k++) c.lineTo(p[k][0], p[k][1]);
+      c.stroke();
+    }
+  }
+  const rgb = (hex) => { const h = hex.replace('#', ''); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); };
+
+  function gradePage() {
+    const rows = pages[S.page], strokes = ink[S.page];
+    const gw = Math.ceil(W * GK), gh = Math.ceil(H * GK);
+    if (gcan.width !== gw) gcan.width = gw;
+    const bh = Math.ceil(L.pitch * GK) + 2;
+    if (gcan.height !== bh) gcan.height = bh;
+    const tol = L.xPx * 0.09 + 1;              // CSS px of leeway around each letter
+    const byRow = rows.map(() => []);
+    for (const s of strokes) {
+      const my = s.pts.reduce((a, p) => a + p[1], 0) / s.pts.length;
+      const i = Math.floor((my - L.top) / L.pitch);
+      if (i >= 0 && i < rows.length) byRow[i].push(s);
+    }
+    const over = new ImageData(gw, gh), od = over.data;
+    const off = rgb(css('--grade-off')), miss = rgb(css('--grade-miss'));
+    const font = `${L.fontSize}px ${L.family}`;
+    const results = rows.map((r, i) => {
+      const target = r.t || r.copy, mine = byRow[i];
+      if (!target || !mine.length) return null;
+      const y0 = L.top + i * L.pitch, base = y0 + L.gapTop + L.ascPx;
+      let x = L.textX;
+      if (!r.t) {
+        // Freehand row: line the letters up with where your writing starts.
+        mctx.font = font;
+        const glyphLeft = L.textX - mctx.measureText(target).actualBoundingBoxLeft;
+        const inkLeft = Math.min(...mine.flatMap((s) => s.pts.map((p) => p[0] - s.w / 2)));
+        x += inkLeft - glyphLeft;
+      }
+      const text = (c, grow) => { c.font = font; c.fillText(target, x, base); if (grow) { c.lineWidth = grow; c.strokeText(target, x, base); } };
+      const A = maskOf(gw, bh, y0, (c) => text(c, 0));
+      const Ad = maskOf(gw, bh, y0, (c) => text(c, tol * 2));
+      const I = maskOf(gw, bh, y0, (c) => inkPath(c, mine, 0));
+      const Id = maskOf(gw, bh, y0, (c) => inkPath(c, mine, tol * 2));
+      let a = 0, aHit = 0, n = 0, nHit = 0;
+      const rowOff = Math.round(y0 * GK);
+      for (let j = 0; j < A.length; j++) {
+        const yy = rowOff + Math.floor(j / gw); if (yy < 0 || yy >= gh) continue;
+        const o = (yy * gw + (j % gw)) * 4;
+        if (A[j]) { a++; if (Id[j]) aHit++; else { od[o] = miss[0]; od[o + 1] = miss[1]; od[o + 2] = miss[2]; od[o + 3] = 120; } }
+        if (I[j]) { n++; if (Ad[j]) nHit++; else { od[o] = off[0]; od[o + 1] = off[1]; od[o + 2] = off[2]; od[o + 3] = 235; } }
+      }
+      if (!n || !a) return null;
+      const on = nHit / n, cov = aHit / a;
+      // F1 of the two, curved so near-misses still score well but sloppy work drops off faster.
+      const score = on + cov ? ((2 * on * cov) / (on + cov)) ** 1.5 : 0;
+      return { i, base, on, cov, score };
+    });
+    ocan.width = gw; ocan.height = gh; octx.putImageData(over, 0, 0);
+    return results;
+  }
+
+  function drawGrade() {
+    gctxOut.setTransform(1, 0, 0, 1, 0, 0);
+    gctxOut.clearRect(0, 0, gradeC.width, gradeC.height);
+    const box = $('score');
+    if (!S.grade || !L || !ink[S.page]) { box.hidden = true; lastGrade = null; return; }
+    const res = gradePage().filter(Boolean);
+    lastGrade = res;
+    const c = gctxOut;
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.imageSmoothingEnabled = true;
+    c.drawImage(ocan, 0, 0, W, H);
+    const col = (v) => css(v >= 0.85 ? '--grade-good' : v >= 0.65 ? '--grade-miss' : '--grade-off');
+    c.font = `700 13px ${css('--font-ui')}`; c.textBaseline = 'middle'; c.textAlign = 'right';
+    for (const r of res) {
+      const label = `${Math.round(r.score * 100)}%`, tw = c.measureText(label).width;
+      const y = r.base - L.ascPx - Math.min(11, L.gapTop / 2), xr = W - 12;
+      c.fillStyle = css('--paper'); c.strokeStyle = col(r.score); c.lineWidth = 1.5;
+      c.beginPath(); c.roundRect(xr - tw - 12, y - 10, tw + 12, 20, 10); c.fill(); c.stroke();
+      c.fillStyle = col(r.score); c.fillText(label, xr - 6, y + 0.5);
+    }
+    if (!res.length) { box.innerHTML = 'Write on a row to get a score'; box.hidden = false; return; }
+    const avg = (k) => Math.round(100 * res.reduce((s, r) => s + r[k], 0) / res.length);
+    box.innerHTML = `Accuracy <b>${avg('score')}%</b> · on the letters ${avg('on')}% · letters covered ${avg('cov')}%`;
+    box.hidden = false;
   }
 
   /* ---------- History ---------- */
@@ -585,6 +733,7 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
       seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(S[seg.dataset.key] === b.dataset.v)));
     });
     $('palm').setAttribute('aria-pressed', String(!!S.palm));
+    $('gradeBtn').setAttribute('aria-pressed', String(!!S.grade));
     $('hint').hidden = !fingersIgnored();
   }
 
@@ -603,7 +752,7 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
       if (S[key] === b.dataset.v) return;
       S[key] = b.dataset.v;
       if (CONTENT_KEYS.includes(key)) relayout(true);
-      else if (key === 'guide') render();
+      else if (key === 'guide' || key === 'paper') render();
       else if (key === 'theme') { applyTheme(); render(); }
       else updateButtons(), save();
     });
@@ -634,6 +783,7 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
   $('prev').addEventListener('click', () => { if (S.page > 0) { S.page--; render(); } });
   $('next').addEventListener('click', () => { if (S.page < pages.length - 1) { S.page++; render(); } });
   $('palm').addEventListener('click', () => { S.palm = !S.palm; updateButtons(); save(); });
+  $('gradeBtn').addEventListener('click', () => { S.grade = !S.grade; drawGrade(); updateButtons(); save(); });
   document.addEventListener('keydown', (e) => {
     if (e.target === textEl) return;
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
@@ -643,7 +793,7 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
   function resize() {
     const r = sheet.getBoundingClientRect();
     W = r.width; H = r.height; dpr = window.devicePixelRatio || 1; rect = null;
-    for (const c of [bg, inkC]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
+    for (const c of [bg, inkC, gradeC]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
     computeLayout(); render();
   }
   new ResizeObserver(resize).observe(sheet);
