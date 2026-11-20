@@ -216,7 +216,7 @@ body.fs #fsbar { display: flex; }
     <div class="group"><span class="label">Practice</span>
       <div class="seg" data-key="mode"><button data-v="trace">Trace</button><button data-v="copy">Trace + copy</button><button data-v="repeat">Repeat &amp; fade</button></div></div>
     <div class="group"><span class="label">Paper</span>
-      <div class="seg" data-key="paper"><button data-v="lines">Lines</button><button data-v="slant" title="Slant lines to keep letters leaning the same way">Slant</button><button data-v="grid" title="Squared paper">Grid</button><button data-v="crossdot" title="Small crosses on a grid">Cross-dot</button></div></div>
+      <div class="seg" data-key="paper"><button data-v="lines">Lines</button><button data-v="slant" title="Slant lines to keep letters leaning the same way">Slant</button><button data-v="grid" title="Squared paper">Grid</button></div></div>
     <div class="group"><span class="label">Size</span>
       <div class="seg" data-key="size"><button data-v="s">S</button><button data-v="m">M</button><button data-v="l">L</button></div></div>
     <div class="group"><span class="label">Tool</span>
@@ -238,6 +238,8 @@ body.fs #fsbar { display: flex; }
       </div></div>
     <div class="group"><span class="label">Fingers</span>
       <button id="palm" class="toggle" aria-pressed="true" title="When on, fingers are ignored once the Pencil has been used">Pencil only</button></div>
+    <div class="group"><span class="label">Margin</span>
+      <button id="marksBtn" class="toggle" aria-pressed="false" title="A cross and a dot in the margin on every line">× •</button></div>
     <div class="group"><span class="label">Check</span>
       <button id="gradeBtn" class="toggle" aria-pressed="false" title="Score how closely your writing follows the letters">Grade</button></div>
     <div class="group"><span class="label">Theme</span>
@@ -281,10 +283,11 @@ body.fs #fsbar { display: flex; }
     text: 'Cody codes',
     style: 'cursive', guide: 'outline', mode: 'trace', size: 'l',
     tool: 'pen', color: 'ink', palm: true, page: 0, theme: 'auto',
-    paper: 'lines', grade: false,
+    paper: 'lines', grade: false, marks: false,
   };
   let S = { ...defaults };
   try { Object.assign(S, JSON.parse(localStorage.getItem(STORE) || '{}')); } catch (_) {}
+  if (S.paper === 'crossdot') S.paper = 'lines';
   const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (_) {} };
 
   // Theme: Auto follows the system (or the host page's own choice); Light/Dark force it.
@@ -415,16 +418,6 @@ body.fs #fsbar { display: flex; }
       for (let y = y0; y <= H; y += step) { c.moveTo(0, y); c.lineTo(W, y); }
       c.stroke();
     }
-    if (S.paper === 'crossdot') {
-      // Cross-dot: a small + at every grid point, lined up with the baselines.
-      const step = L.xPx / 2, arm = Math.max(2, step * 0.16);
-      const y0 = (L.top + L.gapTop + L.ascPx) % step, x0 = L.marginX % step;
-      c.beginPath(); c.strokeStyle = css('--slant'); c.lineWidth = 1;
-      for (let x = x0; x <= W; x += step) for (let y = y0; y <= H; y += step) {
-        c.moveTo(x - arm, y); c.lineTo(x + arm, y); c.moveTo(x, y - arm); c.lineTo(x, y + arm);
-      }
-      c.stroke();
-    }
     pages[S.page].forEach((r, i) => {
       const base = L.top + i * L.pitch + L.gapTop + L.ascPx;
       c.fillStyle = band; c.fillRect(0, base - L.xPx, W, L.xPx);
@@ -444,6 +437,17 @@ body.fs #fsbar { display: flex; }
     });
     c.beginPath(); c.strokeStyle = css('--margin'); c.lineWidth = 1.5;
     c.moveTo(L.marginX, 0); c.lineTo(L.marginX, H); c.stroke();
+    if (S.marks) {
+      // Cross-dot margin: a × and a • side by side in the margin on every writing line.
+      const r = Math.max(3, Math.min(6, L.xPx * 0.14)), cy = (base) => base - L.xPx / 2;
+      const xc = L.marginX * 0.36, xd = L.marginX * 0.7;
+      c.strokeStyle = c.fillStyle = css('--margin'); c.lineWidth = 1.8; c.lineCap = 'round';
+      pages[S.page].forEach((_, i) => {
+        const y = cy(L.top + i * L.pitch + L.gapTop + L.ascPx);
+        c.beginPath(); c.moveTo(xc - r, y - r); c.lineTo(xc + r, y + r); c.moveTo(xc + r, y - r); c.lineTo(xc - r, y + r); c.stroke();
+        c.beginPath(); c.arc(xd, y, r * 0.55, 0, Math.PI * 2); c.fill();
+      });
+    }
   }
 
   /* ---------- Drawing: ink ---------- */
@@ -798,6 +802,7 @@ body.fs #fsbar { display: flex; }
     });
     $('palm').setAttribute('aria-pressed', String(!!S.palm));
     $('gradeBtn').setAttribute('aria-pressed', String(!!S.grade));
+    $('marksBtn').setAttribute('aria-pressed', String(!!S.marks));
     $('hint').hidden = !fingersIgnored();
   }
 
@@ -865,6 +870,7 @@ body.fs #fsbar { display: flex; }
   // Leaving browser full screen (Esc, system gesture) also brings the toolbar back.
   for (const ev of ['fullscreenchange', 'webkitfullscreenchange']) document.addEventListener(ev, () => { if (!fsEl()) document.body.classList.remove('fs'); });
   $('palm').addEventListener('click', () => { S.palm = !S.palm; updateButtons(); save(); });
+  $('marksBtn').addEventListener('click', () => { S.marks = !S.marks; render(); });
   $('gradeBtn').addEventListener('click', () => { S.grade = !S.grade; drawGrade(); updateButtons(); save(); });
   document.addEventListener('keydown', (e) => {
     if (e.target === textEl) return;

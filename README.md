@@ -15,7 +15,8 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
 - Example words to start with: *Cody codes*, *cool*, *hello*, *coffee*, and more, plus alphabets and Devanagari (नमस्ते, कोडी कोड्स, consonants, vowels and numerals)
 - **Theme:** Auto (follows iPad's setting), Light or Dark
 - Practice layouts: Trace (default), Trace + copy, Repeat & fade
-- **Paper:** plain Lines, **Slant** (diagonal guide lines between the rules, like British handwriting paper, to keep every letter leaning the same way) **Grid** (squared paper lined up with the baseline) or **Cross-dot** (a small + at each grid point)
+- **Paper:** plain Lines, **Slant** (diagonal guide lines between the rules, like British handwriting paper, to keep every letter leaning the same way) or **Grid** (squared paper lined up with the baseline)
+- **Cross-dot margin (× •):** turn on a × and a • in the left margin on every writing line
 - **Grade:** scores each row as you write. A badge on the row shows the score, and the sheet marks ink that strayed off the letters in red and parts of letters you missed in amber. The summary at the bottom gives:
   - **On the letters:** how much of your ink lands on the guide letters
   - **Letters covered:** how much of the guide letters your ink went over
