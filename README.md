@@ -40,10 +40,19 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
 | A finger lifts off over the toolbar, or iOS cancels a touch | Tracking resets on the next touch, so fingers never get stuck unable to draw |
 | Two-finger tap | Undo |
 
+### Turn off Scribble
+Scribble turns Apple Pencil writing into typed text when you write near a text box. In this app that can turn your practice strokes into text in the box at the top. Websites can't switch it off, so the app shows a one-time tip on iPad. To turn it off:
+
+1. Open **Settings**.
+2. Tap **Apple Pencil**.
+3. Turn off **Scribble**.
+
+Full screen also helps, because it hides the text box.
+
 These are limits of web apps that the app can't change:
 - Double-tap and squeeze on the Pencil aren't available to websites.
 - Swipes from the screen edges still open Control Center and the Home Screen. In Safari, **Add to Home Screen** gives you the most room.
-- Scribble (handwriting into text fields) still works in the text box, which is handy for typing new practice text with the Pencil.
+- Scribble can't be turned off by a website (see above). If you leave it on, it's handy for writing new practice text into the text box with the Pencil.
 
 ## GitHub Pages
 `.github/workflows/pages.yml` deploys this repo to GitHub Pages on every push to `main`, or when you run it by hand from the Actions tab.

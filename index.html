@@ -143,6 +143,18 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
 }
 @media (max-width: 700px) { .brand { display: none; } }
 
+/* iPad tip about Scribble, floating at the bottom so it never shifts the sheet. */
+#ipadTip {
+  position: fixed; z-index: 6; left: 50%; transform: translateX(-50%);
+  bottom: max(18px, env(safe-area-inset-bottom, 0px)); width: min(560px, calc(100% - 32px)); box-sizing: border-box;
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 12px;
+  padding: 12px 12px 12px 16px; box-shadow: 0 8px 24px rgba(20, 30, 50, .18); font-size: 14px; line-height: 1.4;
+}
+#ipadTip[hidden] { display: none; }
+#ipadTip p { margin: 0; flex: 1; }
+#ipadTip b { color: var(--accent); }
+
 /* Full screen: hide the toolbar so the sheet runs edge to edge like a plain page. */
 body.fs { padding: 0; background: var(--paper); }
 body.fs header { display: none; }
@@ -258,6 +270,11 @@ body.fs #fsbar { display: flex; }
   <div id="cursor" hidden></div>
   <div id="hint">Pencil only is on: fingers won't draw</div>
 </main>
+<div id="ipadTip" role="note" hidden>
+  <p><b>Writing turning into typed text?</b> That's iPad's Scribble feature. Turn it off in
+  <b>Settings → Apple Pencil → Scribble</b>. Full screen also helps, since it hides the text box Scribble writes into.</p>
+  <button id="ipadTipClose">Got it</button>
+</div>
 <div id="fsbar">
   <button id="fsUndo" aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></svg></button>
   <button id="fsPrev" aria-label="Previous page"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
@@ -889,6 +906,15 @@ body.fs #fsbar { display: flex; }
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
   new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   document.fonts.addEventListener('loadingdone', () => { if (W) { computeLayout(); render(); } });
+
+  // iPadOS Safari reports itself as a Mac, so also check for a touch screen.
+  const isIPad = /iPad/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const TIP = 'penmanship-pad:scribble-tip-seen';
+  let tipSeen = false; try { tipSeen = localStorage.getItem(TIP) === '1'; } catch (_) {}
+  if (isIPad && !tipSeen) $('ipadTip').hidden = false;
+  $('ipadTipClose').addEventListener('click', () => {
+    $('ipadTip').hidden = true; try { localStorage.setItem(TIP, '1'); } catch (_) {}
+  });
 
   relayout(false);
 })();
