@@ -15,13 +15,14 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
 - Example words to start with: *Cody codes*, *cool*, *hello*, *coffee*, and more, plus alphabets and Devanagari (नमस्ते, कोडी कोड्स, consonants, vowels and numerals)
 - **Theme:** Auto (follows iPad's setting), Light or Dark
 - Practice layouts: Trace (default), Trace + copy, Repeat & fade
-- **Paper:** plain Lines, **Slant** (diagonal guide lines between the rules, like British handwriting paper, to keep every letter leaning the same way) or **Grid** (squared paper lined up with the baseline)
+- **Paper:** plain Lines, **Slant** (diagonal guide lines between the rules, like British handwriting paper, to keep every letter leaning the same way) **Grid** (squared paper lined up with the baseline) or **Cross-dot** (a small + at each grid point)
 - **Grade:** scores each row as you write. A badge on the row shows the score, and the sheet marks ink that strayed off the letters in red and parts of letters you missed in amber. The summary at the bottom gives:
   - **On the letters:** how much of your ink lands on the guide letters
   - **Letters covered:** how much of the guide letters your ink went over
   - **Accuracy:** the balance of the two, so scribbling everywhere or tracing only one letter both score low
 
   Freehand rows (Trace + copy, and the last row of Repeat & fade) are compared with the line above, lined up with where you started writing.
+- **Full screen:** the corner button hides the toolbar so the sheet fills the screen like a plain page. A small floating bar keeps Undo, page arrows and Exit (Esc also exits)
 - Pressure-sensitive ink, eraser, undo/redo, clear, and 3 ink colors
 
 ## Apple Pencil handling
@@ -34,6 +35,8 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
 | Pinch and double-tap zoom (Safari ignores `user-scalable=no`) | Blocked with `touch-action` and gesture event handling |
 | Fast strokes look jagged | Uses coalesced pointer events where Safari provides them, plus curve smoothing |
 | Pencil hover (M2 or later iPad Pro, Pencil Pro) | Shows a small ring where the tip will land |
+| Palm or knuckle touches down while you write with a finger | The stroke keeps going; a second finger only counts as a two-finger tap if it lands right as the stroke starts |
+| A finger lifts off over the toolbar, or iOS cancels a touch | Tracking resets on the next touch, so fingers never get stuck unable to draw |
 | Two-finger tap | Undo |
 
 These are limits of web apps that the app can't change:

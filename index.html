@@ -142,6 +142,20 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
   pointer-events: none; background: var(--paper); padding: 2px 6px; border-radius: 6px;
 }
 @media (max-width: 700px) { .brand { display: none; } }
+
+/* Full screen: hide the toolbar so the sheet runs edge to edge like a plain page. */
+body.fs { padding: 0; background: var(--paper); }
+body.fs header { display: none; }
+body.fs .sheet { border-radius: 0; box-shadow: none; }
+#fsbar {
+  position: fixed; z-index: 5; display: none; gap: 6px; align-items: center;
+  top: max(10px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px));
+  opacity: .6; transition: opacity .2s;
+}
+#fsbar:hover, #fsbar:focus-within { opacity: 1; }
+body.fs #fsbar { display: flex; }
+#fsbar span { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; padding: 0 2px; }
+#fsbar [hidden] { display: none; }
 </style>
 </head>
 <body>
@@ -191,6 +205,7 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
       <button id="prev" aria-label="Previous page"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
       <span id="pageLabel">1 / 1</span>
       <button id="next" aria-label="Next page"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+      <button id="fsBtn" aria-label="Full screen" title="Full screen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     </div>
   </div>
   <div class="row tools">
@@ -201,7 +216,7 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
     <div class="group"><span class="label">Practice</span>
       <div class="seg" data-key="mode"><button data-v="trace">Trace</button><button data-v="copy">Trace + copy</button><button data-v="repeat">Repeat &amp; fade</button></div></div>
     <div class="group"><span class="label">Paper</span>
-      <div class="seg" data-key="paper"><button data-v="lines">Lines</button><button data-v="slant" title="Slant lines to keep letters leaning the same way">Slant</button><button data-v="grid" title="Squared paper">Grid</button></div></div>
+      <div class="seg" data-key="paper"><button data-v="lines">Lines</button><button data-v="slant" title="Slant lines to keep letters leaning the same way">Slant</button><button data-v="grid" title="Squared paper">Grid</button><button data-v="crossdot" title="Small crosses on a grid">Cross-dot</button></div></div>
     <div class="group"><span class="label">Size</span>
       <div class="seg" data-key="size"><button data-v="s">S</button><button data-v="m">M</button><button data-v="l">L</button></div></div>
     <div class="group"><span class="label">Tool</span>
@@ -239,8 +254,15 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
   <canvas id="grade"></canvas>
   <div id="score" hidden></div>
   <div id="cursor" hidden></div>
-  <div id="hint">Two-finger tap to undo</div>
+  <div id="hint">Pencil only is on: fingers won't draw</div>
 </main>
+<div id="fsbar">
+  <button id="fsUndo" aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></svg></button>
+  <button id="fsPrev" aria-label="Previous page"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <span id="fsPage"></span>
+  <button id="fsNext" aria-label="Next page"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+  <button id="fsExit" aria-label="Exit full screen" title="Exit full screen"><svg viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button>
+</div>
 
 <script>
 (() => {
@@ -391,6 +413,16 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
       c.beginPath(); c.strokeStyle = css('--grid'); c.lineWidth = 1;
       for (let x = x0; x <= W; x += step) { c.moveTo(x, 0); c.lineTo(x, H); }
       for (let y = y0; y <= H; y += step) { c.moveTo(0, y); c.lineTo(W, y); }
+      c.stroke();
+    }
+    if (S.paper === 'crossdot') {
+      // Cross-dot: a small + at every grid point, lined up with the baselines.
+      const step = L.xPx / 2, arm = Math.max(2, step * 0.16);
+      const y0 = (L.top + L.gapTop + L.ascPx) % step, x0 = L.marginX % step;
+      c.beginPath(); c.strokeStyle = css('--slant'); c.lineWidth = 1;
+      for (let x = x0; x <= W; x += step) for (let y = y0; y <= H; y += step) {
+        c.moveTo(x - arm, y); c.lineTo(x + arm, y); c.moveTo(x, y - arm); c.lineTo(x, y + arm);
+      }
       c.stroke();
     }
     pages[S.page].forEach((r, i) => {
@@ -625,16 +657,29 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
     if (e.pointerType === 'pen') {
       lastPenAt = performance.now();
       if (!penSeen) { penSeen = true; if (S.palm) dropRecentFingerStrokes(); updateButtons(); }
+      // Only one Pencil exists: a pen stroke still marked active never got its pointerup. Keep it and move on.
+      if (active && active.type === 'pen' && active.id !== e.pointerId) finishActive(false);
       // The Pencil always wins over a finger or palm stroke already in progress.
       if (active && active.type === 'touch') { active = null; drawInk(); }
     }
     if (e.pointerType === 'touch') {
+      // isPrimary means no other finger is on the screen, so anything still tracked is stale
+      // (its pointerup was lost, e.g. lifted over the toolbar or eaten by a system gesture).
+      if (e.isPrimary) {
+        touches.clear(); twoTap = null;
+        if (active && active.type === 'touch' && active.id !== e.pointerId) finishActive(false);
+      }
       touches.set(e.pointerId, { x: e.clientX, y: e.clientY, moved: false });
       if (touches.size === 2) twoTap = { t: performance.now(), ok: true };
       if (touches.size > 2 && twoTap) twoTap.ok = false;
-      if (fingersIgnored() || touches.size > 1) {
-        // A second finger cancels a finger stroke in progress.
-        if (active && active.type === 'touch') { if (active.stroke) drawInk(); active = null; drawInk(); }
+      if (fingersIgnored()) return;
+      if (touches.size > 1) {
+        // A second finger right after the first one lands is a two-finger tap: drop the tiny
+        // stroke. Later on it's a stray palm or knuckle: ignore it and keep drawing.
+        if (active && active.type === 'touch') {
+          if (active.stroke && isYoung(active.stroke)) { active = null; drawInk(); }
+          else if (twoTap) twoTap.ok = false;
+        }
         return;
       }
     }
@@ -675,6 +720,24 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
     }
   }
 
+  function isYoung(s) {
+    if (performance.now() - s.at > 250) return false;
+    let len = 0; for (let k = 1; k < s.pts.length; k++) len += Math.hypot(s.pts[k][0] - s.pts[k - 1][0], s.pts[k][1] - s.pts[k - 1][1]);
+    return len < 15;
+  }
+
+  // Ends the active stroke or erase and records it for undo.
+  function finishActive(cancelled) {
+    if (!active) return;
+    if (active.erased) { cursor.hidden = true; if (active.erased.length) record({ type: 'erase', items: active.erased }); }
+    else if (!cancelled || active.stroke.pts.length > 2) {
+      const s = active.stroke;
+      ink[S.page].push(s); record({ type: 'add', stroke: s });
+    }
+    active = null;
+    drawInk();
+  }
+
   function onUp(e) {
     if (touches.has(e.pointerId)) {
       touches.delete(e.pointerId);
@@ -685,19 +748,16 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
     }
     if (e.pointerType === 'pen') lastPenAt = performance.now();
     if (!active || e.pointerId !== active.id) return;
-    if (active.erased) { cursor.hidden = true; if (active.erased.length) record({ type: 'erase', items: active.erased }); }
-    else if (e.type !== 'pointercancel' || active.stroke.pts.length > 2) {
-      const s = active.stroke;
-      ink[S.page].push(s); record({ type: 'add', stroke: s });
-    }
-    active = null;
-    drawInk();
+    finishActive(e.type === 'pointercancel');
   }
 
   inkC.addEventListener('pointerdown', onDown);
   inkC.addEventListener('pointermove', onMove);
-  inkC.addEventListener('pointerup', onUp);
-  inkC.addEventListener('pointercancel', onUp);
+  // Listen on window so a finger lifted outside the sheet (or one never captured) is still seen.
+  window.addEventListener('pointerup', onUp, true);
+  window.addEventListener('pointercancel', onUp, true);
+  inkC.addEventListener('lostpointercapture', (e) => { if (active && e.pointerId === active.id) finishActive(false); });
+  window.addEventListener('blur', () => { touches.clear(); twoTap = null; finishActive(false); });
   // Stop iOS from turning long presses and double taps into selection or zoom.
   inkC.addEventListener('pointerleave', (e) => { if (!active) cursor.hidden = true; });
   for (const ev of ['touchstart', 'touchmove']) sheet.addEventListener(ev, (e) => e.preventDefault(), { passive: false });
@@ -706,14 +766,15 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
   sheet.addEventListener('contextmenu', (e) => e.preventDefault());
 
   // A palm resting on the toolbar while you write shouldn't press buttons.
-  const header = document.querySelector('header');
   let blockClick = false;
-  header.addEventListener('pointerdown', (e) => {
-    blockClick = e.pointerType === 'touch' && S.palm && penSeen && (!!active || performance.now() - lastPenAt < 500);
-  }, true);
-  header.addEventListener('click', (e) => {
-    if (blockClick) { e.preventDefault(); e.stopPropagation(); blockClick = false; }
-  }, true);
+  for (const bar of [document.querySelector('header'), $('fsbar')]) {
+    bar.addEventListener('pointerdown', (e) => {
+      blockClick = e.pointerType === 'touch' && S.palm && penSeen && (!!active || performance.now() - lastPenAt < 500);
+    }, true);
+    bar.addEventListener('click', (e) => {
+      if (blockClick) { e.preventDefault(); e.stopPropagation(); blockClick = false; }
+    }, true);
+  }
 
   /* ---------- UI ---------- */
   const textEl = $('text'), preset = $('preset');
@@ -728,7 +789,10 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
     $('clear').disabled = !(ink[S.page] && ink[S.page].length);
     $('prev').disabled = S.page <= 0;
     $('next').disabled = S.page >= pages.length - 1;
-    $('pageLabel').textContent = `${S.page + 1} / ${pages.length}`;
+    $('pageLabel').textContent = $('fsPage').textContent = `${S.page + 1} / ${pages.length}`;
+    $('fsUndo').disabled = $('undo').disabled;
+    $('fsPrev').disabled = $('prev').disabled; $('fsNext').disabled = $('next').disabled;
+    for (const id of ['fsPrev', 'fsPage', 'fsNext']) $(id).hidden = pages.length < 2;
     document.querySelectorAll('.seg').forEach((seg) => {
       seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(S[seg.dataset.key] === b.dataset.v)));
     });
@@ -780,13 +844,32 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
     const arr = ink[S.page]; if (!arr.length) return;
     record({ type: 'clear', strokes: arr.slice() }); arr.length = 0; drawInk(); updateButtons();
   });
-  $('prev').addEventListener('click', () => { if (S.page > 0) { S.page--; render(); } });
-  $('next').addEventListener('click', () => { if (S.page < pages.length - 1) { S.page++; render(); } });
+  const prevPage = () => { if (S.page > 0) { S.page--; render(); } };
+  const nextPage = () => { if (S.page < pages.length - 1) { S.page++; render(); } };
+  $('prev').addEventListener('click', prevPage); $('fsPrev').addEventListener('click', prevPage);
+  $('next').addEventListener('click', nextPage); $('fsNext').addEventListener('click', nextPage);
+  $('fsUndo').addEventListener('click', undo);
+
+  // Full screen: hide the toolbar, and also ask the browser for real full screen where it allows it.
+  const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+  function setFullscreen(on) {
+    document.body.classList.toggle('fs', on);
+    const root = document.documentElement;
+    try {
+      if (on && !fsEl()) { const r = (root.requestFullscreen || root.webkitRequestFullscreen)?.call(root); r?.catch?.(() => {}); }
+      if (!on && fsEl()) { const r = (document.exitFullscreen || document.webkitExitFullscreen)?.call(document); r?.catch?.(() => {}); }
+    } catch (_) {}
+  }
+  $('fsBtn').addEventListener('click', () => setFullscreen(true));
+  $('fsExit').addEventListener('click', () => setFullscreen(false));
+  // Leaving browser full screen (Esc, system gesture) also brings the toolbar back.
+  for (const ev of ['fullscreenchange', 'webkitfullscreenchange']) document.addEventListener(ev, () => { if (!fsEl()) document.body.classList.remove('fs'); });
   $('palm').addEventListener('click', () => { S.palm = !S.palm; updateButtons(); save(); });
   $('gradeBtn').addEventListener('click', () => { S.grade = !S.grade; drawGrade(); updateButtons(); save(); });
   document.addEventListener('keydown', (e) => {
     if (e.target === textEl) return;
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
+    if (e.key === 'Escape' && document.body.classList.contains('fs')) setFullscreen(false);
   });
 
   /* ---------- Sizing + theme ---------- */
