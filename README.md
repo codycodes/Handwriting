@@ -44,7 +44,8 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
 ## Apple Pencil handling
 | Issue on iPad | What the app does |
 | --- | --- |
-| Telling the Pencil from fingers | Safari reports Apple Pencil as a pen and fingers as touch. **Fingers** sets what a finger does on the page: **Draw**, **Scroll** (the Pencil still writes) or **Off**. Fingers can always tap buttons |
+| Telling the Pencil from fingers | Safari reports Apple Pencil as a pen and fingers as touch. **Fingers** sets what a finger does on the page: **Draw** (when the Pencil isn't in use), **Scroll** (the Pencil still writes) or **Off**. Fingers can always tap buttons |
+| Palm resting while you write | While the Pencil is writing, hovering, or was lifted less than a second ago, touches are treated as your palm: they don't draw, scroll, or count as a two-finger tap |
 | Palm already drawing when the Pencil lands | The Pencil cancels the finger stroke and takes over |
 | Palm resting on the toolbar presses buttons | Finger taps on the toolbar are ignored only while the Pencil is mid-stroke |
 | Long press brings up the magnifier, text selection or callout menu | Turned off on the writing sheet |
@@ -53,7 +54,8 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
 | Pencil hover (M2 or later iPad Pro, Pencil Pro) | Shows a small ring where the tip will land |
 | Palm or knuckle touches down while you write with a finger | The stroke keeps going; a second finger only counts as a two-finger tap if it lands right as the stroke starts |
 | A finger lifts off over the toolbar, or iOS cancels a touch | Tracking resets on the next touch, so fingers never get stuck unable to draw |
-| Two-finger tap | Undo |
+| Two-finger tap | Undo, but not within 3 seconds of using the Pencil, so a palm lifting off never undoes your writing |
+| Grade on while writing | Only the row you just wrote on is graded again, after the stroke ends, so the Pencil stays responsive however full the page gets |
 
 These are limits of web apps that the app can't change:
 - Double-tap and squeeze on the Pencil aren't available to websites.

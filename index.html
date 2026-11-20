@@ -277,7 +277,7 @@ body.fs #fsbar { display: flex; }
       </div></div>
     <div class="group"><span class="label">Fingers</span>
       <div class="seg" data-key="fingers" title="What your finger does on the page. Buttons always work.">
-        <button data-v="draw" title="Fingers draw">Draw</button>
+        <button data-v="draw" title="Fingers draw when the Pencil isn't in use (a palm resting while you write is ignored)">Draw</button>
         <button data-v="scroll" title="Fingers scroll the page; only Apple Pencil writes. Long text stays on one line.">Scroll</button>
         <button data-v="off" title="Only Apple Pencil writes; fingers do nothing on the page">Off</button>
       </div></div>
@@ -333,6 +333,11 @@ body.fs #fsbar { display: flex; }
 
 <script src="strokes.js"></script>
 <script>
+// Older Safari (before iPadOS 16) has no roundRect; without it drawing badges would throw.
+if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2); this.moveTo(x + r, y); this.arcTo(x + w, y, x + w, y + h, r); this.arcTo(x + w, y + h, x, y + h, r);
+  this.arcTo(x, y + h, x, y, r); this.arcTo(x, y, x + w, y, r); this.closePath();
+};
 (() => {
   // Kalam is in every stack so Devanagari typed into Cursive/Print still renders.
   const FAMILIES = {
@@ -842,7 +847,19 @@ body.fs #fsbar { display: flex; }
     for (const s of ink[S.page]) if (visibleStroke(s)) { inkXform(s.panel); drawStroke(ictx, s); }
     if (active && active.stroke) { inkXform(active.stroke.panel); drawStroke(ictx, active.stroke); }
     else inkXform(false);
-    if (!active) { drawGrade(); if (S.mode === 'tutor') drawDemo(performance.now()); }
+    if (!active) scheduleGrade();
+  }
+  // Grading runs on the next frame, after the stroke has ended, and an error there can
+  // never get in the way of writing.
+  let gradeQueued = 0;
+  function scheduleGrade() {
+    if (gradeQueued) return;
+    gradeQueued = requestAnimationFrame(() => {
+      gradeQueued = 0;
+      if (active) return;
+      try { drawGrade(); } catch (err) { console.error(err); }
+      try { if (S.mode === 'tutor') drawDemo(performance.now()); } catch (err) { console.error(err); }
+    });
   }
 
   /* ---------- Grading ---------- */
@@ -854,7 +871,6 @@ body.fs #fsbar { display: flex; }
   // are compared with the line above, lined up with where you started writing.
   const GK = 0.5;
   const gcan = document.createElement('canvas'), gctx = gcan.getContext('2d', { willReadFrequently: true });
-  const ocan = document.createElement('canvas'), octx = ocan.getContext('2d');
   let lastGrade = null;
 
   function maskOf(bw, bh, y0, draw) {
@@ -899,10 +915,16 @@ body.fs #fsbar { display: flex; }
     return clamp01(1 - (dev / len) / 0.08);
   }
   const isStraight = (e) => { const len = polyLen(e); return len > L.xPx * 0.4 && Math.hypot(e[e.length - 1][0] - e[0][0], e[e.length - 1][1] - e[0][1]) / len > 0.985; };
+  // Left and right edge of some strokes' ink (a loop: Safari limits how many values can be spread).
+  function inkExtent(strokes) {
+    let x0 = Infinity, x1 = -Infinity;
+    for (const s of strokes) for (const p of s.pts) { if (p[0] - s.w / 2 < x0) x0 = p[0] - s.w / 2; if (p[0] + s.w / 2 > x1) x1 = p[0] + s.w / 2; }
+    return [x0, x1];
+  }
   // Connected letters (cursive): each word should be one stroke, plus dots and crosses (i j t x).
   function connectedness(target, x, mine) {
     mctx.font = `${L.fontSize}px ${L.family}`;
-    const inkR = Math.max(...mine.flatMap((s) => s.pts.map((q) => q[0])));
+    const inkR = inkExtent(mine)[1];
     let expect = 0, pre = '';
     for (const w of target.split(' ')) {
       const start = x + mctx.measureText(pre).width; pre += w + ' ';
@@ -939,24 +961,34 @@ body.fs #fsbar { display: flex; }
       const i = Math.floor((my - L.top) / L.pitch);
       if (i >= 0 && i < rows.length) byRow[i].push(s);
     }
-    // The colour overlay only covers the rows you wrote on.
-    const used = byRow.map((b, i) => (b.length ? i : -1)).filter((i) => i >= 0);
-    const r0 = used.length ? Math.min(...used) : 0, r1 = used.length ? Math.max(...used) : 0;
-    const oOff = Math.round((L.top + r0 * L.pitch) * GK), oh = Math.ceil((r1 - r0 + 1) * L.pitch * GK) + 2;
-    const over = new ImageData(gw, oh), od = over.data;
-    const off = rgb(css('--grade-off')), miss = rgb(css('--grade-miss'));
+    const offHex = css('--grade-off'), missHex = css('--grade-miss');
+    const off = rgb(offHex), miss = rgb(missHex);
     const font = `${L.fontSize}px ${L.family}`;
+    const layoutSig = [S.page, L.fontSize, L.textX, L.tutorX, L.CW, L.pitch, S.mode, S.style, S.size, offHex, missHex].join('|');
+    // Rows whose ink hasn't changed reuse their last result, so grading stays quick as the page fills up.
     const results = rows.map((r, i) => {
-      const target = r.t || r.copy, mine = byRow[i];
-      if ((!target && !r.tutor) || !mine.length) return null;
+      const mine = byRow[i];
+      if (!mine.length) return null;
+      const sig = [layoutSig, i, r.t, r.copy, r.tutor, r.free, ...mine.map((st) => `${st.at}:${st.pts.length}`)].join('|');
+      const hit = rowCache.get(`${S.page}:${i}`);
+      if (hit && hit.sig === sig) return hit.res;
+      const res = gradeRow(r, i, mine);
+      rowCache.set(`${S.page}:${i}`, { sig, res });
+      return res;
+    });
+    return results;
+
+    function gradeRow(r, i, mine) {
+      const target = r.t || r.copy;
+      if (!target && !r.tutor) return null;
+      const over = new ImageData(gw, bh), od = over.data;
       const y0 = L.top + i * L.pitch, base = y0 + L.gapTop + L.ascPx;
       let x = L.textX, text, order = null;
       const straight = [];
       if (r.tutor) {
         // Compare with the copies of the letter your writing spans (freehand rows start where you started).
         const g = glyph(r.tutor), k = tk();
-        const inkL = Math.min(...mine.flatMap((s) => s.pts.map((p) => p[0] - s.w / 2)));
-        const inkR = Math.max(...mine.flatMap((s) => s.pts.map((p) => p[0] + s.w / 2)));
+        const [inkL, inkR] = inkExtent(mine);
         const xs = r.free ? tutorXs(r.tutor, inkL - glyphMinX(g) * k, inkR + g.w * k * 0.5)
                           : tutorXs(r.tutor, L.textX, inkR + g.w * k * 0.5, L.tutorX);
         // Stroke order and direction for each copy you wrote: strokes go to the nearest copy.
@@ -982,7 +1014,7 @@ body.fs #fsbar { display: flex; }
         // Freehand row: line the letters up with where your writing starts.
         mctx.font = font;
         const glyphLeft = L.textX - mctx.measureText(target).actualBoundingBoxLeft;
-        const inkLeft = Math.min(...mine.flatMap((s) => s.pts.map((p) => p[0] - s.w / 2)));
+        const inkLeft = inkExtent(mine)[0];
         x += inkLeft - glyphLeft;
       }
       text = text || ((c, grow) => { c.font = font; c.fillText(target, x, base); if (grow) { c.lineWidth = grow; c.strokeText(target, x, base); } });
@@ -996,11 +1028,9 @@ body.fs #fsbar { display: flex; }
       let ix0 = gw, ix1 = -1;
       for (let j = 0; j < I.length; j++) if (I[j]) { const xx = j % gw; if (xx < ix0) ix0 = xx; if (xx > ix1) ix1 = xx; }
       let a = 0, aHit = 0, n = 0, nHit = 0, ty0 = bh, ty1 = -1, iy0 = bh, iy1 = -1;
-      const rowOff = Math.round(y0 * GK) - oOff;
       const paint = (o, col, al) => { od[o] = col[0]; od[o + 1] = col[1]; od[o + 2] = col[2]; od[o + 3] = Math.max(od[o + 3], al); };
       for (let j = 0; j < A.length; j++) {
-        const ry = Math.floor(j / gw), xx = j % gw, yy = rowOff + ry;
-        const o = yy >= 0 && yy < oh ? (yy * gw + xx) * 4 : -1;
+        const ry = Math.floor(j / gw), xx = j % gw, o = j * 4;
         if (A[j]) {
           a++; if (xx >= ix0 && xx <= ix1) { if (ry < ty0) ty0 = ry; if (ry > ty1) ty1 = ry; }
           if (It[j]) aHit++; else if (Il[j]) { aHit += 0.5; if (o >= 0) paint(o, miss, 60); } else if (o >= 0) paint(o, miss, 130);
@@ -1025,12 +1055,11 @@ body.fs #fsbar { display: flex; }
       }
       if (S.style === 'cursive' && !r.tutor) crit.connected = connectedness(target, x, mine);
       const dir = crit.path ?? null;
-      return { i, base, on, cov, crit, dir, score: overall(crit), marks: order ? order.marks : [] };
-    });
-    ocan.width = gw; ocan.height = oh; octx.putImageData(over, 0, 0);
-    gradePage.oy = oOff / GK; gradePage.oh = oh / GK;
-    return results;
+      const can = document.createElement('canvas'); can.width = gw; can.height = bh; can.getContext('2d').putImageData(over, 0, 0);
+      return { i, base, y0, can, on, cov, crit, dir, score: overall(crit), marks: order ? order.marks : [] };
+    }
   }
+  const rowCache = new Map();
 
   /* ---------- Score history ---------- */
   // Each time you finish with a page (clear it, turn the page, change the text), its score
@@ -1072,7 +1101,7 @@ body.fs #fsbar { display: flex; }
     const c = gctxOut;
     c.setTransform(dpr, 0, 0, dpr, -SX * dpr, -SY * dpr);
     c.imageSmoothingEnabled = true;
-    c.drawImage(ocan, 0, gradePage.oy, L.CW, gradePage.oh);
+    for (const r of res) c.drawImage(r.can, 0, r.y0, r.can.width / GK, r.can.height / GK);
     const col = (v) => css(v >= 0.85 ? '--grade-good' : v >= 0.65 ? '--grade-miss' : '--grade-off');
     c.font = `700 13px ${css('--font-ui')}`; c.textBaseline = 'middle'; c.textAlign = 'right';
     for (const r of res) {
@@ -1128,6 +1157,10 @@ body.fs #fsbar { display: flex; }
   // Safari reports Apple Pencil as pointerType 'pen' and fingers as 'touch'.
   // Fingers: 'draw' draws, 'scroll' scrolls the page sideways, 'off' does nothing on the page.
   const fingersIgnored = () => S.fingers !== 'draw';
+  // While the Pencil is writing, hovering, or was just lifted, a touch is a resting palm:
+  // it never draws, scrolls or counts toward a two-finger tap.
+  const PEN_GRACE = 900;
+  const penBusy = () => (active && active.type === 'pen') || performance.now() - lastPenAt < PEN_GRACE;
   let pan = null;      // finger scroll in progress: {id, x0, y0, sx0, sy0, lastX, lastY, lastT, vx, vy}
   // Scrolls the page. Pulling past the last row adds more rows, so you can keep going down.
   function setScroll(x, y) {
@@ -1191,6 +1224,8 @@ body.fs #fsbar { display: flex; }
     if (e.pointerType === 'pen') {
       lastPenAt = performance.now();
       if (!penSeen) { penSeen = true; updateButtons(); }
+      // A palm that started scrolling the page stops as soon as the Pencil touches down.
+      pan = null; cancelAnimationFrame(glide);
       // Only one Pencil exists: a pen stroke still marked active never got its pointerup. Keep it and move on.
       if (active && active.type === 'pen' && active.id !== e.pointerId) finishActive(false);
       // The Pencil always wins over a finger or palm stroke already in progress.
@@ -1206,6 +1241,7 @@ body.fs #fsbar { display: flex; }
       touches.set(e.pointerId, { x: e.clientX, y: e.clientY, moved: false });
       if (touches.size === 2) twoTap = { t: performance.now(), ok: true };
       if (touches.size > 2 && twoTap) twoTap.ok = false;
+      if (penBusy()) { if (twoTap) twoTap.ok = false; return; }
       if (S.fingers === 'scroll' && touches.size === 1) {
         cancelAnimationFrame(glide);
         pan = { id: e.pointerId, x0: e.clientX, y0: e.clientY, sx0: SX, sy0: SY, lastX: e.clientX, lastY: e.clientY, lastT: performance.now(), vx: 0, vy: 0 };
@@ -1292,7 +1328,8 @@ body.fs #fsbar { display: flex; }
     if (touches.has(e.pointerId)) {
       touches.delete(e.pointerId);
       if (touches.size === 0 && twoTap) {
-        if (twoTap.ok && performance.now() - twoTap.t < 350) undo();
+        // Never undo from a "two-finger tap" right after Pencil use: that's a palm lifting.
+        if (twoTap.ok && performance.now() - twoTap.t < 350 && performance.now() - lastPenAt > 3000) undo();
         twoTap = null;
       }
     }
@@ -1306,8 +1343,9 @@ body.fs #fsbar { display: flex; }
   // Listen on window so a finger lifted outside the sheet (or one never captured) is still seen.
   window.addEventListener('pointerup', onUp, true);
   window.addEventListener('pointercancel', onUp, true);
-  inkC.addEventListener('lostpointercapture', (e) => { if (active && e.pointerId === active.id) finishActive(false); });
-  window.addEventListener('blur', () => { touches.clear(); twoTap = null; finishActive(false); });
+  // Pointer up/cancel on the window ends strokes; losing capture or focus doesn't, since Safari
+  // can do either mid-stroke.
+  window.addEventListener('blur', () => { touches.clear(); twoTap = null; pan = null; });
   // Stop iOS from turning long presses and double taps into selection or zoom.
   inkC.addEventListener('pointerleave', (e) => { if (!active) cursor.hidden = true; });
   for (const ev of ['touchstart', 'touchmove']) sheet.addEventListener(ev, (e) => { if (!e.target.closest('.ui')) e.preventDefault(); }, { passive: false });
