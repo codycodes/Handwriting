@@ -1,6 +1,6 @@
 # Penmanship Pad
 
-A single-file web app for practicing handwriting on iPad with Apple Pencil.
+A web app for practicing handwriting on iPad with Apple Pencil. It's one page (`index.html`) plus the stroke-order data for Tutor mode (`strokes.js`).
 
 ![Penmanship Pad on iPad in light and dark mode](screenshots/mockup.png)
 
@@ -14,24 +14,29 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
 - Tracing guides drawn as **Outline** (default), **Dotted**, or **Faded** letters
 - Example words to start with: *Cody codes*, *cool*, *hello*, *coffee*, and more, plus alphabets and Devanagari (नमस्ते, कोडी कोड्स, consonants, vowels and numerals)
 - **Theme:** Auto (follows iPad's setting), Light or Dark
-- Practice layouts: Trace (default), Trace + copy, Repeat & fade
+- Practice layouts: Trace (default), Trace + copy, Repeat & fade, and **Tutor**
+- **Tutor:** learn how to write each letter, one letter per page.
+  - A large model letter on the left draws itself stroke by stroke. Numbered circles show where each stroke starts (1, 2, 3...), and arrows show which way it goes. Tap **Show me** to watch again.
+  - Beside it are rows of the letter to trace, fading row by row, then a blank row to write it on your own. Grade works here too.
+  - Letter sets: English a–z, A–Z and 0–9 (print), and Devanagari स्वर (vowels, including अं and अः), व्यंजन (consonants, including क्ष, त्र and ज्ञ) and अंक (numerals). **Letters from my text** picks out the letters in your practice text.
+  - Devanagari follows the order usually taught in Indian schools: the body of the letter first, then the vertical line (खड़ी पाई), then the headline (शिरोरेखा) last. The letter shapes follow the Kalam handwriting font, so a teacher's version may differ a little.
 - **Paper:** plain Lines, **Slant** (diagonal guide lines between the rules, like British handwriting paper, to keep every letter leaning the same way) or **Grid** (squared paper lined up with the baseline)
-- **Cross-dot margin (× •):** turn on a × and a • in the left margin on every writing line
+- **Cross-dot margin (× •):** one mark in the left margin on each writing line, alternating × and •
 - **Grade:** scores each row as you write. A badge on the row shows the score, and the sheet marks ink that strayed off the letters in red and parts of letters you missed in amber. The summary at the bottom gives:
   - **On the letters:** how much of your ink lands on the guide letters
   - **Letters covered:** how much of the guide letters your ink went over
   - **Accuracy:** the balance of the two, so scribbling everywhere or tracing only one letter both score low
 
   Freehand rows (Trace + copy, and the last row of Repeat & fade) are compared with the line above, lined up with where you started writing.
-- **Full screen:** the corner button hides the toolbar so the sheet fills the screen like a plain page. A small floating bar keeps Undo, page arrows and Exit (Esc also exits)
+- **Full screen:** the corner button hides the toolbar so the sheet fills the screen like a plain page. A small floating bar keeps Undo, page arrows and Exit (Esc also exits). If Safari drops its own full screen (for example after a swipe near the top edge), the app stays in full-screen layout until you tap Exit. For no Safari bars at all, use **Add to Home Screen**
 - Pressure-sensitive ink, eraser, undo/redo, clear, and 3 ink colors
 
 ## Apple Pencil handling
 | Issue on iPad | What the app does |
 | --- | --- |
-| Palm touches the screen before the Pencil | When the Pencil is first detected, finger strokes from the last 2 seconds are removed (one undo restores them). After that, fingers never draw while **Pencil only** is on |
+| Telling the Pencil from fingers | Safari reports Apple Pencil as a pen and fingers as touch. With **Pencil only** on, fingers never draw on the page, but they can still tap buttons. With it off, both draw |
 | Palm already drawing when the Pencil lands | The Pencil cancels the finger stroke and takes over |
-| Palm resting on the toolbar presses buttons | Finger taps on the toolbar are ignored while the Pencil is writing or just lifted |
+| Palm resting on the toolbar presses buttons | Finger taps on the toolbar are ignored only while the Pencil is mid-stroke |
 | Long press brings up the magnifier, text selection or callout menu | Turned off on the writing sheet |
 | Pinch and double-tap zoom (Safari ignores `user-scalable=no`) | Blocked with `touch-action` and gesture event handling |
 | Fast strokes look jagged | Uses coalesced pointer events where Safari provides them, plus curve smoothing |
@@ -40,19 +45,10 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
 | A finger lifts off over the toolbar, or iOS cancels a touch | Tracking resets on the next touch, so fingers never get stuck unable to draw |
 | Two-finger tap | Undo |
 
-### Turn off Scribble
-Scribble turns Apple Pencil writing into typed text when you write near a text box. In this app that can turn your practice strokes into text in the box at the top. Websites can't switch it off, so the app shows a one-time tip on iPad. To turn it off:
-
-1. Open **Settings**.
-2. Tap **Apple Pencil**.
-3. Turn off **Scribble**.
-
-Full screen also helps, because it hides the text box.
-
 These are limits of web apps that the app can't change:
 - Double-tap and squeeze on the Pencil aren't available to websites.
 - Swipes from the screen edges still open Control Center and the Home Screen. In Safari, **Add to Home Screen** gives you the most room.
-- Scribble can't be turned off by a website (see above). If you leave it on, it's handy for writing new practice text into the text box with the Pencil.
+- The practice-text box is locked until you tap it, so iPad's Scribble can't turn strokes on the page into typed text. Once you tap the box, Scribble works there, which is handy for writing new practice text with the Pencil.
 
 ## GitHub Pages
 `.github/workflows/pages.yml` deploys this repo to GitHub Pages on every push to `main`, or when you run it by hand from the Actions tab.

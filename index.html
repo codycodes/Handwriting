@@ -130,7 +130,11 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
   overflow: hidden; touch-action: none;
 }
 .sheet canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
-#grade { pointer-events: none; }
+#grade, #demo { pointer-events: none; }
+body.tutor #text, body.tutor #preset { display: none; }
+body:not(.tutor) .tutor-only { display: none !important; }
+#tutorSet { flex: 1 1 220px; }
+#playBtn { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); font-weight: 700; }
 #score {
   position: absolute; left: 14px; bottom: 10px; font-size: 13px; color: var(--text);
   pointer-events: none; background: var(--paper); padding: 3px 8px; border-radius: 6px;
@@ -142,18 +146,6 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
   pointer-events: none; background: var(--paper); padding: 2px 6px; border-radius: 6px;
 }
 @media (max-width: 700px) { .brand { display: none; } }
-
-/* iPad tip about Scribble, floating at the bottom so it never shifts the sheet. */
-#ipadTip {
-  position: fixed; z-index: 6; left: 50%; transform: translateX(-50%);
-  bottom: max(18px, env(safe-area-inset-bottom, 0px)); width: min(560px, calc(100% - 32px)); box-sizing: border-box;
-  display: flex; gap: 12px; align-items: flex-start;
-  background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 12px;
-  padding: 12px 12px 12px 16px; box-shadow: 0 8px 24px rgba(20, 30, 50, .18); font-size: 14px; line-height: 1.4;
-}
-#ipadTip[hidden] { display: none; }
-#ipadTip p { margin: 0; flex: 1; }
-#ipadTip b { color: var(--accent); }
 
 /* Full screen: hide the toolbar so the sheet runs edge to edge like a plain page. */
 body.fs { padding: 0; background: var(--paper); }
@@ -174,7 +166,7 @@ body.fs #fsbar { display: flex; }
 <header>
   <div class="row">
     <span class="brand" aria-hidden="true">Penmanship Pad</span>
-    <input id="text" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Text to practice">
+    <input id="text" type="text" readonly autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Text to practice">
     <select id="preset" aria-label="Example text">
       <option value="">Examples…</option>
       <optgroup label="Words">
@@ -213,6 +205,20 @@ body.fs #fsbar { display: flex; }
         <option data-script="devanagari">१ २ ३ ४ ५ ६ ७ ८ ९ १०</option>
       </optgroup>
     </select>
+    <select id="tutorSet" class="tutor-only" aria-label="Letters to learn">
+      <optgroup label="English">
+        <option value="lower">a–z  lowercase</option>
+        <option value="upper">A–Z  capitals</option>
+        <option value="digits">0–9  numbers</option>
+      </optgroup>
+      <optgroup label="देवनागरी · Devanagari">
+        <option value="swar">स्वर · vowels</option>
+        <option value="vyanjan">व्यंजन · consonants</option>
+        <option value="ank">अंक · numerals</option>
+      </optgroup>
+      <option value="text">Letters from my text</option>
+    </select>
+    <button id="playBtn" class="tutor-only" title="Watch the strokes again"><svg viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></svg>Show me</button>
     <div class="pager">
       <button id="prev" aria-label="Previous page"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
       <span id="pageLabel">1 / 1</span>
@@ -226,7 +232,7 @@ body.fs #fsbar { display: flex; }
     <div class="group"><span class="label">Guide</span>
       <div class="seg" data-key="guide"><button data-v="outline">Outline</button><button data-v="dotted">Dotted</button><button data-v="faded">Faded</button></div></div>
     <div class="group"><span class="label">Practice</span>
-      <div class="seg" data-key="mode"><button data-v="trace">Trace</button><button data-v="copy">Trace + copy</button><button data-v="repeat">Repeat &amp; fade</button></div></div>
+      <div class="seg" data-key="mode"><button data-v="trace">Trace</button><button data-v="copy">Trace + copy</button><button data-v="repeat">Repeat &amp; fade</button><button data-v="tutor" title="Learn how to write each letter, stroke by stroke">Tutor</button></div></div>
     <div class="group"><span class="label">Paper</span>
       <div class="seg" data-key="paper"><button data-v="lines">Lines</button><button data-v="slant" title="Slant lines to keep letters leaning the same way">Slant</button><button data-v="grid" title="Squared paper">Grid</button></div></div>
     <div class="group"><span class="label">Size</span>
@@ -249,9 +255,9 @@ body.fs #fsbar { display: flex; }
         <button id="clear">Clear</button>
       </div></div>
     <div class="group"><span class="label">Fingers</span>
-      <button id="palm" class="toggle" aria-pressed="true" title="When on, fingers are ignored once the Pencil has been used">Pencil only</button></div>
+      <button id="palm" class="toggle" aria-pressed="true" title="When on, only Apple Pencil draws. Fingers can still tap buttons.">Pencil only</button></div>
     <div class="group"><span class="label">Margin</span>
-      <button id="marksBtn" class="toggle" aria-pressed="false" title="A cross and a dot in the margin on every line">× •</button></div>
+      <button id="marksBtn" class="toggle" aria-pressed="false" title="A cross or a dot in the margin on each line, alternating">× •</button></div>
     <div class="group"><span class="label">Check</span>
       <button id="gradeBtn" class="toggle" aria-pressed="false" title="Score how closely your writing follows the letters">Grade</button></div>
     <div class="group"><span class="label">Theme</span>
@@ -264,18 +270,15 @@ body.fs #fsbar { display: flex; }
 </header>
 <main class="sheet" id="sheet">
   <canvas id="bg"></canvas>
+  <canvas id="demo"></canvas>
   <canvas id="ink"></canvas>
   <canvas id="grade"></canvas>
   <div id="score" hidden></div>
   <div id="cursor" hidden></div>
   <div id="hint">Pencil only is on: fingers won't draw</div>
 </main>
-<div id="ipadTip" role="note" hidden>
-  <p><b>Writing turning into typed text?</b> That's iPad's Scribble feature. Turn it off in
-  <b>Settings → Apple Pencil → Scribble</b>. Full screen also helps, since it hides the text box Scribble writes into.</p>
-  <button id="ipadTipClose">Got it</button>
-</div>
 <div id="fsbar">
+  <button id="fsPlay" class="tutor-only" aria-label="Show me the strokes"><svg viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></svg></button>
   <button id="fsUndo" aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></svg></button>
   <button id="fsPrev" aria-label="Previous page"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
   <span id="fsPage"></span>
@@ -283,6 +286,7 @@ body.fs #fsbar { display: flex; }
   <button id="fsExit" aria-label="Exit full screen" title="Exit full screen"><svg viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button>
 </div>
 
+<script src="strokes.js"></script>
 <script>
 (() => {
   // Kalam is in every stack so Devanagari typed into Cursive/Print still renders.
@@ -299,8 +303,8 @@ body.fs #fsbar { display: flex; }
   const defaults = {
     text: 'Cody codes',
     style: 'cursive', guide: 'outline', mode: 'trace', size: 'l',
-    tool: 'pen', color: 'ink', palm: true, page: 0, theme: 'auto',
-    paper: 'lines', grade: false, marks: false,
+    tool: 'pen', color: 'ink', palm: false, palmSet: false, page: 0, theme: 'auto',
+    paper: 'lines', grade: false, marks: false, tutorSet: 'lower',
   };
   let S = { ...defaults };
   try { Object.assign(S, JSON.parse(localStorage.getItem(STORE) || '{}')); } catch (_) {}
@@ -317,7 +321,8 @@ body.fs #fsbar { display: flex; }
   applyTheme();
 
   const $ = (id) => document.getElementById(id);
-  const sheet = $('sheet'), bg = $('bg'), inkC = $('ink'), gradeC = $('grade');
+  const sheet = $('sheet'), bg = $('bg'), inkC = $('ink'), gradeC = $('grade'), demoC = $('demo');
+  const dctx = demoC.getContext('2d');
   const bctx = bg.getContext('2d'), ictx = inkC.getContext('2d'), gctxOut = gradeC.getContext('2d');
   const mctx = document.createElement('canvas').getContext('2d');
   let W = 0, H = 0, dpr = 1;
@@ -362,7 +367,10 @@ body.fs #fsbar { display: flex; }
 
   function computeLayout() {
     const family = FAMILIES[S.style];
-    const fm = fontMetrics(family, S.style === 'devanagari' || DEVANAGARI.test(S.text));
+    const tutor = S.mode === 'tutor';
+    let fm = fontMetrics(family, tutor ? tutorScript() === 'deva' : S.style === 'devanagari' || DEVANAGARI.test(S.text));
+    // Tutor letters are drawn on the 4-line grid exactly: 2 x-heights above the baseline, 1 below.
+    if (tutor) fm = { x: fm.x, asc: fm.x * 2, desc: fm.x };
     const unit = X_HEIGHT[S.size] * (W < 600 ? 0.75 : 1);
     const fontSize = unit / fm.x;
     const ascPx = fm.asc * fontSize, descPx = fm.desc * fontSize, xPx = unit;
@@ -372,14 +380,29 @@ body.fs #fsbar { display: flex; }
     const textX = marginX + unit * 0.7;
     const top = unit * 0.5;
     const perPage = Math.max(1, Math.floor((H - top * 2) / pitch));
-    L = { family, fontSize, ascPx, descPx, xPx, gapTop, pitch, marginX, textX, top, perPage };
+    L = { family, fontSize, ascPx, descPx, xPx, gapTop, pitch, marginX, textX, top, perPage, tutorX: textX, panel: null };
+    if (tutor) {
+      // Tutor: a big model letter in a panel on the left, practice rows beside it.
+      const pw = Math.round(Math.min(340, Math.max(150, W * 0.27)));
+      L.panel = { x0: marginX + 10, x1: marginX + 10 + pw, y0: top, y1: H - top };
+      L.tutorX = L.panel.x1 + unit * 0.6;
+    }
 
     mctx.font = `${fontSize}px ${family}`;
     const lines = wrap(S.text, W - textX - unit * 0.8);
     const blank = () => ({ t: null, a: 0 });
     const chunk = (rows, n) => { const out = []; for (let i = 0; i < rows.length; i += n) out.push(rows.slice(i, i + n)); return out; };
     let pg;
-    if (!lines.length) pg = [[]];
+    if (tutor) {
+      // One page per letter: the model on top, fading copies to trace, then a blank row to write freehand.
+      pg = tutorChars().map((ch) => Array.from({ length: perPage }, (_, i) => {
+        if (i === perPage - 1 && perPage > 1) return { tutor: ch, free: true, a: 0 };
+        const n = Math.max(1, perPage - 2);
+        return { tutor: ch, a: 1 - Math.min(1, i / n) * 0.7 };
+      }));
+      if (!pg.length) pg = [[]];
+    }
+    else if (!lines.length) pg = [[]];
     else if (S.mode === 'trace') pg = chunk(lines.map((t) => ({ t, a: 1 })), perPage);
     else if (S.mode === 'copy') {
       if (perPage < 2) pg = chunk(lines.map((t) => ({ t, a: 1 })), 1);
@@ -394,6 +417,157 @@ body.fs #fsbar { display: flex; }
     pages = pg.map((rows) => { const r = rows.slice(); while (r.length < perPage) r.push(blank()); return r; });
     while (ink.length < pages.length) { ink.push([]); hist.push({ undo: [], redo: [] }); }
     S.page = Math.min(Math.max(0, S.page), pages.length - 1);
+  }
+
+  /* ---------- Tutor: letter data ---------- */
+  const STK = window.STROKES || null;
+  const glyph = (ch) => STK && (STK.latin[ch] || STK.deva[ch]);
+  const tutorScript = () => {
+    if (!STK) return 'latin';
+    if (S.tutorSet === 'text') return DEVANAGARI.test(S.text) ? 'deva' : 'latin';
+    return (STK.sets[S.tutorSet] || STK.sets.lower).script;
+  };
+  function tutorChars() {
+    if (!STK) return [];
+    if (S.tutorSet !== 'text') return (STK.sets[S.tutorSet] || STK.sets.lower).chars;
+    // Letters from the text box that have stroke data, in order, without repeats.
+    const multi = Object.keys(STK.deva).filter((k) => k.length > 1).sort((a, b) => b.length - a.length);
+    const out = [], t = S.text;
+    for (let i = 0; i < t.length;) {
+      const m = multi.find((k) => t.startsWith(k, i)), ch = m || t[i];
+      if (glyph(ch) && !out.includes(ch)) out.push(ch);
+      i += ch.length;
+    }
+    return out;
+  }
+  const tk = () => L.xPx / 50;                       // px per letter unit
+  const penW = () => X_HEIGHT[S.size] * 0.11 + 1.2;   // same width as the pen
+  function glyphMinX(g) { return g.minX ?? (g.minX = Math.min(...g.s.flat().map((p) => p[0]))); }
+  // Where copies of a letter go on a row, from startX to the right edge.
+  function tutorXs(ch, startX, limitX) {
+    const g = glyph(ch), k = tk(), adv = (g.w + 26) * k, xs = [];
+    for (let x = startX; x + g.w * k <= Math.min(limitX ?? Infinity, W - L.xPx * 0.5) || !xs.length; x += adv) { xs.push(x); if (xs.length > 40) break; }
+    return xs;
+  }
+  const toPx = (p, x, base, k) => [x + p[0] * k, base + (p[1] - 100) * k];
+  function strokePath(c, pts, x, base) {
+    const k = tk(); c.beginPath();
+    pts.forEach((p, i) => { const [px, py] = toPx(p, x, base, k); i ? c.lineTo(px, py) : c.moveTo(px, py); });
+  }
+  function drawTutorGuide(c, ch, xs, base, a) {
+    const g = glyph(ch); if (!g) return;
+    c.save(); c.lineCap = c.lineJoin = 'round'; c.strokeStyle = css('--guide');
+    for (const x of xs) for (const s of g.s) {
+      if (S.guide === 'outline') {
+        c.globalAlpha = 0.13 * a; c.lineWidth = penW() * 2.2; strokePath(c, s, x, base); c.stroke();
+        c.globalAlpha = 0.85 * a; c.lineWidth = 1.2; strokePath(c, s, x, base); c.stroke();
+      } else if (S.guide === 'dotted') {
+        c.globalAlpha = a; c.lineWidth = Math.max(1.6, penW() * 0.5); c.setLineDash([0.01, Math.max(4, L.xPx * 0.16)]);
+        strokePath(c, s, x, base); c.stroke(); c.setLineDash([]);
+      } else {
+        c.globalAlpha = 0.3 * a; c.lineWidth = penW(); strokePath(c, s, x, base); c.stroke();
+      }
+    }
+    c.restore();
+  }
+
+  /* ---------- Tutor: animated demo ---------- */
+  // The model letter at the top of each page is drawn here: grey, then traced over stroke
+  // by stroke in order, with a numbered badge at each stroke's start and an arrow for direction.
+  let demo = { key: null, t0: 0, raf: 0 };
+  function modelGeom() {
+    const r = pages[S.page] && pages[S.page][0], P = L.panel;
+    if (!r || !r.tutor || !P) return null;
+    const g = glyph(r.tutor); if (!g) return null;
+    const pw = P.x1 - P.x0, ph = P.y1 - P.y0;
+    const k = Math.min((pw - 40) / g.w, (ph - 70) / 150, 4.2);
+    const top = P.y0 + (ph - 40 - 150 * k) / 2, base = top + 100 * k, x = P.x0 + (pw - g.w * k) / 2;
+    const strokes = g.s.map((s) => s.map((p) => toPx(p, x, base, k)));
+    const lens = strokes.map((s) => s.reduce((t, p, i) => i ? t + Math.hypot(p[0] - s[i - 1][0], p[1] - s[i - 1][1]) : 0, 0));
+    return { ch: r.tutor, strokes, lens, k, base, top };
+  }
+  function polyTo(c, s, upto) {
+    // Draws the first `upto` px of polyline s; returns the tip point.
+    c.beginPath(); c.moveTo(s[0][0], s[0][1]);
+    let left = upto, tip = s[0];
+    for (let i = 1; i < s.length; i++) {
+      const d = Math.hypot(s[i][0] - s[i - 1][0], s[i][1] - s[i - 1][1]);
+      if (d >= left) { const f = d ? left / d : 0; tip = [s[i - 1][0] + (s[i][0] - s[i - 1][0]) * f, s[i - 1][1] + (s[i][1] - s[i - 1][1]) * f]; c.lineTo(tip[0], tip[1]); return tip; }
+      left -= d; c.lineTo(s[i][0], s[i][1]); tip = s[i];
+    }
+    return tip;
+  }
+  function pointAt(s, frac) {
+    const total = s.reduce((t, p, i) => i ? t + Math.hypot(p[0] - s[i - 1][0], p[1] - s[i - 1][1]) : 0, 0);
+    let left = total * frac;
+    for (let i = 1; i < s.length; i++) {
+      const d = Math.hypot(s[i][0] - s[i - 1][0], s[i][1] - s[i - 1][1]);
+      if (d >= left && d > 0) return { p: [s[i - 1][0] + (s[i][0] - s[i - 1][0]) * left / d, s[i - 1][1] + (s[i][1] - s[i - 1][1]) * left / d], a: Math.atan2(s[i][1] - s[i - 1][1], s[i][0] - s[i - 1][0]) };
+      left -= d;
+    }
+    return { p: s[s.length - 1], a: 0 };
+  }
+  function drawDemo(now) {
+    const c = dctx;
+    c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, demoC.width, demoC.height);
+    cancelAnimationFrame(demo.raf);
+    if (S.mode !== 'tutor' || !L) return;
+    const m = modelGeom(); if (!m) return;
+    c.setTransform(dpr, 0, 0, dpr, 0, 0); c.lineCap = c.lineJoin = 'round';
+    // Panel card with its own 4 guide lines, sized to the model letter.
+    const P = L.panel;
+    c.fillStyle = css('--paper'); c.strokeStyle = css('--line'); c.lineWidth = 1;
+    c.beginPath(); c.roundRect(P.x0, P.y0, P.x1 - P.x0, P.y1 - P.y0, 12); c.fill(); c.stroke();
+    const gl = (y, col, wd, dash) => { c.beginPath(); c.setLineDash(dash || []); c.strokeStyle = col; c.lineWidth = wd; c.moveTo(P.x0 + 10, y); c.lineTo(P.x1 - 10, y); c.stroke(); c.setLineDash([]); };
+    c.fillStyle = css('--band'); c.fillRect(P.x0 + 1, m.base - 50 * m.k, P.x1 - P.x0 - 2, 50 * m.k);
+    gl(m.top, css('--rule'), 1); gl(m.base - 50 * m.k, css('--rule-soft'), 1, [7, 6]); gl(m.base, css('--rule'), 1.8); gl(m.base + 50 * m.k, css('--rule-soft'), 1, [2, 5]);
+    c.fillStyle = css('--muted'); c.font = `14px ${css('--font-ui')}`; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+    c.fillText(`${m.strokes.length} stroke${m.strokes.length > 1 ? 's' : ''} · watch, then trace`, (P.x0 + P.x1) / 2, P.y1 - 16);
+    const w = Math.max(penW() * 1.15, m.k * 4.2), accent = css('--accent'), guide = css('--guide');
+    // Grey model underneath.
+    c.strokeStyle = guide; c.globalAlpha = 0.35; c.lineWidth = w;
+    for (const s of m.strokes) { polyTo(c, s, Infinity); c.stroke(); }
+    c.globalAlpha = 1;
+    // Strokes drawn so far, in order.
+    const speed = L.xPx * 3.2, pause = 0.4;
+    let t = (now - demo.t0) / 1000 - 0.3, started = 0, running = false;
+    c.strokeStyle = c.fillStyle = accent; c.lineWidth = w;
+    for (let i = 0; i < m.strokes.length; i++) {
+      if (t <= 0) { running = true; break; }
+      const dur = Math.max(0.25, m.lens[i] / speed), frac = Math.min(1, t / dur);
+      started = i + 1;
+      const tip = polyTo(c, m.strokes[i], m.lens[i] * frac); c.stroke();
+      if (frac < 1) { running = true; c.beginPath(); c.arc(tip[0], tip[1], w * 0.9, 0, Math.PI * 2); c.fill(); break; }
+      t -= dur + pause;
+    }
+    // Numbered badges at each stroke's start, arrows for direction.
+    const r = Math.max(10, Math.min(15, m.k * 4.5));
+    c.font = `700 ${Math.round(r * 1.25)}px ${css('--font-ui')}`; c.textAlign = 'center'; c.textBaseline = 'middle';
+    m.strokes.forEach((s, i) => {
+      const on = i < started, col = on ? accent : css('--muted');
+      const { a } = pointAt(s, 0.02), st = s[0];
+      const bx = st[0] - Math.cos(a) * (r + 3), by = st[1] - Math.sin(a) * (r + 3);
+      c.globalAlpha = 1; c.fillStyle = css('--paper'); c.strokeStyle = col; c.lineWidth = 1.6;
+      c.beginPath(); c.arc(bx, by, r, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.fillStyle = col; c.fillText(String(i + 1), bx, by + 0.5);
+      if (on && s.length > 3) {
+        const mid = pointAt(s, 0.5), h = Math.max(5, w * 1.1);
+        c.beginPath();
+        c.moveTo(mid.p[0] + Math.cos(mid.a) * h, mid.p[1] + Math.sin(mid.a) * h);
+        c.lineTo(mid.p[0] + Math.cos(mid.a + 2.4) * h, mid.p[1] + Math.sin(mid.a + 2.4) * h);
+        c.lineTo(mid.p[0] + Math.cos(mid.a - 2.4) * h, mid.p[1] + Math.sin(mid.a - 2.4) * h);
+        c.closePath(); c.fillStyle = css('--paper'); c.fill();
+        c.strokeStyle = accent; c.lineWidth = 1.4; c.stroke();
+      }
+    });
+    if (running) demo.raf = requestAnimationFrame(drawDemo);
+  }
+  function playDemo() { demo.t0 = performance.now(); drawDemo(demo.t0); }
+  function syncDemo() {
+    const r = pages[S.page] && pages[S.page][0];
+    const key = S.mode === 'tutor' && r && r.tutor ? `${S.page}:${r.tutor}:${S.tutorSet}` : null;
+    if (key && key !== demo.key) { demo.key = key; playDemo(); }
+    else { demo.key = key; drawDemo(performance.now()); }
   }
 
   /* ---------- Drawing: sheet + guides ---------- */
@@ -451,18 +625,18 @@ body.fs #fsbar { display: flex; }
       hline(c, base, rule, 1.8);
       hline(c, base + L.descPx, soft, 1, [2, 5]);
       if (r.t) drawGuideText(c, r.t, L.textX, base, r.a);
+      else if (r.tutor && !r.free) drawTutorGuide(c, r.tutor, tutorXs(r.tutor, L.tutorX), base, r.a);
     });
     c.beginPath(); c.strokeStyle = css('--margin'); c.lineWidth = 1.5;
     c.moveTo(L.marginX, 0); c.lineTo(L.marginX, H); c.stroke();
     if (S.marks) {
-      // Cross-dot margin: a × and a • side by side in the margin on every writing line.
-      const r = Math.max(3, Math.min(6, L.xPx * 0.14)), cy = (base) => base - L.xPx / 2;
-      const xc = L.marginX * 0.36, xd = L.marginX * 0.7;
+      // Cross-dot margin: one mark per writing line, alternating × and • down the margin.
+      const r = Math.max(3, Math.min(6, L.xPx * 0.14)), x = L.marginX / 2;
       c.strokeStyle = c.fillStyle = css('--margin'); c.lineWidth = 1.8; c.lineCap = 'round';
       pages[S.page].forEach((_, i) => {
-        const y = cy(L.top + i * L.pitch + L.gapTop + L.ascPx);
-        c.beginPath(); c.moveTo(xc - r, y - r); c.lineTo(xc + r, y + r); c.moveTo(xc + r, y - r); c.lineTo(xc - r, y + r); c.stroke();
-        c.beginPath(); c.arc(xd, y, r * 0.55, 0, Math.PI * 2); c.fill();
+        const y = L.top + i * L.pitch + L.gapTop + L.ascPx - L.xPx / 2;
+        if (i % 2 === 0) { c.beginPath(); c.moveTo(x - r, y - r); c.lineTo(x + r, y + r); c.moveTo(x + r, y - r); c.lineTo(x - r, y + r); c.stroke(); }
+        else { c.beginPath(); c.arc(x, y, r * 0.6, 0, Math.PI * 2); c.fill(); }
       });
     }
   }
@@ -555,17 +729,25 @@ body.fs #fsbar { display: flex; }
     const font = `${L.fontSize}px ${L.family}`;
     const results = rows.map((r, i) => {
       const target = r.t || r.copy, mine = byRow[i];
-      if (!target || !mine.length) return null;
+      if ((!target && !r.tutor) || !mine.length) return null;
       const y0 = L.top + i * L.pitch, base = y0 + L.gapTop + L.ascPx;
-      let x = L.textX;
-      if (!r.t) {
+      let x = L.textX, text;
+      if (r.tutor) {
+        // Compare with the copies of the letter your writing spans (freehand rows start where you started).
+        const g = glyph(r.tutor), k = tk();
+        const inkL = Math.min(...mine.flatMap((s) => s.pts.map((p) => p[0] - s.w / 2)));
+        const inkR = Math.max(...mine.flatMap((s) => s.pts.map((p) => p[0] + s.w / 2)));
+        const start = r.free ? inkL - glyphMinX(g) * k : L.tutorX;
+        const xs = tutorXs(r.tutor, start, inkR + g.w * k * 0.5);
+        text = (c, grow) => { c.lineWidth = penW() + grow; for (const x0 of xs) for (const s of g.s) { strokePath(c, s, x0, base); c.stroke(); } };
+      } else if (!r.t) {
         // Freehand row: line the letters up with where your writing starts.
         mctx.font = font;
         const glyphLeft = L.textX - mctx.measureText(target).actualBoundingBoxLeft;
         const inkLeft = Math.min(...mine.flatMap((s) => s.pts.map((p) => p[0] - s.w / 2)));
         x += inkLeft - glyphLeft;
       }
-      const text = (c, grow) => { c.font = font; c.fillText(target, x, base); if (grow) { c.lineWidth = grow; c.strokeText(target, x, base); } };
+      text = text || ((c, grow) => { c.font = font; c.fillText(target, x, base); if (grow) { c.lineWidth = grow; c.strokeText(target, x, base); } });
       const A = maskOf(gw, bh, y0, (c) => text(c, 0));
       const Ad = maskOf(gw, bh, y0, (c) => text(c, tol * 2));
       const I = maskOf(gw, bh, y0, (c) => inkPath(c, mine, 0));
@@ -636,7 +818,8 @@ body.fs #fsbar { display: flex; }
   let twoTap = null;
   let rect = null;                 // cached canvas rect, so pointer moves don't force layout
   let lastPenAt = 0;
-  const fingersIgnored = () => S.palm && penSeen;
+  // Pencil only: fingers never draw on the sheet (Safari reports Apple Pencil as pointerType 'pen').
+  const fingersIgnored = () => !!S.palm;
   const cursor = $('cursor');
 
   function pos(e) { const r = rect || (rect = inkC.getBoundingClientRect()); return [e.clientX - r.left, e.clientY - r.top]; }
@@ -646,16 +829,6 @@ body.fs #fsbar { display: flex; }
     cursor.style.transform = `translate(${x}px, ${y}px)`;
   }
 
-  // A palm often lands before the Pencil does. When the Pencil shows up for the first
-  // time, remove finger strokes from the last 2 seconds (one undo brings them back).
-  function dropRecentFingerStrokes() {
-    const arr = ink[S.page], now = performance.now(), items = [];
-    for (let i = arr.length - 1; i >= 0; i--) {
-      const s = arr[i];
-      if (s.by === 'touch' && now - s.at < 2000) { items.push({ i, s }); arr.splice(i, 1); }
-    }
-    if (items.length) { record({ type: 'erase', items }); drawInk(); }
-  }
   function pressureOf(e) {
     if (e.pointerType === 'pen') return e.pressure > 0 ? e.pressure : 0.5;
     return 0.5;
@@ -675,9 +848,10 @@ body.fs #fsbar { display: flex; }
 
   function onDown(e) {
     rect = inkC.getBoundingClientRect();
+    if (document.activeElement === textEl) textEl.blur();
     if (e.pointerType === 'pen') {
       lastPenAt = performance.now();
-      if (!penSeen) { penSeen = true; if (S.palm) dropRecentFingerStrokes(); updateButtons(); }
+      if (!penSeen) { penSeen = true; updateButtons(); }
       // Only one Pencil exists: a pen stroke still marked active never got its pointerup. Keep it and move on.
       if (active && active.type === 'pen' && active.id !== e.pointerId) finishActive(false);
       // The Pencil always wins over a finger or palm stroke already in progress.
@@ -790,7 +964,8 @@ body.fs #fsbar { display: flex; }
   let blockClick = false;
   for (const bar of [document.querySelector('header'), $('fsbar')]) {
     bar.addEventListener('pointerdown', (e) => {
-      blockClick = e.pointerType === 'touch' && S.palm && penSeen && (!!active || performance.now() - lastPenAt < 500);
+      // Fingers can always tap buttons, except a palm landing while the Pencil is mid-stroke.
+      blockClick = e.pointerType === 'touch' && !!active && active.type === 'pen';
     }, true);
     bar.addEventListener('click', (e) => {
       if (blockClick) { e.preventDefault(); e.stopPropagation(); blockClick = false; }
@@ -804,6 +979,8 @@ body.fs #fsbar { display: flex; }
   function resetInk() { ink = []; hist = []; S.page = 0; }
 
   function updateButtons() {
+    document.body.classList.toggle('tutor', S.mode === 'tutor');
+    $('tutorSet').value = S.tutorSet;
     const h = hist[S.page] || { undo: [], redo: [] };
     $('undo').disabled = !h.undo.length;
     $('redo').disabled = !h.redo.length;
@@ -820,10 +997,13 @@ body.fs #fsbar { display: flex; }
     $('palm').setAttribute('aria-pressed', String(!!S.palm));
     $('gradeBtn').setAttribute('aria-pressed', String(!!S.grade));
     $('marksBtn').setAttribute('aria-pressed', String(!!S.marks));
-    $('hint').hidden = !fingersIgnored();
+    const hint = $('hint');
+    if (S.palm) { hint.textContent = "Pencil only: fingers won't draw"; hint.hidden = false; }
+    else if (penSeen && !S.palmSet) { hint.textContent = 'Using Apple Pencil? Turn on Pencil only so your palm won\'t draw'; hint.hidden = false; }
+    else hint.hidden = true;
   }
 
-  function render() { drawBg(); drawInk(); updateButtons(); save(); }
+  function render() { drawBg(); drawInk(); syncDemo(); updateButtons(); save(); }
 
   async function relayout(clear) {
     if (clear) resetInk();
@@ -837,12 +1017,22 @@ body.fs #fsbar { display: flex; }
       const key = seg.dataset.key;
       if (S[key] === b.dataset.v) return;
       S[key] = b.dataset.v;
+      if (key === 'mode' && S.mode === 'tutor') matchTutorScript();
+      if (key === 'style' && S.mode === 'tutor') matchTutorScript();
       if (CONTENT_KEYS.includes(key)) relayout(true);
       else if (key === 'guide' || key === 'paper') render();
       else if (key === 'theme') { applyTheme(); render(); }
       else updateButtons(), save();
     });
   });
+
+  // The text box stays read-only until you tap it. iPad's Scribble only turns Pencil
+  // writing into text inside editable boxes, so a locked box can't grab strokes meant
+  // for the page. It locks again when you leave it or start writing.
+  const unlockText = () => { if (textEl.readOnly) { textEl.readOnly = false; textEl.focus(); } };
+  textEl.addEventListener('click', unlockText); // click counts as a user tap, so iOS opens the keyboard
+  textEl.addEventListener('keydown', (e) => { if (textEl.readOnly && e.key === 'Enter') unlockText(); });
+  textEl.addEventListener('blur', () => { textEl.readOnly = true; });
 
   let typing;
   textEl.value = S.text;
@@ -872,6 +1062,22 @@ body.fs #fsbar { display: flex; }
   $('next').addEventListener('click', nextPage); $('fsNext').addEventListener('click', nextPage);
   $('fsUndo').addEventListener('click', undo);
 
+  // Tutor: keep the letter set in step with the Style (Devanagari vs English).
+  function matchTutorScript() {
+    if (!STK || S.tutorSet === 'text') return;
+    const deva = S.style === 'devanagari', setDeva = STK.sets[S.tutorSet]?.script === 'deva';
+    if (deva && !setDeva) S.tutorSet = 'swar';
+    if (!deva && setDeva) S.tutorSet = 'lower';
+  }
+  $('tutorSet').addEventListener('change', () => {
+    S.tutorSet = $('tutorSet').value;
+    const sc = STK && STK.sets[S.tutorSet]?.script;
+    if (sc === 'deva') S.style = 'devanagari'; else if (sc === 'latin' && S.style === 'devanagari') S.style = 'print';
+    relayout(true);
+  });
+  $('playBtn').addEventListener('click', playDemo);
+  $('fsPlay').addEventListener('click', playDemo);
+
   // Full screen: hide the toolbar, and also ask the browser for real full screen where it allows it.
   const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
   function setFullscreen(on) {
@@ -884,9 +1090,9 @@ body.fs #fsbar { display: flex; }
   }
   $('fsBtn').addEventListener('click', () => setFullscreen(true));
   $('fsExit').addEventListener('click', () => setFullscreen(false));
-  // Leaving browser full screen (Esc, system gesture) also brings the toolbar back.
-  for (const ev of ['fullscreenchange', 'webkitfullscreenchange']) document.addEventListener(ev, () => { if (!fsEl()) document.body.classList.remove('fs'); });
-  $('palm').addEventListener('click', () => { S.palm = !S.palm; updateButtons(); save(); });
+  // Safari can drop its own full screen by itself (a swipe near the top edge, for example).
+  // The app's full screen page stays up anyway; only the Exit button (or Esc) leaves it.
+  $('palm').addEventListener('click', () => { S.palm = !S.palm; S.palmSet = true; if (active && active.type === 'touch' && S.palm) { active = null; drawInk(); } updateButtons(); save(); });
   $('marksBtn').addEventListener('click', () => { S.marks = !S.marks; render(); });
   $('gradeBtn').addEventListener('click', () => { S.grade = !S.grade; drawGrade(); updateButtons(); save(); });
   document.addEventListener('keydown', (e) => {
@@ -899,22 +1105,13 @@ body.fs #fsbar { display: flex; }
   function resize() {
     const r = sheet.getBoundingClientRect();
     W = r.width; H = r.height; dpr = window.devicePixelRatio || 1; rect = null;
-    for (const c of [bg, inkC, gradeC]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
+    for (const c of [bg, demoC, inkC, gradeC]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
     computeLayout(); render();
   }
   new ResizeObserver(resize).observe(sheet);
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
   new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   document.fonts.addEventListener('loadingdone', () => { if (W) { computeLayout(); render(); } });
-
-  // iPadOS Safari reports itself as a Mac, so also check for a touch screen.
-  const isIPad = /iPad/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const TIP = 'penmanship-pad:scribble-tip-seen';
-  let tipSeen = false; try { tipSeen = localStorage.getItem(TIP) === '1'; } catch (_) {}
-  if (isIPad && !tipSeen) $('ipadTip').hidden = false;
-  $('ipadTipClose').addEventListener('click', () => {
-    $('ipadTip').hidden = true; try { localStorage.setItem(TIP, '1'); } catch (_) {}
-  });
 
   relayout(false);
 })();
