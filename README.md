@@ -16,8 +16,9 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
 - **Theme:** Auto (follows iPad's setting), Light or Dark
 - Practice layouts: Trace (default), Trace + copy, Repeat & fade, and **Tutor**
 - **Tutor:** learn how to write each letter, one letter per page.
-  - A large model letter on the left draws itself stroke by stroke. Numbered circles show where each stroke starts (1, 2, 3...), and arrows show which way it goes. Tap **Show me** to watch again.
-  - Beside it are rows of the letter to trace, fading row by row, then a blank row to write it on your own. Grade works here too.
+  - A large model letter on the left draws itself stroke by stroke. Numbered circles show where each stroke starts (1, 2, 3...), and arrows show which way it goes. **Play** on the panel replays it; **Hide** tucks the panel away for more writing room, and the **Aa** tab in the margin brings it back.
+  - Trace over the big letter and the panel coaches you live: "Good! Next: stroke 2", "Stroke 2 goes the other way", or "came out of order". Each stroke you write gets a marker with the stroke it matched: green is right, ↺ means backwards, amber means out of order.
+  - Beside it are rows of the letter to trace, fading row by row, then a blank row to write it on your own. With Grade on, every letter you write is also checked for stroke order and direction, and that counts toward its score.
   - Letter sets: English a–z, A–Z and 0–9 (print), and Devanagari स्वर (vowels, including अं and अः), व्यंजन (consonants, including क्ष, त्र and ज्ञ) and अंक (numerals). **Letters from my text** picks out the letters in your practice text.
   - Devanagari follows the order usually taught in Indian schools: the body of the letter first, then the vertical line (खड़ी पाई), then the headline (शिरोरेखा) last. The letter shapes follow the Kalam handwriting font, so a teacher's version may differ a little.
 - **Paper:** plain Lines, **Slant** (diagonal guide lines between the rules, like British handwriting paper, to keep every letter leaning the same way) or **Grid** (squared paper lined up with the baseline)
@@ -26,9 +27,13 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
   - **On the letters:** how much of your ink lands on the guide letters
   - **Letters covered:** how much of the guide letters your ink went over
   - **Accuracy:** the balance of the two, so scribbling everywhere or tracing only one letter both score low
+  - **Stroke order & direction** (Tutor mode): how many strokes were written in the right order and the right way
+
+  Grading is strict on purpose. Ink within a hair of the letter (about 2 px on the large size) counts fully, ink a little further out counts half, and beyond that it counts as a miss. Roughly: 4 px off scores about 90%, 7 px about 65%. 100% takes careful writing.
 
   Freehand rows (Trace + copy, and the last row of Repeat & fade) are compared with the line above, lined up with where you started writing.
 - **Full screen:** the corner button hides the toolbar so the sheet fills the screen like a plain page. A small floating bar keeps Undo, page arrows and Exit (Esc also exits). If Safari drops its own full screen (for example after a swipe near the top edge), the app stays in full-screen layout until you tap Exit. For no Safari bars at all, use **Add to Home Screen**
+- **Tips:** a tip bar under the toolbar with advice on grip, posture, letter sizes and stroke order, chosen for the script and mode you're using. Flip through with the arrows, or hide it with × (the **Tips** button brings it back)
 - Pressure-sensitive ink, eraser, undo/redo, clear, and 3 ink colors
 
 ## Apple Pencil handling

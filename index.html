@@ -134,7 +134,18 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
 body.tutor #text, body.tutor #preset { display: none; }
 body:not(.tutor) .tutor-only { display: none !important; }
 #tutorSet { flex: 1 1 220px; }
-#playBtn { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); font-weight: 700; }
+/* Controls that sit on the sheet itself */
+.ui { position: absolute; z-index: 3; }
+#panelCtl { display: flex; gap: 8px; }
+#panelCtl[hidden], #panelShow[hidden] { display: none; }
+#panelPlay { background: var(--accent); color: var(--paper); border-color: var(--accent); font-weight: 700; }
+#panelShow { left: 6px; top: 8px; padding: 0 8px; font-weight: 700; color: var(--accent); }
+/* Tip bar under the toolbar */
+#tipBar { gap: 8px; flex-wrap: nowrap; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 4px 4px 4px 12px; font-size: 14px; }
+#tipBar[hidden] { display: none; }
+#tipBar svg { flex: none; width: 18px; height: 18px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+#tipText { flex: 1; min-width: 0; }
+#tipBar button { min-height: 32px; padding: 0 8px; border: 0; background: transparent; }
 #score {
   position: absolute; left: 14px; bottom: 10px; font-size: 13px; color: var(--text);
   pointer-events: none; background: var(--paper); padding: 3px 8px; border-radius: 6px;
@@ -218,7 +229,6 @@ body.fs #fsbar { display: flex; }
       </optgroup>
       <option value="text">Letters from my text</option>
     </select>
-    <button id="playBtn" class="tutor-only" title="Watch the strokes again"><svg viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></svg>Show me</button>
     <div class="pager">
       <button id="prev" aria-label="Previous page"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
       <span id="pageLabel">1 / 1</span>
@@ -260,12 +270,21 @@ body.fs #fsbar { display: flex; }
       <button id="marksBtn" class="toggle" aria-pressed="false" title="A cross or a dot in the margin on each line, alternating">× •</button></div>
     <div class="group"><span class="label">Check</span>
       <button id="gradeBtn" class="toggle" aria-pressed="false" title="Score how closely your writing follows the letters">Grade</button></div>
+    <div class="group"><span class="label">Help</span>
+      <button id="tipsBtn" class="toggle" aria-pressed="true" title="Show handwriting tips">Tips</button></div>
     <div class="group"><span class="label">Theme</span>
       <div class="seg" data-key="theme">
         <button data-v="auto">Auto</button>
         <button data-v="light" aria-label="Light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
         <button data-v="dark" aria-label="Dark"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></button>
       </div></div>
+  </div>
+  <div class="row" id="tipBar" role="note" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0012 3z"/></svg>
+    <span id="tipText"></span>
+    <button id="tipPrev" aria-label="Previous tip"><svg viewBox="0 0 24 24" style="stroke:currentColor"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <button id="tipNext" aria-label="Next tip"><svg viewBox="0 0 24 24" style="stroke:currentColor"><path d="M9 18l6-6-6-6"/></svg></button>
+    <button id="tipClose" aria-label="Hide tips"><svg viewBox="0 0 24 24" style="stroke:currentColor"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
 </header>
 <main class="sheet" id="sheet">
@@ -274,11 +293,15 @@ body.fs #fsbar { display: flex; }
   <canvas id="ink"></canvas>
   <canvas id="grade"></canvas>
   <div id="score" hidden></div>
+  <div id="panelCtl" class="ui" hidden>
+    <button id="panelPlay"><svg viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></svg>Play</button>
+    <button id="panelHide" title="Hide the big letter"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>Hide</button>
+  </div>
+  <button id="panelShow" class="ui" hidden title="Show the big letter">Aa<svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
   <div id="cursor" hidden></div>
   <div id="hint">Pencil only is on: fingers won't draw</div>
 </main>
 <div id="fsbar">
-  <button id="fsPlay" class="tutor-only" aria-label="Show me the strokes"><svg viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></svg></button>
   <button id="fsUndo" aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></svg></button>
   <button id="fsPrev" aria-label="Previous page"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
   <span id="fsPage"></span>
@@ -304,7 +327,7 @@ body.fs #fsbar { display: flex; }
     text: 'Cody codes',
     style: 'cursive', guide: 'outline', mode: 'trace', size: 'l',
     tool: 'pen', color: 'ink', palm: false, palmSet: false, page: 0, theme: 'auto',
-    paper: 'lines', grade: false, marks: false, tutorSet: 'lower',
+    paper: 'lines', grade: false, marks: false, tutorSet: 'lower', panel: true, tips: true, tipI: 0,
   };
   let S = { ...defaults };
   try { Object.assign(S, JSON.parse(localStorage.getItem(STORE) || '{}')); } catch (_) {}
@@ -381,7 +404,7 @@ body.fs #fsbar { display: flex; }
     const top = unit * 0.5;
     const perPage = Math.max(1, Math.floor((H - top * 2) / pitch));
     L = { family, fontSize, ascPx, descPx, xPx, gapTop, pitch, marginX, textX, top, perPage, tutorX: textX, panel: null };
-    if (tutor) {
+    if (tutor && S.panel !== false) {
       // Tutor: a big model letter in a panel on the left, practice rows beside it.
       const pw = Math.round(Math.min(340, Math.max(150, W * 0.27)));
       L.panel = { x0: marginX + 10, x1: marginX + 10 + pw, y0: top, y1: H - top };
@@ -471,6 +494,65 @@ body.fs #fsbar { display: flex; }
     c.restore();
   }
 
+  /* ---------- Tutor: stroke order & direction ---------- */
+  const polyLen = (s) => s.reduce((t, p, i) => i ? t + Math.hypot(p[0] - s[i - 1][0], p[1] - s[i - 1][1]) : 0, 0);
+  function resample(s, n = 24) {
+    const total = polyLen(s); if (!total) return Array.from({ length: n }, () => s[0]);
+    const out = []; let i = 1, acc = 0;
+    for (let k = 0; k < n; k++) {
+      const want = total * k / (n - 1);
+      while (i < s.length - 1 && acc + Math.hypot(s[i][0] - s[i - 1][0], s[i][1] - s[i - 1][1]) < want) { acc += Math.hypot(s[i][0] - s[i - 1][0], s[i][1] - s[i - 1][1]); i++; }
+      const d = Math.hypot(s[i][0] - s[i - 1][0], s[i][1] - s[i - 1][1]) || 1, f = Math.min(1, Math.max(0, (want - acc) / d));
+      out.push([s[i - 1][0] + (s[i][0] - s[i - 1][0]) * f, s[i - 1][1] + (s[i][1] - s[i - 1][1]) * f]);
+    }
+    return out;
+  }
+  const meanDist = (a, b) => a.reduce((t, p, i) => t + Math.hypot(p[0] - b[i][0], p[1] - b[i][1]), 0) / a.length;
+  // Matches each of your strokes (in the order you wrote them) to a stroke of the model letter,
+  // and checks it goes the right way and comes in the right order. `unit` is the x-height in px.
+  function strokeCheck(user, expected, unit) {
+    const E = expected.map((e) => ({ r: resample(e), len: polyLen(e) }));
+    let last = -1;
+    const per = user.map((u) => {
+      const U = resample(u); let best = { i: -1, cost: Infinity, rev: false };
+      E.forEach((e, i) => {
+        const f = meanDist(U, e.r), rv = meanDist(U, e.r.slice().reverse()), c = Math.min(f, rv);
+        if (c < best.cost) best = { i, cost: c, rev: e.len > unit * 0.3 && rv < f };
+      });
+      if (best.cost > unit * 0.7) return { i: -1, status: 'extra' };
+      let status = best.rev ? 'reversed' : 'ok';
+      if (best.i < last && status === 'ok') status = 'order';
+      last = Math.max(last, best.i);
+      return { i: best.i, status };
+    });
+    const exp = E.map((_, i) => { const m = per.find((p) => p.i === i); return m ? m.status : 'missing'; });
+    return { per, exp, ok: exp.filter((x) => x === 'ok').length / E.length };
+  }
+  const STATUS_COLOR = { ok: '--grade-good', reversed: '--grade-off', order: '--grade-miss', extra: '--grade-off' };
+  // Small numbered marker at the start of each of your strokes: which model stroke it matched.
+  function drawStrokeMarks(c, user, check, r) {
+    c.font = `700 ${Math.round(r * 1.2)}px ${css('--font-ui')}`; c.textAlign = 'center'; c.textBaseline = 'middle';
+    user.forEach((u, j) => {
+      const res = check.per[j], col = css(STATUS_COLOR[res.status]);
+      const st = u[0], nx = u[Math.min(u.length - 1, 3)], a = Math.atan2(nx[1] - st[1], nx[0] - st[0]) || 0;
+      const bx = st[0] - Math.cos(a) * (r + 3), by = st[1] - Math.sin(a) * (r + 3);
+      c.fillStyle = col; c.beginPath(); c.arc(bx, by, r, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#fff'; c.fillText(res.status === 'extra' ? '?' : res.status === 'reversed' ? '↺' : String(res.i + 1), bx, by + 0.5);
+    });
+  }
+  function checkMessage(check, total) {
+    const bad = check.per.findIndex((p) => p.status !== 'ok');
+    if (bad >= 0) {
+      const p = check.per[bad];
+      if (p.status === 'reversed') return [`Stroke ${p.i + 1} goes the other way: start at circle ${p.i + 1}`, 'off'];
+      if (p.status === 'order') return [`Stroke ${p.i + 1} came out of order: follow the numbers`, 'miss'];
+      return ['One stroke doesn\'t match the letter: undo and try again', 'off'];
+    }
+    const next = check.exp.findIndex((x) => x === 'missing');
+    if (next >= 0) return [`Good! Next: stroke ${next + 1}`, 'good'];
+    return [`Right order and direction for all ${total} stroke${total > 1 ? 's' : ''}`, 'good'];
+  }
+
   /* ---------- Tutor: animated demo ---------- */
   // The model letter at the top of each page is drawn here: grey, then traced over stroke
   // by stroke in order, with a numbered badge at each stroke's start and an arrow for direction.
@@ -480,8 +562,8 @@ body.fs #fsbar { display: flex; }
     if (!r || !r.tutor || !P) return null;
     const g = glyph(r.tutor); if (!g) return null;
     const pw = P.x1 - P.x0, ph = P.y1 - P.y0;
-    const k = Math.min((pw - 40) / g.w, (ph - 70) / 150, 4.2);
-    const top = P.y0 + (ph - 40 - 150 * k) / 2, base = top + 100 * k, x = P.x0 + (pw - g.w * k) / 2;
+    const k = Math.min((pw - 40) / g.w, (ph - 150) / 150, 4.2);
+    const top = P.y0 + 16 + (ph - 150 - 150 * k) / 2, base = top + 100 * k, x = P.x0 + (pw - g.w * k) / 2;
     const strokes = g.s.map((s) => s.map((p) => toPx(p, x, base, k)));
     const lens = strokes.map((s) => s.reduce((t, p, i) => i ? t + Math.hypot(p[0] - s[i - 1][0], p[1] - s[i - 1][1]) : 0, 0));
     return { ch: r.tutor, strokes, lens, k, base, top };
@@ -511,8 +593,13 @@ body.fs #fsbar { display: flex; }
     const c = dctx;
     c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, demoC.width, demoC.height);
     cancelAnimationFrame(demo.raf);
-    if (S.mode !== 'tutor' || !L) return;
+    const tutorOn = S.mode === 'tutor' && !!L;
+    $('panelShow').hidden = !(tutorOn && S.panel === false && pages[S.page] && pages[S.page][0] && pages[S.page][0].tutor);
+    $('panelCtl').hidden = true;
+    if (!tutorOn) return;
     const m = modelGeom(); if (!m) return;
+    const ctl = $('panelCtl'); ctl.hidden = false;
+    ctl.style.left = `${L.panel.x0 + 12}px`; ctl.style.top = `${L.panel.y1 - 108}px`;
     c.setTransform(dpr, 0, 0, dpr, 0, 0); c.lineCap = c.lineJoin = 'round';
     // Panel card with its own 4 guide lines, sized to the model letter.
     const P = L.panel;
@@ -521,8 +608,14 @@ body.fs #fsbar { display: flex; }
     const gl = (y, col, wd, dash) => { c.beginPath(); c.setLineDash(dash || []); c.strokeStyle = col; c.lineWidth = wd; c.moveTo(P.x0 + 10, y); c.lineTo(P.x1 - 10, y); c.stroke(); c.setLineDash([]); };
     c.fillStyle = css('--band'); c.fillRect(P.x0 + 1, m.base - 50 * m.k, P.x1 - P.x0 - 2, 50 * m.k);
     gl(m.top, css('--rule'), 1); gl(m.base - 50 * m.k, css('--rule-soft'), 1, [7, 6]); gl(m.base, css('--rule'), 1.8); gl(m.base + 50 * m.k, css('--rule-soft'), 1, [2, 5]);
-    c.fillStyle = css('--muted'); c.font = `14px ${css('--font-ui')}`; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
-    c.fillText(`${m.strokes.length} stroke${m.strokes.length > 1 ? 's' : ''} · watch, then trace`, (P.x0 + P.x1) / 2, P.y1 - 16);
+    // Your tracing on the big letter: checked for stroke order and direction.
+    const mine = (ink[S.page] || []).filter(inPanel).map((st) => st.pts.map((q) => [q[0], q[1]]));
+    const chk = mine.length ? strokeCheck(mine, m.strokes, 50 * m.k) : null;
+    let msg = [`${m.strokes.length} stroke${m.strokes.length > 1 ? 's' : ''}. Watch, then trace over the big letter`, 'muted'];
+    if (chk) msg = checkMessage(chk, m.strokes.length);
+    c.font = `${msg[1] === 'muted' ? 400 : 700} 14px ${css('--font-ui')}`; c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+    c.fillStyle = css(msg[1] === 'muted' ? '--muted' : `--grade-${msg[1]}`);
+    wrapText(c, msg[0], P.x0 + 14, P.y1 - 34, P.x1 - P.x0 - 28, 18);
     const w = Math.max(penW() * 1.15, m.k * 4.2), accent = css('--accent'), guide = css('--guide');
     // Grey model underneath.
     c.strokeStyle = guide; c.globalAlpha = 0.35; c.lineWidth = w;
@@ -560,7 +653,20 @@ body.fs #fsbar { display: flex; }
         c.strokeStyle = accent; c.lineWidth = 1.4; c.stroke();
       }
     });
+    if (chk) drawStrokeMarks(c, mine, chk, Math.max(9, Math.min(12, m.k * 3)));
     if (running) demo.raf = requestAnimationFrame(drawDemo);
+  }
+  function wrapText(c, text, x, y, maxW, lh) {
+    const words = text.split(' '), lines = []; let cur = '';
+    for (const w of words) { const t = cur ? cur + ' ' + w : w; if (cur && c.measureText(t).width > maxW) { lines.push(cur); cur = w; } else cur = t; }
+    lines.push(cur);
+    lines.slice(-2).forEach((l, i, arr) => c.fillText(l, x, y - (arr.length - 1 - i) * lh));
+  }
+  // A stroke written on the big model letter (not on the practice rows).
+  function inPanel(st) {
+    const P = L && L.panel; if (!P || S.mode !== 'tutor') return false;
+    const mx = st.pts.reduce((a, q) => a + q[0], 0) / st.pts.length;
+    return mx >= P.x0 && mx <= P.x1;
   }
   function playDemo() { demo.t0 = performance.now(); drawDemo(demo.t0); }
   function syncDemo() {
@@ -676,7 +782,7 @@ body.fs #fsbar { display: flex; }
     ictx.setTransform(dpr, 0, 0, dpr, 0, 0);
     for (const s of ink[S.page]) drawStroke(ictx, s);
     if (active && active.stroke) drawStroke(ictx, active.stroke);
-    if (!active) drawGrade();
+    if (!active) { drawGrade(); if (S.mode === 'tutor') drawDemo(performance.now()); }
   }
 
   /* ---------- Grading ---------- */
@@ -717,9 +823,12 @@ body.fs #fsbar { display: flex; }
     if (gcan.width !== gw) gcan.width = gw;
     const bh = Math.ceil(L.pitch * GK) + 2;
     if (gcan.height !== bh) gcan.height = bh;
-    const tol = L.xPx * 0.09 + 1;              // CSS px of leeway around each letter
+    // Two bands of leeway around each letter: inside the tight band counts fully,
+    // inside the loose band counts half, beyond it counts as a miss.
+    const tol1 = L.xPx * 0.05 + 0.5, tol2 = L.xPx * 0.15 + 1;
     const byRow = rows.map(() => []);
     for (const s of strokes) {
+      if (inPanel(s)) continue;
       const my = s.pts.reduce((a, p) => a + p[1], 0) / s.pts.length;
       const i = Math.floor((my - L.top) / L.pitch);
       if (i >= 0 && i < rows.length) byRow[i].push(s);
@@ -731,7 +840,7 @@ body.fs #fsbar { display: flex; }
       const target = r.t || r.copy, mine = byRow[i];
       if ((!target && !r.tutor) || !mine.length) return null;
       const y0 = L.top + i * L.pitch, base = y0 + L.gapTop + L.ascPx;
-      let x = L.textX, text;
+      let x = L.textX, text, order = null;
       if (r.tutor) {
         // Compare with the copies of the letter your writing spans (freehand rows start where you started).
         const g = glyph(r.tutor), k = tk();
@@ -740,6 +849,21 @@ body.fs #fsbar { display: flex; }
         const start = r.free ? inkL - glyphMinX(g) * k : L.tutorX;
         const xs = tutorXs(r.tutor, start, inkR + g.w * k * 0.5);
         text = (c, grow) => { c.lineWidth = penW() + grow; for (const x0 of xs) for (const s of g.s) { strokePath(c, s, x0, base); c.stroke(); } };
+        // Stroke order and direction for each copy you wrote: strokes go to the nearest copy.
+        const adv = (g.w + 26) * k, groups = xs.map(() => []);
+        for (const st of mine) {
+          const mx = st.pts.reduce((a, q) => a + q[0], 0) / st.pts.length;
+          let best = 0; xs.forEach((x0, j) => { if (Math.abs(x0 + g.w * k / 2 - mx) < Math.abs(xs[best] + g.w * k / 2 - mx)) best = j; });
+          if (Math.abs(xs[best] + g.w * k / 2 - mx) < adv * 0.6) groups[best].push(st);
+        }
+        order = { marks: [], ok: 0, n: 0 };
+        groups.forEach((grp, j) => {
+          if (!grp.length) return;
+          const user = grp.map((st) => st.pts.map((q) => [q[0], q[1]]));
+          const exp = g.s.map((st) => st.map((q) => toPx(q, xs[j], base, k)));
+          const chk = strokeCheck(user, exp, L.xPx);
+          order.ok += chk.ok; order.n++; order.marks.push({ user, chk });
+        });
       } else if (!r.t) {
         // Freehand row: line the letters up with where your writing starts.
         mctx.font = font;
@@ -749,22 +873,27 @@ body.fs #fsbar { display: flex; }
       }
       text = text || ((c, grow) => { c.font = font; c.fillText(target, x, base); if (grow) { c.lineWidth = grow; c.strokeText(target, x, base); } });
       const A = maskOf(gw, bh, y0, (c) => text(c, 0));
-      const Ad = maskOf(gw, bh, y0, (c) => text(c, tol * 2));
+      const At = maskOf(gw, bh, y0, (c) => text(c, tol1 * 2));
+      const Al = maskOf(gw, bh, y0, (c) => text(c, tol2 * 2));
       const I = maskOf(gw, bh, y0, (c) => inkPath(c, mine, 0));
-      const Id = maskOf(gw, bh, y0, (c) => inkPath(c, mine, tol * 2));
+      const It = maskOf(gw, bh, y0, (c) => inkPath(c, mine, tol1 * 2));
+      const Il = maskOf(gw, bh, y0, (c) => inkPath(c, mine, tol2 * 2));
       let a = 0, aHit = 0, n = 0, nHit = 0;
       const rowOff = Math.round(y0 * GK);
+      const paint = (o, col, al) => { od[o] = col[0]; od[o + 1] = col[1]; od[o + 2] = col[2]; od[o + 3] = Math.max(od[o + 3], al); };
       for (let j = 0; j < A.length; j++) {
         const yy = rowOff + Math.floor(j / gw); if (yy < 0 || yy >= gh) continue;
         const o = (yy * gw + (j % gw)) * 4;
-        if (A[j]) { a++; if (Id[j]) aHit++; else { od[o] = miss[0]; od[o + 1] = miss[1]; od[o + 2] = miss[2]; od[o + 3] = 120; } }
-        if (I[j]) { n++; if (Ad[j]) nHit++; else { od[o] = off[0]; od[o + 1] = off[1]; od[o + 2] = off[2]; od[o + 3] = 235; } }
+        if (A[j]) { a++; if (It[j]) aHit++; else if (Il[j]) { aHit += 0.5; paint(o, miss, 60); } else paint(o, miss, 130); }
+        if (I[j]) { n++; if (At[j]) nHit++; else if (Al[j]) { nHit += 0.5; paint(o, off, 110); } else paint(o, off, 235); }
       }
       if (!n || !a) return null;
       const on = nHit / n, cov = aHit / a;
-      // F1 of the two, curved so near-misses still score well but sloppy work drops off faster.
-      const score = on + cov ? ((2 * on * cov) / (on + cov)) ** 1.5 : 0;
-      return { i, base, on, cov, score };
+      // Shape: F1 of the two, squared, so only careful writing gets close to 100%.
+      let score = on + cov ? ((2 * on * cov) / (on + cov)) ** 2 : 0;
+      let dir = null;
+      if (order && order.n) { dir = order.ok / order.n; score *= 0.5 + 0.5 * dir; }
+      return { i, base, on, cov, score, dir, marks: order ? order.marks : [] };
     });
     ocan.width = gw; ocan.height = gh; octx.putImageData(over, 0, 0);
     return results;
@@ -774,6 +903,7 @@ body.fs #fsbar { display: flex; }
     gctxOut.setTransform(1, 0, 0, 1, 0, 0);
     gctxOut.clearRect(0, 0, gradeC.width, gradeC.height);
     const box = $('score');
+    box.style.left = L && L.panel ? `${L.panel.x1 + 12}px` : '';
     if (!S.grade || !L || !ink[S.page]) { box.hidden = true; lastGrade = null; return; }
     const res = gradePage().filter(Boolean);
     lastGrade = res;
@@ -790,9 +920,12 @@ body.fs #fsbar { display: flex; }
       c.beginPath(); c.roundRect(xr - tw - 12, y - 10, tw + 12, 20, 10); c.fill(); c.stroke();
       c.fillStyle = col(r.score); c.fillText(label, xr - 6, y + 0.5);
     }
+    for (const r of res) for (const mk of r.marks) drawStrokeMarks(c, mk.user, mk.chk, 8);
     if (!res.length) { box.innerHTML = 'Write on a row to get a score'; box.hidden = false; return; }
     const avg = (k) => Math.round(100 * res.reduce((s, r) => s + r[k], 0) / res.length);
-    box.innerHTML = `Accuracy <b>${avg('score')}%</b> · on the letters ${avg('on')}% · letters covered ${avg('cov')}%`;
+    const dirs = res.filter((r) => r.dir !== null);
+    const dirTxt = dirs.length ? ` · stroke order &amp; direction ${Math.round(100 * dirs.reduce((t, r) => t + r.dir, 0) / dirs.length)}%` : '';
+    box.innerHTML = `Accuracy <b>${avg('score')}%</b> · on the letters ${avg('on')}% · letters covered ${avg('cov')}%${dirTxt}`;
     box.hidden = false;
   }
 
@@ -955,14 +1088,14 @@ body.fs #fsbar { display: flex; }
   window.addEventListener('blur', () => { touches.clear(); twoTap = null; finishActive(false); });
   // Stop iOS from turning long presses and double taps into selection or zoom.
   inkC.addEventListener('pointerleave', (e) => { if (!active) cursor.hidden = true; });
-  for (const ev of ['touchstart', 'touchmove']) sheet.addEventListener(ev, (e) => e.preventDefault(), { passive: false });
+  for (const ev of ['touchstart', 'touchmove']) sheet.addEventListener(ev, (e) => { if (!e.target.closest('.ui')) e.preventDefault(); }, { passive: false });
   // Safari pinch-zoom ignores user-scalable=no; block it everywhere.
   for (const ev of ['gesturestart', 'gesturechange']) document.addEventListener(ev, (e) => e.preventDefault(), { passive: false });
   sheet.addEventListener('contextmenu', (e) => e.preventDefault());
 
   // A palm resting on the toolbar while you write shouldn't press buttons.
   let blockClick = false;
-  for (const bar of [document.querySelector('header'), $('fsbar')]) {
+  for (const bar of [document.querySelector('header'), $('fsbar'), $('panelCtl'), $('panelShow')]) {
     bar.addEventListener('pointerdown', (e) => {
       // Fingers can always tap buttons, except a palm landing while the Pencil is mid-stroke.
       blockClick = e.pointerType === 'touch' && !!active && active.type === 'pen';
@@ -1003,7 +1136,7 @@ body.fs #fsbar { display: flex; }
     else hint.hidden = true;
   }
 
-  function render() { drawBg(); drawInk(); syncDemo(); updateButtons(); save(); }
+  function render() { drawBg(); drawInk(); syncDemo(); updateButtons(); showTip(); save(); }
 
   async function relayout(clear) {
     if (clear) resetInk();
@@ -1075,8 +1208,9 @@ body.fs #fsbar { display: flex; }
     if (sc === 'deva') S.style = 'devanagari'; else if (sc === 'latin' && S.style === 'devanagari') S.style = 'print';
     relayout(true);
   });
-  $('playBtn').addEventListener('click', playDemo);
-  $('fsPlay').addEventListener('click', playDemo);
+  $('panelPlay').addEventListener('click', playDemo);
+  $('panelHide').addEventListener('click', () => { S.panel = false; computeLayout(); render(); });
+  $('panelShow').addEventListener('click', () => { S.panel = true; computeLayout(); render(); demo.key = null; syncDemo(); });
 
   // Full screen: hide the toolbar, and also ask the browser for real full screen where it allows it.
   const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
@@ -1101,6 +1235,45 @@ body.fs #fsbar { display: flex; }
     if (e.key === 'Escape' && document.body.classList.contains('fs')) setFullscreen(false);
   });
 
+  /* ---------- Tips ---------- */
+  const TIPS = [
+    { t: 'Hold the Pencil lightly, about 2–3 cm from the tip. Squeezing makes shaky lines.' },
+    { t: 'Rest your palm on the screen and turn on Pencil only so your hand won\'t draw.' },
+    { t: 'Sit up straight with both feet on the floor. Move from your wrist and arm, not just your fingers.' },
+    { t: 'Go slowly. Neat letters come first; speed comes later.' },
+    { t: 'Most strokes start at the top and pull down. Pulling is steadier than pushing.' },
+    { t: 'Lift the Pencil only where a stroke ends. Extra lifts make letters look broken.' },
+    { t: 'Turn on Grade: red marks ink off the letter, amber marks parts you missed.' },
+    { t: 'Aim for the tight band: only ink right on the letter counts fully, so 100% takes real care.' },
+    { latin: 1, t: 'Small letters touch the dashed midline; tall letters (b, d, h, k, l) reach the top line.' },
+    { latin: 1, t: 'Tails on g, j, p, q, y drop to the dotted line below, no further.' },
+    { latin: 1, t: 'Circles in a, c, d, g, o, q go counterclockwise, starting near 2 o\'clock.' },
+    { latin: 1, t: 'Keep every letter leaning the same way. Slant paper helps.' },
+    { latin: 1, t: 'Leave about one "o" of space between words, and a little between letters.' },
+    { deva: 1, t: 'Write the body of the letter first, then the vertical line, then the headline (शिरोरेखा) last.' },
+    { deva: 1, t: 'Letters hang from the headline: their tops touch the dashed line.' },
+    { deva: 1, t: 'Draw one straight headline across a whole word once its letters are done.' },
+    { deva: 1, t: 'Matras above the line go up toward the top line; ु and ू drop below the baseline.' },
+    { tutor: 1, t: 'Press Play on the big letter, then trace over it. It checks your stroke order and direction.' },
+    { tutor: 1, t: 'Follow the numbered circles: each stroke starts at its number and goes the way the arrow points.' },
+    { tutor: 1, t: 'With Grade on, each letter on the rows shows which stroke you wrote: green is right, ↺ means backwards.' },
+  ];
+  function tipList() {
+    const deva = S.mode === 'tutor' ? tutorScript() === 'deva' : S.style === 'devanagari' || DEVANAGARI.test(S.text);
+    return TIPS.filter((x) => (!x.deva || deva) && (!x.latin || !deva) && (!x.tutor || S.mode === 'tutor'));
+  }
+  function showTip() {
+    const list = tipList(); $('tipBar').hidden = !S.tips;
+    $('tipsBtn').setAttribute('aria-pressed', String(!!S.tips));
+    if (!S.tips) return;
+    S.tipI = ((S.tipI % list.length) + list.length) % list.length;
+    $('tipText').textContent = list[S.tipI].t;
+  }
+  $('tipNext').addEventListener('click', () => { S.tipI++; showTip(); save(); });
+  $('tipPrev').addEventListener('click', () => { S.tipI--; showTip(); save(); });
+  $('tipClose').addEventListener('click', () => { S.tips = false; showTip(); save(); });
+  $('tipsBtn').addEventListener('click', () => { S.tips = !S.tips; showTip(); save(); });
+
   /* ---------- Sizing + theme ---------- */
   function resize() {
     const r = sheet.getBoundingClientRect();
@@ -1112,6 +1285,13 @@ body.fs #fsbar { display: flex; }
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
   new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   document.fonts.addEventListener('loadingdone', () => { if (W) { computeLayout(); render(); } });
+
+  // Test hook: only with #test in the URL, exposes letter geometry so automated tests can trace it.
+  if (location.hash === '#test') window.__pad = {
+    model: () => modelGeom(),
+    row: (i) => { const r = pages[S.page][i], g = glyph(r.tutor), k = tk(), base = L.top + i * L.pitch + L.gapTop + L.ascPx;
+      return tutorXs(r.tutor, L.tutorX).map((x) => g.s.map((st) => st.map((q) => toPx(q, x, base, k)))); },
+  };
 
   relayout(false);
 })();
