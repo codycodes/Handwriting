@@ -4,7 +4,7 @@ A single-file web app for practicing handwriting on iPad with Apple Pencil.
 
 ![Penmanship Pad on iPad in light and dark mode](screenshots/mockup.png)
 
-**Live site:** https://codycodes.github.io/claude/ (after GitHub Pages is turned on, see below)
+**Live site:** https://codycodes.github.io/Handwriting/ (after GitHub Pages is turned on, see below)
 
 On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it full screen like an app.
 
@@ -35,6 +35,6 @@ These are limits of web apps that the app can't change:
 - Scribble (handwriting into text fields) still works in the text box, which is handy for typing new practice text with the Pencil.
 
 ## GitHub Pages
-`.github/workflows/pages.yml` deploys this folder to GitHub Pages when `handwriting-practice/` changes on `main`, or when you run it by hand from the Actions tab.
+`.github/workflows/pages.yml` deploys this repo to GitHub Pages on every push to `main`, or when you run it by hand from the Actions tab.
 
 One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
