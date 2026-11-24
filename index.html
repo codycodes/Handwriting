@@ -225,6 +225,40 @@ svg.off { stroke: var(--muted) !important; opacity: .7; }
 .step.cur { background: var(--accent-soft); }
 .path-next { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .path-next .muted { font-size: 13px; }
+/* Write along with a video: floating player and the current line */
+#pip { position: fixed; z-index: 15; width: 360px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(10, 20, 40, .28); overflow: hidden; touch-action: none; }
+#pip[hidden] { display: none; }
+#pip.s { width: 260px; } #pip.l { width: 520px; }
+.pip-bar { display: flex; align-items: center; gap: 6px; padding: 4px 4px 4px 8px; cursor: grab; font-size: 13px; color: var(--muted); }
+.pip-bar svg { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none; stroke-width: 3; stroke-linecap: round; }
+.pip-bar span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pip-bar button { min-height: 30px; padding: 0 8px; }
+#pipVideo { position: relative; aspect-ratio: 16 / 9; background: #000; }
+#pipVideo iframe, #ytHost { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+#pipSeek { width: calc(100% - 16px); margin: 6px 8px 0; accent-color: var(--accent); }
+.pip-ctl { display: flex; align-items: center; gap: 4px; padding: 4px 6px 6px; flex-wrap: wrap; }
+.pip-ctl button { min-height: 36px; padding: 0 9px; font-size: 14px; }
+.pip-ctl #pipTime { margin-left: auto; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+#pip.dragging { opacity: .85; } #pip.dragging iframe { pointer-events: none; }
+#lineBar { flex-wrap: nowrap; gap: 8px; background: var(--panel); border: 1px solid var(--accent); border-radius: 10px; padding: 4px; }
+#lineBar[hidden] { display: none; }
+#lbText { flex: 1; min-width: 0; padding: 0 4px; }
+#lbText .hi { font-family: "Kalam", sans-serif; font-size: 19px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#lbText .en { font-size: 14px; color: var(--muted); line-height: 1.3; }
+#lbText .en i { color: var(--accent); }
+#lbPos { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+#vdLines td.hi { font-family: "Kalam", sans-serif; font-size: 19px; line-height: 1.35; }
+#vdLines td .en { font-family: var(--font-ui); font-size: 13.5px; color: var(--muted); }
+#vdLines tr.cur td { background: var(--accent-soft); }
+#vdLines tbody tr { cursor: pointer; }
+label.file { display: inline-flex; align-items: center; min-height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); cursor: pointer; font-size: 14px; }
+.dlg-body input[type=url], .dlg-body input[type=text], .dlg-head select, .dlg-body select { font: inherit; font-size: 16px; color: var(--text); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+#trOut .big { font-size: 20px; line-height: 1.4; }
+#trOut .big[lang=hi] { font-family: "Kalam", sans-serif; font-size: 24px; }
+#trOut .tr { color: var(--accent); font-style: italic; margin-top: 2px; }
+#trOut .row { margin-top: 10px; }
+@media (max-width: 700px) { #pip { width: 260px; } #lbTranslate { display: none; } }
 /* Dialogs (Words, Progress) */
 .dlg { width: min(980px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); padding: 0; border: 1px solid var(--line); border-radius: 14px;
   background: var(--paper); color: var(--text); box-shadow: 0 20px 60px rgba(10, 20, 40, .3); overflow: hidden; }
@@ -395,6 +429,8 @@ body.fs #fsbar { display: flex; }
       <div class="row" style="gap:6px;flex-wrap:nowrap">
         <button id="wordsBtn" title="Your path through Hindi and Marathi: letters, then words, then Bollywood and culture. Meanings, sounds and Anki lists.">Learn</button>
         <button id="progressBtn" title="Your accuracy for each letter and word over time">Progress</button>
+        <button id="videoBtn" title="Write along with a YouTube video, line by line, with its transcript">Video</button>
+        <button id="translateBtn" title="Translate between Devanagari and English">Translate</button>
       </div></div>
     <div class="group"><span class="label">Theme</span>
       <div class="seg" data-key="theme">
@@ -409,6 +445,15 @@ body.fs #fsbar { display: flex; }
     <button id="tipPrev" aria-label="Previous tip"><svg viewBox="0 0 24 24" style="stroke:currentColor"><path d="M15 18l-6-6 6-6"/></svg></button>
     <button id="tipNext" aria-label="Next tip"><svg viewBox="0 0 24 24" style="stroke:currentColor"><path d="M9 18l6-6-6-6"/></svg></button>
     <button id="tipClose" aria-label="Hide tips"><svg viewBox="0 0 24 24" style="stroke:currentColor"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="row" id="lineBar" hidden>
+    <button id="lbLines" title="Show all lines of the transcript">Lines</button>
+    <button id="lbPrev" aria-label="Previous line"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div id="lbText"><div class="hi" lang="hi"></div><div class="en"></div></div>
+    <span id="lbPos"></span>
+    <button id="lbNext" class="primary" aria-label="Next line">Next<svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+    <button id="lbTranslate" title="Translate this line">Translate</button>
+    <button id="lbClose" aria-label="Stop writing along with the video"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
   <div class="row" id="wordBar" hidden>
     <div id="wordChips"></div>
@@ -469,6 +514,73 @@ body.fs #fsbar { display: flex; }
     <p id="wlHint" class="muted"></p>
     <table class="tbl" id="wlTable"><thead><tr><th></th><th>Word</th><th>Sounds like</th><th>Language</th><th>Meaning</th><th class="num">Best</th><th></th></tr></thead><tbody></tbody></table>
     <p class="muted small" id="wlNote"></p>
+  </div>
+</dialog>
+<div id="pip" hidden>
+  <div class="pip-bar" id="pipBar" title="Drag to move">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h.01M15 5h.01M9 12h.01M15 12h.01M9 19h.01M15 19h.01"/></svg>
+    <span id="pipTitle"></span>
+    <button id="pipSize" aria-label="Change size" title="Smaller / bigger">S</button>
+    <button id="pipHide" aria-label="Close video"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div id="pipVideo"><div id="ytHost"></div></div>
+  <input id="pipSeek" type="range" min="0" max="100" step="0.1" value="0" aria-label="Position in the video">
+  <div class="pip-ctl">
+    <button id="pipPrevLine" title="Previous line" aria-label="Previous line"><svg viewBox="0 0 24 24"><path d="M6 5v14M18 6l-9 6 9 6z"/></svg></button>
+    <button id="pipBack" title="Back 5 seconds">−5</button>
+    <button id="pipPlay" class="primary" aria-label="Play"><svg viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></svg></button>
+    <button id="pipFwd" title="Forward 5 seconds">+5</button>
+    <button id="pipNextLine" title="Next line" aria-label="Next line"><svg viewBox="0 0 24 24"><path d="M18 5v14M6 6l9 6-9 6z"/></svg></button>
+    <button id="pipRate" title="Speed">1×</button>
+    <button id="pipStop" class="toggle" aria-pressed="true" title="Pause at the end of each line so you can write it">⏸ line</button>
+    <span id="pipTime"></span>
+  </div>
+</div>
+<dialog id="videoDlg" class="dlg" aria-labelledby="videoTitle">
+  <div class="dlg-head">
+    <h2 id="videoTitle">Video</h2>
+    <select id="vdList" aria-label="Your videos"></select>
+    <span class="spacer"></span>
+    <button id="vdNew">Add a video</button>
+    <button id="vdDelete" hidden>Delete</button>
+    <button class="dlg-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="dlg-body">
+    <div id="vdForm" class="card" hidden>
+      <p><b>1. The video.</b> Paste a YouTube link.</p>
+      <div class="row"><input id="vdUrl" type="url" placeholder="https://www.youtube.com/watch?v=…" aria-label="YouTube link" style="flex:1 1 320px">
+        <input id="vdName" type="text" placeholder="Name (optional)" aria-label="Name" style="flex:1 1 200px">
+        <select id="vdLang" aria-label="Language of the video"><option value="hi">Hindi</option><option value="mr">Marathi</option></select></div>
+      <p style="margin-top:12px"><b>2. Its transcript in Devanagari.</b> On YouTube, open the video's description and tap <b>Show transcript</b>, choose Hindi (or Marathi), then select and copy all the lines with their times. Subtitle files (.srt, .vtt) work too, and so does plain text without times.</p>
+      <textarea id="vdHi" rows="6" placeholder="0:01&#10;नमस्ते दोस्तों&#10;0:04&#10;आज हम …"></textarea>
+      <div class="row"><label class="muted small"><input type="checkbox" id="vdJoin" checked> Join short caption pieces into sentences</label>
+        <label class="file">Open a file<input type="file" id="vdHiFile" accept=".srt,.vtt,.txt,text/plain" hidden></label></div>
+      <p style="margin-top:12px"><b>3. English transcript</b> (optional). If the video also has English captions, paste them the same way: each Hindi line gets the English said at the same time. Lines without one are translated by machine when you reach them.</p>
+      <textarea id="vdEn" rows="4" placeholder="0:01&#10;Hello friends"></textarea>
+      <div class="row"><button id="vdSave" class="primary">Save and start</button><button id="vdCancel">Cancel</button><span id="vdMsg" class="muted"></span></div>
+    </div>
+    <div id="vdEmpty" class="muted" hidden>Add a YouTube video and its transcript, then write it line by line while it plays in a small player you can move around.</div>
+    <div id="vdLinesWrap">
+      <div class="row" style="margin-bottom:8px"><button id="vdStart" class="primary">Write along</button><span class="muted small" id="vdInfo"></span></div>
+      <table class="tbl" id="vdLines"><thead><tr><th class="num">Time</th><th>Line</th><th></th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+</dialog>
+<dialog id="translateDlg" class="dlg" aria-labelledby="translateTitle">
+  <div class="dlg-head">
+    <h2 id="translateTitle">Translate</h2>
+    <select id="trDir" aria-label="Direction">
+      <option value="hi|en">हिंदी → English</option><option value="mr|en">मराठी → English</option>
+      <option value="en|hi">English → हिंदी</option><option value="en|mr">English → मराठी</option>
+    </select>
+    <span class="spacer"></span>
+    <button class="dlg-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="dlg-body">
+    <textarea id="trIn" rows="3" placeholder="Type or paste Devanagari or English" style="width:100%;box-sizing:border-box;font:18px/1.4 var(--font-ui);color:var(--text);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:8px"></textarea>
+    <div class="row" style="margin:8px 0"><button id="trGo" class="primary">Translate</button><button id="trSwap" title="Swap direction and text">⇄ Swap</button><span id="trMsg" class="muted small"></span></div>
+    <div id="trOut" class="card" hidden></div>
+    <p class="muted small">Machine translation by MyMemory (free, no account: about 5,000 characters a day on this device). Meanings of single words come from the app's own word lists and Wiktionary first. Treat translations as a rough guide.</p>
   </div>
 </dialog>
 <dialog id="progressDlg" class="dlg" aria-labelledby="progressTitle">
@@ -2268,6 +2380,360 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     } catch (_) { alert('That file isn’t a Penmanship Pad export.'); }
   });
   addEventListener('resize', () => { if ($('progressDlg').open) renderProgress(); });
+
+  /* ---------- Translation (MyMemory: free, no key) ---------- */
+  const TR_CACHE = 'penmanship-pad:translations';
+  let trCache = {}; try { trCache = JSON.parse(localStorage.getItem(TR_CACHE) || '{}') || {}; } catch (_) {}
+  const trPending = new Map();
+  // Resolves with {text} or {error}; the same text is only ever translated once.
+  function translate(text, pair) {
+    text = text.trim(); if (!text) return Promise.resolve({ text: '' });
+    const key = `${pair}|${text}`;
+    if (trCache[key]) return Promise.resolve({ text: trCache[key] });
+    if (trPending.has(key)) return trPending.get(key);
+    const p = (async () => {
+      try {
+        const r = await fetch(`https://api.mymemory.translated.net/get?langpair=${encodeURIComponent(pair)}&q=${encodeURIComponent(text.slice(0, 480))}`);
+        const j = await r.json();
+        const out = j && j.responseData && j.responseData.translatedText;
+        if (j.responseStatus == 429 || /MYMEMORY WARNING/i.test(out || '')) return { error: 'The free daily translation limit is used up on this device. It resets tomorrow.' };
+        if (!out || j.responseStatus != 200) return { error: (j && j.responseDetails) || 'Translation failed' };
+        const clean = stripTags(out);
+        trCache[key] = clean;
+        const keys = Object.keys(trCache); if (keys.length > 3000) for (const k of keys.slice(0, 500)) delete trCache[k];
+        try { localStorage.setItem(TR_CACHE, JSON.stringify(trCache)); } catch (_) {}
+        return { text: clean };
+      } catch (_) { return { error: 'No connection to the translation service' }; }
+      finally { trPending.delete(key); }
+    })();
+    trPending.set(key, p);
+    return p;
+  }
+  const stripTags = (h) => { const d = document.createElement('div'); d.innerHTML = h; return (d.textContent || '').trim(); };
+
+  /* ---------- Translate dialog ---------- */
+  function openTranslate(text, pair) {
+    if (text != null) $('trIn').value = text;
+    const t = $('trIn').value;
+    if (pair) $('trDir').value = pair;
+    $('trOut').hidden = true; $('trMsg').textContent = '';
+    if (!$('translateDlg').open) $('translateDlg').showModal();
+    if (t.trim()) runTranslate();
+  }
+  async function runTranslate() {
+    const text = $('trIn').value.trim(), pair = $('trDir').value, out = $('trOut');
+    if (!text) return;
+    // Text in the wrong script for the chosen direction: flip it.
+    if (DEVANAGARI.test(text) && pair.startsWith('en|')) $('trDir').value = pair.split('|')[1] + '|en';
+    else if (!DEVANAGARI.test(text) && !pair.startsWith('en|')) $('trDir').value = 'en|' + pair.split('|')[0];
+    const dir = $('trDir').value, [from, to] = dir.split('|');
+    $('trMsg').textContent = 'Translating…';
+    // A single known word: the app's own meaning first.
+    const single = from !== 'en' && W$ && !/\s/.test(text) && W$.local(cleanWord(text));
+    const res = await translate(text, dir);
+    $('trMsg').textContent = res.error || '';
+    const result = res.text || '';
+    let html = '';
+    if (from !== 'en' && W$) html += `<div class="muted small">${esc(text)} · <i>${esc(W$.translit(text))}</i></div>`;
+    if (single) html += `<div class="big">${esc(W$.meaningText(single))} <span class="lgb">${esc(W$.langText(single.langs))}</span></div>`;
+    if (result && !(single && result.toLowerCase() === W$.meaningText(single).toLowerCase())) html += `<div class="big"${to !== 'en' ? ' lang="hi"' : ''}>${esc(result)}</div>`;
+    if (result && to !== 'en' && W$) html += `<div class="tr">${esc(W$.translit(result))}</div>`;
+    const dev = to !== 'en' ? result : text;
+    html += `<div class="row">${result ? '<button id="trCopy">Copy</button>' : ''}${dev && DEVANAGARI.test(dev) ? '<button id="trWrite" class="primary">Write the Devanagari</button><button id="trHear">Hear it</button>' : ''}</div>`;
+    out.innerHTML = html; out.hidden = !html;
+    $('trCopy')?.addEventListener('click', () => navigator.clipboard?.writeText(result).then(() => { $('trMsg').textContent = 'Copied'; }, () => {}));
+    $('trWrite')?.addEventListener('click', () => { if (S.mode === 'tutor') S.mode = 'trace'; practice(dev, 'deva'); });
+    const langs = [to !== 'en' ? to : from];
+    const hear = $('trHear');
+    if (hear) { if (!W$.canPlay(dev, langs)) { hear.disabled = true; hear.title = NO_SOUND; } else hear.addEventListener('click', () => W$.playNow(dev, langs).then((src) => { $('trMsg').textContent = src || ''; })); }
+  }
+  $('translateBtn').addEventListener('click', () => openTranslate());
+  $('trGo').addEventListener('click', runTranslate);
+  $('trIn').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); runTranslate(); } });
+  $('trSwap').addEventListener('click', () => {
+    const [a, b] = $('trDir').value.split('|'); $('trDir').value = `${b}|${a}`;
+    const out = $('trOut').querySelector('.big:last-of-type'); if (out) $('trIn').value = out.textContent;
+    runTranslate();
+  });
+
+  /* ---------- Transcripts ---------- */
+  // Reads YouTube's "Show transcript" text, .srt, .vtt, "[0:05] text" or plain text.
+  const toSec = (t) => { const m = /(?:(\d+):)?(\d{1,2}):(\d{2})(?:[.,](\d{1,3}))?/.exec(t); return m ? (+m[1] || 0) * 3600 + +m[2] * 60 + +m[3] + (m[4] ? +('0.' + m[4]) : 0) : null; };
+  function parseTranscript(raw) {
+    const text = raw.replace(/\r/g, '').replace(/^﻿/, '').trim();
+    if (!text) return [];
+    const cues = [];
+    const TS = /^\[?\(?((?:\d+:)?\d{1,2}:\d{2}(?:[.,]\d{1,3})?)\]?\)?/;
+    if (/-->/.test(text)) {
+      // SRT / VTT: blocks with "start --> end" then the text.
+      for (const block of text.split(/\n\s*\n/)) {
+        const lines = block.split('\n'), i = lines.findIndex((l) => l.includes('-->'));
+        if (i < 0) continue;
+        const [a, b] = lines[i].split('-->');
+        const words = lines.slice(i + 1).join(' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+        if (words) cues.push({ t: toSec(a), end: toSec(b), text: words });
+      }
+    } else {
+      const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+      const timed = lines.filter((l) => TS.test(l)).length;
+      if (timed >= Math.max(1, lines.length / 3)) {
+        // "0:05" on its own line followed by the words, or "0:05 words" on one line.
+        let cur = null;
+        for (const l of lines) {
+          const m = TS.exec(l);
+          if (m && /^\s*$/.test(l.slice(m[0].length).replace(/^[\s\-–:·]+/, '')) ) { cur = { t: toSec(m[1]), text: '' }; cues.push(cur); }
+          else if (m) { cur = { t: toSec(m[1]), text: l.slice(m[0].length).replace(/^[\s\-–:·]+/, '') }; cues.push(cur); }
+          else if (cur) cur.text = (cur.text ? cur.text + ' ' : '') + l;
+          // YouTube adds lines like "2 seconds" for screen readers: skip them.
+          if (cur && /^\d+\s+(seconds?|minutes?)(,\s*\d+\s+seconds?)?$/i.test(cur.text)) cur.text = '';
+        }
+      } else {
+        // No times: one line per sentence.
+        for (const sent of text.replace(/\n+/g, ' ').split(/(?<=[।॥?!.])\s+/)) if (sent.trim()) cues.push({ t: null, text: sent.trim() });
+      }
+    }
+    const out = cues.filter((c) => c.text && c.text.replace(/\[[^\]]*\]/g, '').trim()).map((c) => ({ ...c, text: c.text.replace(/\[[^\]]*\]/g, '').replace(/\s+/g, ' ').trim() }));
+    for (let i = 0; i < out.length; i++) if (out[i].t != null && out[i].end == null) out[i].end = out[i + 1] && out[i + 1].t != null ? out[i + 1].t : out[i].t + 4;
+    return out;
+  }
+  // Caption pieces are often half a sentence: join them until a sentence ends (or the line gets long).
+  function joinSentences(cues) {
+    const out = [];
+    for (const c of cues) {
+      const last = out[out.length - 1];
+      if (last && !/[।॥?!.]$/.test(last.text) && (last.text + ' ' + c.text).length <= 70 && (c.t == null || c.t - last.end < 1.5)) {
+        last.text += ' ' + c.text; last.end = c.end;
+      } else out.push({ ...c });
+    }
+    return out;
+  }
+  // English said during each Hindi line.
+  function alignEnglish(lines, en) {
+    if (!en.length) return lines;
+    return lines.map((l) => {
+      if (l.t == null) return l;
+      const over = en.filter((e) => e.t != null && e.t < l.end - 0.2 && (e.end ?? e.t + 3) > l.t + 0.2);
+      return over.length ? { ...l, en: over.map((e) => e.text).join(' ') } : l;
+    });
+  }
+  function ytId(url) {
+    url = (url || '').trim();
+    if (/^[\w-]{11}$/.test(url)) return url;
+    const m = /(?:youtu\.be\/|[?&]v=|\/(?:embed|shorts|live|v)\/)([\w-]{11})/.exec(url);
+    return m ? m[1] : null;
+  }
+
+  /* ---------- Saved videos ---------- */
+  const VIDEOS = 'penmanship-pad:videos';
+  const readVideos = () => { try { return JSON.parse(localStorage.getItem(VIDEOS) || '[]') || []; } catch (_) { return []; } };
+  const writeVideos = (vs) => { try { localStorage.setItem(VIDEOS, JSON.stringify(vs)); return true; } catch (_) { return false; } };
+  const curVideo = () => readVideos().find((v) => v.id === S.videoId) || null;
+  function saveVideoPos(idx) { const vs = readVideos(), v = vs.find((x) => x.id === S.videoId); if (v) { v.line = idx; writeVideos(vs); } }
+
+  const fmt = (t) => { if (t == null || isNaN(t)) return ''; t = Math.max(0, Math.floor(t)); const h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, sec = t % 60; return (h ? `${h}:${String(m).padStart(2, '0')}` : m) + ':' + String(sec).padStart(2, '0'); };
+
+  function renderVideoDlg(scrollToCur) {
+    const vs = readVideos();
+    $('vdList').innerHTML = vs.map((v) => `<option value="${esc(v.id)}">${esc(v.name || v.yt)}</option>`).join('');
+    $('vdList').hidden = !vs.length;
+    const v = curVideo() || vs[0] || null;
+    if (v && v.id !== S.videoId) { S.videoId = v.id; save(); }
+    if (v) $('vdList').value = v.id;
+    $('vdDelete').hidden = !v;
+    $('vdEmpty').hidden = !!v || !$('vdForm').hidden;
+    $('vdLinesWrap').hidden = !v || !$('vdForm').hidden;
+    if (!v) { if (!vs.length) showVideoForm(); return; }
+    $('vdInfo').textContent = `${v.lines.length} lines · ${W$ ? W$.LANG_NAME[v.lang] || '' : ''} · tap a line to start there`;
+    const tb = $('vdLines').tBodies[0]; tb.innerHTML = '';
+    v.lines.forEach((l, i) => {
+      const tr = document.createElement('tr'); if (i === (v.line || 0)) tr.className = 'cur';
+      tr.innerHTML = `<td class="num muted">${esc(fmt(l.t))}</td><td class="hi" lang="hi">${esc(l.text)}<div class="en">${esc(l.en || '')}</div></td><td><button class="tr-l" aria-label="Translate">Translate</button></td>`;
+      tr.addEventListener('click', (e) => { if (e.target.closest('.tr-l')) { openTranslate(l.text, `${v.lang || 'hi'}|en`); return; } startVideo(i); });
+      tb.appendChild(tr);
+    });
+    if (scrollToCur) tb.querySelector('tr.cur')?.scrollIntoView({ block: 'center' });
+  }
+  function showVideoForm() {
+    $('vdForm').hidden = false; $('vdEmpty').hidden = true; $('vdLinesWrap').hidden = true; $('vdMsg').textContent = '';
+    $('vdLang').value = S.videoLang || 'hi';
+  }
+  $('videoBtn').addEventListener('click', () => { $('vdForm').hidden = true; $('videoDlg').showModal(); renderVideoDlg(true); });
+  $('vdNew').addEventListener('click', showVideoForm);
+  $('vdCancel').addEventListener('click', () => { $('vdForm').hidden = true; renderVideoDlg(); });
+  $('vdList').addEventListener('change', () => { S.videoId = $('vdList').value; save(); renderVideoDlg(true); });
+  $('vdDelete').addEventListener('click', () => {
+    const v = curVideo(); if (!v || !confirm(`Delete “${v.name || v.yt}” and its transcript?`)) return;
+    writeVideos(readVideos().filter((x) => x.id !== v.id)); if (S.videoOn) stopVideo(); S.videoId = null; save(); renderVideoDlg();
+  });
+  $('vdHiFile').addEventListener('change', async () => { const f = $('vdHiFile').files[0]; if (f) $('vdHi').value = await f.text(); $('vdHiFile').value = ''; });
+  $('vdSave').addEventListener('click', () => {
+    const yt = ytId($('vdUrl').value);
+    if (!yt) { $('vdMsg').textContent = 'That doesn’t look like a YouTube link.'; return; }
+    let lines = parseTranscript($('vdHi').value);
+    if (!lines.length) { $('vdMsg').textContent = 'Paste the transcript first.'; return; }
+    if ($('vdJoin').checked) lines = joinSentences(lines);
+    lines = alignEnglish(lines, parseTranscript($('vdEn').value)).map((l) => ({ t: l.t, end: l.end, text: l.text, ...(l.en ? { en: l.en } : {}) }));
+    const v = { id: 'v' + Date.now().toString(36), yt, name: $('vdName').value.trim(), lang: $('vdLang').value, lines, line: 0, added: Date.now() };
+    const vs = readVideos(); vs.push(v);
+    if (!writeVideos(vs)) { $('vdMsg').textContent = 'Not enough storage left on this device for that transcript.'; return; }
+    S.videoId = v.id; S.videoLang = v.lang; save();
+    $('vdUrl').value = $('vdName').value = $('vdHi').value = $('vdEn').value = '';
+    $('vdForm').hidden = true;
+    startVideo(0);
+  });
+  $('vdStart').addEventListener('click', () => { const v = curVideo(); if (v) startVideo(v.line || 0); });
+
+  /* ---------- Writing along: the current line ---------- */
+  let vIdx = 0, vLines = [], vData = null;
+  function startVideo(i) {
+    vData = curVideo(); if (!vData) return;
+    vLines = vData.lines; S.videoOn = true; S.videoLang = vData.lang; save();
+    document.querySelectorAll('dialog[open]').forEach((d) => d.close());
+    openPip(vData);
+    gotoLine(i, { seek: true, play: true });
+  }
+  function stopVideo() {
+    S.videoOn = false; save();
+    $('lineBar').hidden = true; $('pip').hidden = true;
+    try { ytp && ytp.pauseVideo && ytp.pauseVideo(); } catch (_) {}
+  }
+  function gotoLine(i, { seek = false, play = false } = {}) {
+    if (!vLines.length) return;
+    vIdx = Math.max(0, Math.min(vLines.length - 1, i));
+    const l = vLines[vIdx];
+    saveVideoPos(vIdx);
+    if (S.mode === 'tutor') S.mode = 'trace';
+    if (S.text !== l.text) practice(l.text, 'deva');
+    showLine();
+    stoppedAt = -1;
+    if (seek && l.t != null) ytSeek(l.t, play);
+  }
+  function showLine() {
+    const bar = $('lineBar'), l = vLines[vIdx]; if (!l) { bar.hidden = true; return; }
+    bar.hidden = false;
+    bar.querySelector('.hi').textContent = l.text;
+    $('lbPos').textContent = `${vIdx + 1} / ${vLines.length}`;
+    $('lbPrev').disabled = vIdx <= 0; $('lbNext').disabled = vIdx >= vLines.length - 1;
+    const en = bar.querySelector('.en');
+    if (l.en) en.textContent = l.en;
+    else {
+      en.innerHTML = '<i>translating…</i>';
+      const want = vIdx;
+      translate(l.text, `${vData.lang || 'hi'}|en`).then((r) => { if (vIdx === want) en.innerHTML = r.text ? `${esc(r.text)} <span class="muted small">(machine)</span>` : `<span class="muted">${esc(r.error)}</span>`; });
+      // Get the next line ready too.
+      if (vLines[vIdx + 1] && !vLines[vIdx + 1].en) translate(vLines[vIdx + 1].text, `${vData.lang || 'hi'}|en`);
+    }
+  }
+  $('lbPrev').addEventListener('click', () => gotoLine(vIdx - 1, { seek: true, play: true }));
+  $('lbNext').addEventListener('click', () => gotoLine(vIdx + 1, { seek: true, play: true }));
+  $('lbLines').addEventListener('click', () => { $('vdForm').hidden = true; $('videoDlg').showModal(); renderVideoDlg(true); });
+  $('lbTranslate').addEventListener('click', () => { const l = vLines[vIdx]; if (l) openTranslate(l.text, `${vData.lang || 'hi'}|en`); });
+  $('lbClose').addEventListener('click', stopVideo);
+
+  /* ---------- The floating YouTube player ---------- */
+  let ytp = null, ytReady = false, ytApi = null, stoppedAt = -1, pending = null;
+  function loadYT() {
+    if (ytApi) return ytApi;
+    ytApi = new Promise((res) => {
+      if (window.YT && window.YT.Player) return res(window.YT);
+      const prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => { if (prev) prev(); res(window.YT); };
+      const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api'; sc.async = true;
+      sc.onerror = () => { $('pipTime').textContent = 'YouTube didn’t load'; };
+      document.head.appendChild(sc);
+    });
+    return ytApi;
+  }
+  function placePip() {
+    const el = $('pip'), P = S.pip || {};
+    el.className = P.size === 's' ? 's' : P.size === 'l' ? 'l' : '';
+    $('pipSize').textContent = (P.size || 'm').toUpperCase();
+    const w = el.offsetWidth || 360, h = el.offsetHeight || 300;
+    const x = P.x == null ? innerWidth - w - 24 : P.x, y = P.y == null ? innerHeight - h - 90 : P.y;
+    el.style.left = `${Math.max(4, Math.min(innerWidth - w - 4, x))}px`;
+    el.style.top = `${Math.max(4, Math.min(innerHeight - 40, y))}px`;
+  }
+  async function openPip(v) {
+    const el = $('pip'); el.hidden = false; $('pipTitle').textContent = v.name || 'YouTube';
+    placePip();
+    const YT = await loadYT();
+    if (ytp && ytp.__yt === v.yt) return;
+    if (ytp) { try { ytp.destroy(); } catch (_) {} ytp = null; ytReady = false; $('pipVideo').innerHTML = '<div id="ytHost"></div>'; }
+    ytp = new YT.Player('ytHost', {
+      videoId: v.yt, width: '100%', height: '100%',
+      playerVars: { playsinline: 1, rel: 0, modestbranding: 1, cc_load_policy: 0 },
+      events: {
+        onReady: () => { ytReady = true; setRate(S.videoRate || 1); if (pending) { const p = pending; pending = null; ytSeek(p.t, p.play); } },
+        onStateChange: (e) => { $('pipPlay').innerHTML = e.data === 1 ? '<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>' : '<svg viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></svg>'; },
+      },
+    });
+    ytp.__yt = v.yt;
+  }
+  function ytSeek(t, play) {
+    if (!ytp || !ytReady) { pending = { t, play }; return; }
+    try { ytp.seekTo(Math.max(0, t), true); if (play) ytp.playVideo(); } catch (_) {}
+  }
+  const ytTime = () => { try { return ytp && ytReady ? ytp.getCurrentTime() : 0; } catch (_) { return 0; } };
+  const ytPlaying = () => { try { return ytp && ytReady && ytp.getPlayerState() === 1; } catch (_) { return false; } };
+  function setRate(r) { S.videoRate = r; save(); $('pipRate').textContent = `${r}×`; try { ytp && ytReady && ytp.setPlaybackRate(r); } catch (_) {} }
+  $('pipPlay').addEventListener('click', () => {
+    if (!ytp || !ytReady) return;
+    if (ytPlaying()) ytp.pauseVideo();
+    else {
+      // Paused at the end of a line: play on into the next one.
+      const l = vLines[vIdx];
+      if (l && l.end != null && ytTime() >= l.end - 0.3 && vIdx < vLines.length - 1) gotoLine(vIdx + 1, { seek: true, play: true });
+      else ytp.playVideo();
+    }
+  });
+  $('pipBack').addEventListener('click', () => ytSeek(ytTime() - 5, ytPlaying()));
+  $('pipFwd').addEventListener('click', () => ytSeek(ytTime() + 5, ytPlaying()));
+  $('pipPrevLine').addEventListener('click', () => gotoLine(vIdx - 1, { seek: true, play: true }));
+  $('pipNextLine').addEventListener('click', () => gotoLine(vIdx + 1, { seek: true, play: true }));
+  $('pipRate').addEventListener('click', () => { const R = [1, 0.75, 0.5]; setRate(R[(R.indexOf(S.videoRate || 1) + 1) % R.length]); });
+  $('pipStop').addEventListener('click', () => { S.videoStop = S.videoStop === false; $('pipStop').setAttribute('aria-pressed', String(S.videoStop !== false)); save(); });
+  $('pipStop').setAttribute('aria-pressed', String(S.videoStop !== false));
+  $('pipSize').addEventListener('click', () => { const P = S.pip || (S.pip = {}); P.size = { s: 'm', m: 'l', l: 's' }[P.size || 'm']; save(); placePip(); });
+  $('pipHide').addEventListener('click', () => { $('pip').hidden = true; try { ytp && ytp.pauseVideo(); } catch (_) {} });
+  // Seek bar: drag to any point; the line under it becomes the one to write.
+  let seeking = false;
+  $('pipSeek').addEventListener('input', () => { seeking = true; $('pipTime').textContent = `${fmt(+$('pipSeek').value)} / ${fmt(ytp && ytReady ? ytp.getDuration() : 0)}`; });
+  $('pipSeek').addEventListener('change', () => {
+    seeking = false; const t = +$('pipSeek').value; ytSeek(t, ytPlaying());
+    const i = lineAt(t); if (i >= 0 && i !== vIdx) gotoLine(i);
+  });
+  function lineAt(t) { let k = -1; vLines.forEach((l, i) => { if (l.t != null && l.t <= t + 0.05) k = i; }); return k; }
+  // Follow the video: write the line being spoken, and pause at its end so there's time to write it.
+  setInterval(() => {
+    if (!S.videoOn || !ytp || !ytReady || $('pip').hidden) return;
+    const t = ytTime(), d = ytp.getDuration ? ytp.getDuration() : 0;
+    if (!seeking && d) { $('pipSeek').max = String(d); $('pipSeek').value = String(t); $('pipTime').textContent = `${fmt(t)} / ${fmt(d)}`; }
+    if (!ytPlaying()) return;
+    // First: the line you're writing just ended, so pause (before moving on to the next one).
+    const l = vLines[vIdx];
+    if (S.videoStop !== false && l && l.end != null && t >= l.end - 0.12 && t < l.end + 2 && stoppedAt !== vIdx) { stoppedAt = vIdx; ytp.pauseVideo(); return; }
+    const i = lineAt(t);
+    if (i >= 0 && i !== vIdx && !active) gotoLine(i);
+  }, 150);
+  // Drag the player by its top bar, anywhere on the screen.
+  (() => {
+    const el = $('pip'), bar = $('pipBar'); let d = null;
+    bar.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button')) return;
+      d = { id: e.pointerId, dx: e.clientX - el.offsetLeft, dy: e.clientY - el.offsetTop };
+      bar.setPointerCapture(e.pointerId); el.classList.add('dragging'); e.preventDefault();
+    });
+    bar.addEventListener('pointermove', (e) => {
+      if (!d || e.pointerId !== d.id) return;
+      el.style.left = `${Math.max(4, Math.min(innerWidth - el.offsetWidth - 4, e.clientX - d.dx))}px`;
+      el.style.top = `${Math.max(4, Math.min(innerHeight - 40, e.clientY - d.dy))}px`;
+    });
+    const end = () => { if (!d) return; d = null; el.classList.remove('dragging'); S.pip = { ...(S.pip || {}), x: el.offsetLeft, y: el.offsetTop }; save(); };
+    bar.addEventListener('pointerup', end); bar.addEventListener('pointercancel', end);
+    addEventListener('resize', () => { if (!el.hidden) placePip(); });
+  })();
+  // Pick up where you left off after a reload.
+  if (S.videoOn && curVideo()) setTimeout(() => { vData = curVideo(); vLines = vData.lines; vIdx = Math.min(vData.line || 0, vLines.length - 1); showLine(); openPip(vData).then(() => { const l = vLines[vIdx]; if (l && l.t != null) ytSeek(l.t, false); }); }, 0);
 
   /* ---------- Sizing + theme ---------- */
   function resize() {
