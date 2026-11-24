@@ -1,1 +1,2299 @@
-{}
+{
+ "hi": [
+  {
+   "f": "hi/0001.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Aditya_suthar02-hi.wav",
+   "speaker": "Aditya suthar02"
+  }
+ ],
+ "mr": [],
+ "अंडा": [
+  {
+   "f": "hi/0002.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%85%E0%A4%82%E0%A4%A1%E0%A4%BE.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "अगर": [
+  {
+   "f": "hi/0003.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%85%E0%A4%97%E0%A4%B0.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0001.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Sabretooth-%E0%A4%85%E0%A4%97%E0%A4%B0.wav",
+   "speaker": "Sabretooth"
+  }
+ ],
+ "अच्छा": [
+  {
+   "f": "hi/0004.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%85%E0%A4%9A%E0%A5%8D%E0%A4%9B%E0%A4%BE.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "अतिथि": [
+  {
+   "f": "hi/0005.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%85%E0%A4%A4%E0%A4%BF%E0%A4%A5%E0%A4%BF.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "अतिथि देवो भव": [],
+ "अपनी": [
+  {
+   "f": "hi/0006.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Goutam1962-%E0%A4%85%E0%A4%AA%E0%A4%A8%E0%A5%80.wav",
+   "speaker": "Goutam1962"
+  }
+ ],
+ "अब": [
+  {
+   "f": "hi/0007.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%85%E0%A4%AC.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "आंबा": [
+  {
+   "f": "mr/0002.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%86%E0%A4%82%E0%A4%AC%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "आई": [
+  {
+   "f": "mr/0003.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%86%E0%A4%88.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "आग": [
+  {
+   "f": "hi/0008.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%86%E0%A4%97.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0004.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%86%E0%A4%97.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "आज": [
+  {
+   "f": "hi/0009.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%86%E0%A4%9C.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0005.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%86%E0%A4%9C.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "आठ": [
+  {
+   "f": "hi/0010.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%86%E0%A4%A0.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0006.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%86%E0%A4%A0.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "आता": [
+  {
+   "f": "mr/0007.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%86%E0%A4%A4%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "आता माझी सटकली": [],
+ "आदमी": [
+  {
+   "f": "hi/0011.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%86%E0%A4%A6%E0%A4%AE%E0%A5%80.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "आप": [
+  {
+   "f": "hi/0012.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%86%E0%A4%AA.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "आप कैसे हैं": [],
+ "आभारी": [],
+ "आभारी आहे": [],
+ "आम": [
+  {
+   "f": "hi/0013.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%86%E0%A4%AE.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0008.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%86%E0%A4%AE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "आम्ही": [
+  {
+   "f": "mr/0009.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%86%E0%A4%AE%E0%A5%8D%E0%A4%B9%E0%A5%80.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "आहात": [
+  {
+   "f": "mr/0010.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%86%E0%A4%B9%E0%A4%BE%E0%A4%A4.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "आहे": [
+  {
+   "f": "mr/0011.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%86%E0%A4%B9%E0%A5%87.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "इज़": [],
+ "ऊन": [
+  {
+   "f": "hi/0014.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Medhi_jyoti-%E0%A4%8A%E0%A4%A8.wav",
+   "speaker": "Medhi jyoti"
+  },
+  {
+   "f": "mr/0012.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%8A%E0%A4%A8.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "एक": [
+  {
+   "f": "hi/0015.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%8F%E0%A4%95.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0013.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%8F%E0%A4%95.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "ऑल": [],
+ "ऑल इज़ वेल": [],
+ "और": [
+  {
+   "f": "hi/0016.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%94%E0%A4%B0.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "कभी": [],
+ "कभी कभी कुछ जीतने के लिए कुछ हारना पड़ता है": [],
+ "कमल": [
+  {
+   "f": "hi/0017.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%95%E0%A4%AE%E0%A4%B2.wav",
+   "speaker": "ATallSteve"
+  }
+ ],
+ "कल": [
+  {
+   "f": "hi/0018.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%95%E0%A4%B2.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0014.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%95%E0%A4%B2.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "कलम": [],
+ "कळस": [],
+ "कसे": [],
+ "काका": [
+  {
+   "f": "mr/0015.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%95%E0%A4%BE%E0%A4%95%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "कान": [
+  {
+   "f": "hi/0019.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%95%E0%A4%BE%E0%A4%A8.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0016.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%95%E0%A4%BE%E0%A4%A8.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "काम": [
+  {
+   "f": "hi/0020.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%95%E0%A4%BE%E0%A4%AE.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0017.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%B5%E0%A4%BF%E0%A4%A8%E0%A4%AF%E0%A4%BE_%E0%A4%B2%E0%A5%81%E0%A4%95%E0%A4%A4%E0%A5%81%E0%A4%95%E0%A5%87-%E0%A4%95%E0%A4%BE%E0%A4%AE.wav",
+   "speaker": "विनया लुकतुके"
+  }
+ ],
+ "कितने": [],
+ "कितने आदमी थे": [],
+ "किताब": [
+  {
+   "f": "hi/0021.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%95%E0%A4%BF%E0%A4%A4%E0%A4%BE%E0%A4%AC.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "की": [
+  {
+   "f": "mr/0018.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%95%E0%A5%80.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "कुछ": [
+  {
+   "f": "hi/0022.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%95%E0%A5%81%E0%A4%9B.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "कुटुम्बकम्": [],
+ "कुत्ता": [
+  {
+   "f": "hi/0023.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%95%E0%A5%81%E0%A4%A4%E0%A5%8D%E0%A4%A4%E0%A4%BE.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "कुत्रा": [
+  {
+   "f": "mr/0019.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Anagha62-%E0%A4%95%E0%A5%81%E0%A4%A4%E0%A5%8D%E0%A4%B0%E0%A4%BE.wav",
+   "speaker": "Anagha62"
+  }
+ ],
+ "कूल": [],
+ "कृपया": [],
+ "के": [
+  {
+   "f": "hi/0024.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Medhi_jyoti-%E0%A4%95%E0%A5%87.wav",
+   "speaker": "Medhi jyoti"
+  },
+  {
+   "f": "mr/0020.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%95%E0%A5%87.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "केला": [
+  {
+   "f": "hi/0025.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%95%E0%A5%87%E0%A4%B2%E0%A4%BE.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0021.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%95%E0%A5%87%E0%A4%B2%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "केळे": [
+  {
+   "f": "mr/0022.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%95%E0%A5%87%E0%A4%B3%E0%A5%87.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "कैसे": [],
+ "को": [
+  {
+   "f": "mr/0023.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%95%E0%A5%8B.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "कोडी": [
+  {
+   "f": "mr/0024.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Sanjusao-%E0%A4%95%E0%A5%8B%E0%A4%A1%E0%A5%80.wav",
+   "speaker": "Sanjusao"
+  }
+ ],
+ "कोड्स": [],
+ "क्षमा": [],
+ "खाना": [
+  {
+   "f": "hi/0026.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%96%E0%A4%BE%E0%A4%A8%E0%A4%BE.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "खुश": [
+  {
+   "f": "mr/0025.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%96%E0%A5%81%E0%A4%B6.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "खेल": [
+  {
+   "f": "hi/0027.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%96%E0%A5%87%E0%A4%B2.wav",
+   "speaker": "ATallSteve"
+  }
+ ],
+ "खेळ": [
+  {
+   "f": "mr/0026.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Sanjusao-%E0%A4%96%E0%A5%87%E0%A4%B3.wav",
+   "speaker": "Sanjusao"
+  }
+ ],
+ "गणपती": [
+  {
+   "f": "mr/0027.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Neelima64-%E0%A4%97%E0%A4%A3%E0%A4%AA%E0%A4%A4%E0%A5%80.wav",
+   "speaker": "Neelima64"
+  }
+ ],
+ "गणपती बाप्पा मोरया": [],
+ "गरीब": [],
+ "गाँव": [],
+ "गाडी": [],
+ "गाव": [
+  {
+   "f": "mr/0028.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Ujjwala_(Ujjwala_Barve)-%E0%A4%97%E0%A4%BE%E0%A4%B5.wav",
+   "speaker": "Ujjwala (Ujjwala Barve)"
+  }
+ ],
+ "गुरु": [
+  {
+   "f": "hi/0028.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Mauryaar-%E0%A4%97%E0%A5%81%E0%A4%B0%E0%A5%81.wav",
+   "speaker": "Mauryaar"
+  },
+  {
+   "f": "mr/0029.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%97%E0%A5%81%E0%A4%B0%E0%A5%81.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "गुलाब": [
+  {
+   "f": "hi/0029.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Sriveenkat-%E0%A4%97%E0%A5%81%E0%A4%B2%E0%A4%BE%E0%A4%AC.wav",
+   "speaker": "Sriveenkat"
+  },
+  {
+   "f": "mr/0030.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%97%E0%A5%81%E0%A4%B2%E0%A4%BE%E0%A4%AC.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "गोड": [
+  {
+   "f": "mr/0031.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%97%E0%A5%8B%E0%A4%A1.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "घर": [
+  {
+   "f": "hi/0030.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Mauryaar-%E0%A4%98%E0%A4%B0.wav",
+   "speaker": "Mauryaar"
+  },
+  {
+   "f": "mr/0032.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%98%E0%A4%B0.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "घोड़ा": [
+  {
+   "f": "hi/0031.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%98%E0%A5%8B%E0%A4%A1%E0%A4%BC%E0%A4%BE.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "घोडा": [
+  {
+   "f": "mr/0033.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Anagha62-%E0%A4%98%E0%A5%8B%E0%A4%A1%E0%A4%BE.wav",
+   "speaker": "Anagha62"
+  }
+ ],
+ "घ्या": [],
+ "चमक": [],
+ "चाँद": [
+  {
+   "f": "hi/0032.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Mauryaar-%E0%A4%9A%E0%A4%BE%E0%A4%81%E0%A4%A6.wav",
+   "speaker": "Mauryaar"
+  }
+ ],
+ "चांगला": [
+  {
+   "f": "mr/0034.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%9A%E0%A4%BE%E0%A4%82%E0%A4%97%E0%A4%B2%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "चार": [
+  {
+   "f": "hi/0033.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%9A%E0%A4%BE%E0%A4%B0.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0035.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%9A%E0%A4%BE%E0%A4%B0.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "चाहिए": [],
+ "चीनी": [
+  {
+   "f": "hi/0034.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%9A%E0%A5%80%E0%A4%A8%E0%A5%80.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "चूहा": [
+  {
+   "f": "hi/0035.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%9A%E0%A5%82%E0%A4%B9%E0%A4%BE.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "छह": [
+  {
+   "f": "hi/0036.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%9B%E0%A4%B9.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "जब": [],
+ "जय": [],
+ "जय महाराष्ट्र": [],
+ "जय हिंद": [],
+ "जयते": [],
+ "जल": [
+  {
+   "f": "hi/0037.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Mauryaar-%E0%A4%9C%E0%A4%B2.wav",
+   "speaker": "Mauryaar"
+  },
+  {
+   "f": "mr/0036.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%9C%E0%A4%B2.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "ज़िंदगी": [
+  {
+   "f": "hi/0038.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%9C%E0%A4%BC%E0%A4%BF%E0%A4%82%E0%A4%A6%E0%A4%97%E0%A5%80.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "जा": [
+  {
+   "f": "mr/0037.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%9C%E0%A4%BE.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "जा सिमरन जा, जी ले अपनी ज़िंदगी": [],
+ "जाना": [
+  {
+   "f": "hi/0039.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%9C%E0%A4%BE%E0%A4%A8%E0%A4%BE.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "जी": [
+  {
+   "f": "hi/0040.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%9C%E0%A5%80.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0038.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%9C%E0%A5%80.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "जीतने": [],
+ "जीवन": [
+  {
+   "f": "hi/0041.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%9C%E0%A5%80%E0%A4%B5%E0%A4%A8.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0039.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%9C%E0%A5%80%E0%A4%B5%E0%A4%A8.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "जोश": [],
+ "ज्ञान": [
+  {
+   "f": "hi/0042.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-SHUBHAM_KR_SONI-%E0%A4%9C%E0%A5%8D%E0%A4%9E%E0%A4%BE%E0%A4%A8.wav",
+   "speaker": "SHUBHAM KR SONI"
+  },
+  {
+   "f": "mr/0040.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Neelima64-%E0%A4%9C%E0%A5%8D%E0%A4%9E%E0%A4%BE%E0%A4%A8.wav",
+   "speaker": "Neelima64"
+  }
+ ],
+ "झाड": [
+  {
+   "f": "mr/0041.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%9D%E0%A4%BE%E0%A4%A1.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "झिंग": [],
+ "झिंग झिंग झिंगाट": [],
+ "झिंगाट": [],
+ "ठीक": [
+  {
+   "f": "hi/0043.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%A0%E0%A5%80%E0%A4%95.wav",
+   "speaker": "ATallSteve"
+  },
+  {
+   "f": "mr/0042.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%A0%E0%A5%80%E0%A4%95.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "डर": [
+  {
+   "f": "hi/0044.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%A1%E0%A4%B0.wav",
+   "speaker": "ATallSteve"
+  }
+ ],
+ "डाळ": [],
+ "डॉन": [],
+ "डॉन को पकड़ना मुश्किल ही नहीं, नामुमकिन है": [],
+ "तब": [
+  {
+   "f": "hi/0045.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Medhi_jyoti-%E0%A4%A4%E0%A4%AC.wav",
+   "speaker": "Medhi jyoti"
+  }
+ ],
+ "ताई": [],
+ "तारीख़": [
+  {
+   "f": "hi/0046.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%A4%E0%A4%BE%E0%A4%B0%E0%A5%80%E0%A4%96%E0%A4%BC.wav",
+   "speaker": "ATallSteve"
+  }
+ ],
+ "तारीख़ पे तारीख़": [],
+ "तिळगूळ": [
+  {
+   "f": "mr/0043.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Neelima64-%E0%A4%A4%E0%A4%BF%E0%A4%B3%E0%A4%97%E0%A5%82%E0%A4%B3.wav",
+   "speaker": "Neelima64"
+  }
+ ],
+ "तिळगूळ घ्या, गोड गोड बोला": [],
+ "तीन": [
+  {
+   "f": "hi/0047.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%A4%E0%A5%80%E0%A4%A8.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0044.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%A4%E0%A5%80%E0%A4%A8.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "तुम्ही": [
+  {
+   "f": "mr/0045.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%A4%E0%A5%81%E0%A4%AE%E0%A5%8D%E0%A4%B9%E0%A5%80.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "तुम्ही कसे आहात": [],
+ "तू": [
+  {
+   "f": "hi/0048.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%A4%E0%A5%82.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0046.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%A4%E0%A5%82.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "तेल": [
+  {
+   "f": "hi/0049.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%A4%E0%A5%87%E0%A4%B2.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0047.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%A4%E0%A5%87%E0%A4%B2.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "तोड़ेंगे": [],
+ "थे": [
+  {
+   "f": "mr/0048.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%A5%E0%A5%87.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "द": [
+  {
+   "f": "mr/0049.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%A6.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "दस": [],
+ "दहा": [
+  {
+   "f": "mr/0050.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%A6%E0%A4%B9%E0%A4%BE.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "दादा": [
+  {
+   "f": "hi/0050.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%A6%E0%A4%BE%E0%A4%A6%E0%A4%BE.wav",
+   "speaker": "ATallSteve"
+  }
+ ],
+ "दिन": [
+  {
+   "f": "hi/0051.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%A6%E0%A4%BF%E0%A4%A8.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "दिल": [
+  {
+   "f": "hi/0052.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%A6%E0%A4%BF%E0%A4%B2.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "दिवस": [
+  {
+   "f": "mr/0051.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%A6%E0%A4%BF%E0%A4%B5%E0%A4%B8.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "दिवाली": [],
+ "दिवाली की शुभकामनाएँ": [],
+ "दिवाळीच्या": [],
+ "दिवाळीच्या हार्दिक शुभेच्छा": [],
+ "दीजिए": [],
+ "दीदी": [],
+ "दीपावली": [],
+ "दुःख": [
+  {
+   "f": "mr/0052.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%B5%E0%A4%BF%E0%A4%A8%E0%A4%AF%E0%A4%BE_%E0%A4%B2%E0%A5%81%E0%A4%95%E0%A4%A4%E0%A5%81%E0%A4%95%E0%A5%87-%E0%A4%A6%E0%A5%81%E0%A4%83%E0%A4%96.wav",
+   "speaker": "विनया लुकतुके"
+  }
+ ],
+ "दुकान": [
+  {
+   "f": "hi/0053.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-SHUBHAM_KR_SONI-%E0%A4%A6%E0%A5%81%E0%A4%95%E0%A4%BE%E0%A4%A8.wav",
+   "speaker": "SHUBHAM KR SONI"
+  },
+  {
+   "f": "mr/0053.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%A6%E0%A5%81%E0%A4%95%E0%A4%BE%E0%A4%A8.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "दूध": [
+  {
+   "f": "hi/0054.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%A6%E0%A5%82%E0%A4%A7.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0054.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Neelima64-%E0%A4%A6%E0%A5%82%E0%A4%A7.wav",
+   "speaker": "Neelima64"
+  }
+ ],
+ "देवो": [],
+ "देश": [
+  {
+   "f": "hi/0055.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Medhi_jyoti-%E0%A4%A6%E0%A5%87%E0%A4%B6.wav",
+   "speaker": "Medhi jyoti"
+  }
+ ],
+ "दो": [
+  {
+   "f": "hi/0056.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%A6%E0%A5%8B.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0055.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%A6%E0%A5%8B.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "दोन": [
+  {
+   "f": "mr/0056.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%A6%E0%A5%8B%E0%A4%A8.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "दोस्त": [
+  {
+   "f": "hi/0057.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Sriveenkat-%E0%A4%A6%E0%A5%8B%E0%A4%B8%E0%A5%8D%E0%A4%A4.wav",
+   "speaker": "Sriveenkat"
+  }
+ ],
+ "दोस्ती": [
+  {
+   "f": "hi/0058.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%A6%E0%A5%8B%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A5%80.wav",
+   "speaker": "ATallSteve"
+  }
+ ],
+ "द्या": [],
+ "धन": [
+  {
+   "f": "hi/0059.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Medhi_jyoti-%E0%A4%A7%E0%A4%A8.wav",
+   "speaker": "Medhi jyoti"
+  },
+  {
+   "f": "mr/0057.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%A7%E0%A4%A8.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "धन्यवाद": [
+  {
+   "f": "hi/0060.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Mauryaar-%E0%A4%A7%E0%A4%A8%E0%A5%8D%E0%A4%AF%E0%A4%B5%E0%A4%BE%E0%A4%A6.wav",
+   "speaker": "Mauryaar"
+  }
+ ],
+ "न": [
+  {
+   "f": "hi/0061.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-SHUBHAM_KR_SONI-%E0%A4%A8.wav",
+   "speaker": "SHUBHAM KR SONI"
+  },
+  {
+   "f": "mr/0058.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%A8.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "नऊ": [
+  {
+   "f": "mr/0059.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%A8%E0%A4%8A.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "नए": [],
+ "नए साल की शुभकामनाएँ": [],
+ "नगर": [
+  {
+   "f": "hi/0062.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%A8%E0%A4%97%E0%A4%B0.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0060.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%A8%E0%A4%97%E0%A4%B0.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "नदी": [
+  {
+   "f": "hi/0063.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%A8%E0%A4%A6%E0%A5%80.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0061.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Anagha62-%E0%A4%A8%E0%A4%A6%E0%A5%80.wav",
+   "speaker": "Anagha62"
+  }
+ ],
+ "नमक": [
+  {
+   "f": "hi/0064.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%A8%E0%A4%AE%E0%A4%95.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "नमस्कार": [
+  {
+   "f": "hi/0065.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-SHUBHAM_KR_SONI-%E0%A4%A8%E0%A4%AE%E0%A4%B8%E0%A5%8D%E0%A4%95%E0%A4%BE%E0%A4%B0.wav",
+   "speaker": "SHUBHAM KR SONI"
+  },
+  {
+   "f": "mr/0062.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%A8%E0%A4%AE%E0%A4%B8%E0%A5%8D%E0%A4%95%E0%A4%BE%E0%A4%B0.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "नमस्ते": [
+  {
+   "f": "hi/0066.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%A8%E0%A4%AE%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A5%87.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "नवीन": [
+  {
+   "f": "mr/0063.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%A8%E0%A4%B5%E0%A5%80%E0%A4%A8.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "नवीन वर्षाच्या शुभेच्छा": [],
+ "नहीं": [
+  {
+   "f": "hi/0067.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%A8%E0%A4%B9%E0%A5%80%E0%A4%82.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "नाक": [
+  {
+   "f": "hi/0068.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%A8%E0%A4%BE%E0%A4%95.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0064.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%A8%E0%A4%BE%E0%A4%95.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "नाम": [
+  {
+   "f": "hi/0069.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%A8%E0%A4%BE%E0%A4%AE.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0065.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%A8%E0%A4%BE%E0%A4%AE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "नामुमकिन": [],
+ "नाव": [
+  {
+   "f": "hi/0070.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%A8%E0%A4%BE%E0%A4%B5.wav",
+   "speaker": "ATallSteve"
+  },
+  {
+   "f": "mr/0066.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%A8%E0%A4%BE%E0%A4%B5.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "नाही": [
+  {
+   "f": "mr/0067.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%A8%E0%A4%BE%E0%A4%B9%E0%A5%80.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "नौ": [
+  {
+   "f": "hi/0071.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%A8%E0%A5%8C.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0068.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%A8%E0%A5%8C.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "नौका": [
+  {
+   "f": "mr/0069.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%A8%E0%A5%8C%E0%A4%95%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "पंखा": [],
+ "पकड़ना": [
+  {
+   "f": "hi/0072.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%AA%E0%A4%95%E0%A4%A1%E0%A4%BC%E0%A4%A8%E0%A4%BE.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "पड़ता": [],
+ "पाँच": [
+  {
+   "f": "hi/0073.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%AA%E0%A4%BE%E0%A4%81%E0%A4%9A.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "पाच": [
+  {
+   "f": "mr/0070.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%AA%E0%A4%BE%E0%A4%9A.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "पाणी": [
+  {
+   "f": "mr/0071.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AA%E0%A4%BE%E0%A4%A3%E0%A5%80.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "पाणी द्या": [],
+ "पानी": [
+  {
+   "f": "hi/0074.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%AA%E0%A4%BE%E0%A4%A8%E0%A5%80.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "पानी दीजिए": [],
+ "पापा": [],
+ "पाय": [
+  {
+   "f": "mr/0072.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Vj18081991-%E0%A4%AA%E0%A4%BE%E0%A4%AF.wav",
+   "speaker": "Vj18081991"
+  }
+ ],
+ "पास": [],
+ "पिता": [
+  {
+   "f": "hi/0075.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%AA%E0%A4%BF%E0%A4%A4%E0%A4%BE.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0073.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AA%E0%A4%BF%E0%A4%A4%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "पुढच्या": [],
+ "पुढच्या वर्षी लवकर या": [],
+ "पुन्हा": [
+  {
+   "f": "mr/0074.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AA%E0%A5%81%E0%A4%A8%E0%A5%8D%E0%A4%B9%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "पुन्हा भेटू": [],
+ "पुल": [
+  {
+   "f": "hi/0076.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%AA%E0%A5%81%E0%A4%B2.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "पुस्तक": [
+  {
+   "f": "hi/0077.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Mauryaar-%E0%A4%AA%E0%A5%81%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A4%95.wav",
+   "speaker": "Mauryaar"
+  },
+  {
+   "f": "mr/0075.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%AD%E0%A4%BE%E0%A4%B7%E0%A4%BE%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A5%80-%E0%A4%AA%E0%A5%81%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A4%95.wav",
+   "speaker": "भाषाप्रेमी"
+  }
+ ],
+ "पूल": [
+  {
+   "f": "mr/0076.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Ujjwala_(Ujjwala_Barve)-%E0%A4%AA%E0%A5%82%E0%A4%B2.wav",
+   "speaker": "Ujjwala (Ujjwala Barve)"
+  }
+ ],
+ "पे": [
+  {
+   "f": "hi/0078.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%AA%E0%A5%87.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0077.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%AA%E0%A5%87.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "पेड़": [
+  {
+   "f": "hi/0079.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%AA%E0%A5%87%E0%A4%A1%E0%A4%BC.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "पैसा": [
+  {
+   "f": "hi/0080.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%AA%E0%A5%88%E0%A4%B8%E0%A4%BE.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0078.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AA%E0%A5%88%E0%A4%B8%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "पोळी": [
+  {
+   "f": "mr/0079.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Meghanee_Gambhir-%E0%A4%AA%E0%A5%8B%E0%A4%B3%E0%A5%80.wav",
+   "speaker": "Meghanee Gambhir"
+  }
+ ],
+ "प्यार": [
+  {
+   "f": "hi/0081.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%AA%E0%A5%8D%E0%A4%AF%E0%A4%BE%E0%A4%B0.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "प्रेम": [
+  {
+   "f": "hi/0082.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0080.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "फिर": [
+  {
+   "f": "hi/0083.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Mauryaar-%E0%A4%AB%E0%A4%BF%E0%A4%B0.wav",
+   "speaker": "Mauryaar"
+  }
+ ],
+ "फिर मिलेंगे": [],
+ "फूल": [
+  {
+   "f": "hi/0084.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%AB%E0%A5%82%E0%A4%B2.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0081.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AB%E0%A5%82%E0%A4%B2.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "बड़ी": [],
+ "बदल": [
+  {
+   "f": "mr/0082.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AC%E0%A4%A6%E0%A4%B2.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "बस": [
+  {
+   "f": "mr/0083.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-JayashreeVI-%E0%A4%AC%E0%A4%B8.wav",
+   "speaker": "JayashreeVI"
+  }
+ ],
+ "बहीण": [
+  {
+   "f": "mr/0084.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AC%E0%A4%B9%E0%A5%80%E0%A4%A3.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "बाजार": [
+  {
+   "f": "mr/0085.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AC%E0%A4%BE%E0%A4%9C%E0%A4%BE%E0%A4%B0.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "बाप्पा": [],
+ "बाबा": [
+  {
+   "f": "mr/0086.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-JayashreeVI-%E0%A4%AC%E0%A4%BE%E0%A4%AC%E0%A4%BE.wav",
+   "speaker": "JayashreeVI"
+  }
+ ],
+ "बाबूमोशाय": [],
+ "बाबूमोशाय, ज़िंदगी बड़ी होनी चाहिए, लंबी नहीं": [],
+ "बिल्ली": [
+  {
+   "f": "hi/0085.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%AC%E0%A4%BF%E0%A4%B2%E0%A5%8D%E0%A4%B2%E0%A5%80.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "बुरा": [
+  {
+   "f": "hi/0086.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%AC%E0%A5%81%E0%A4%B0%E0%A4%BE.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "बुरा न मानो, होली है": [],
+ "बेटा": [
+  {
+   "f": "hi/0087.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%AC%E0%A5%87%E0%A4%9F%E0%A4%BE.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "बोल": [
+  {
+   "f": "hi/0088.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%AC%E0%A5%8B%E0%A4%B2.wav",
+   "speaker": "ATallSteve"
+  },
+  {
+   "f": "mr/0087.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AC%E0%A5%8B%E0%A4%B2.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "बोला": [
+  {
+   "f": "mr/0088.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AC%E0%A5%8B%E0%A4%B2%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "भव": [
+  {
+   "f": "mr/0089.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AD%E0%A4%B5.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "भाषा": [
+  {
+   "f": "hi/0089.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%AD%E0%A4%BE%E0%A4%B7%E0%A4%BE.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0090.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Sanjusao-%E0%A4%AD%E0%A4%BE%E0%A4%B7%E0%A4%BE.wav",
+   "speaker": "Sanjusao"
+  }
+ ],
+ "भूख": [
+  {
+   "f": "hi/0090.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%AD%E0%A5%82%E0%A4%96.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "भेटू": [],
+ "मगर": [
+  {
+   "f": "hi/0091.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-SHUBHAM_KR_SONI-%E0%A4%AE%E0%A4%97%E0%A4%B0.wav",
+   "speaker": "SHUBHAM KR SONI"
+  },
+  {
+   "f": "mr/0091.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Anagha62-%E0%A4%AE%E0%A4%97%E0%A4%B0.wav",
+   "speaker": "Anagha62"
+  }
+ ],
+ "मन": [
+  {
+   "f": "mr/0092.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%AE%E0%A4%A8.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "मराठी": [
+  {
+   "f": "hi/0092.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Medhi_jyoti-%E0%A4%AE%E0%A4%B0%E0%A4%BE%E0%A4%A0%E0%A5%80.wav",
+   "speaker": "Medhi jyoti"
+  },
+  {
+   "f": "mr/0093.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Aparna_Gondhalekar-%E0%A4%AE%E0%A4%B0%E0%A4%BE%E0%A4%A0%E0%A5%80.wav",
+   "speaker": "Aparna Gondhalekar"
+  }
+ ],
+ "महाराष्ट्र": [
+  {
+   "f": "hi/0093.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Medhi_jyoti-%E0%A4%AE%E0%A4%B9%E0%A4%BE%E0%A4%B0%E0%A4%BE%E0%A4%B7%E0%A5%8D%E0%A4%9F%E0%A5%8D%E0%A4%B0.wav",
+   "speaker": "Medhi jyoti"
+  },
+  {
+   "f": "mr/0094.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Aparna_Gondhalekar-%E0%A4%AE%E0%A4%B9%E0%A4%BE%E0%A4%B0%E0%A4%BE%E0%A4%B7%E0%A5%8D%E0%A4%9F%E0%A5%8D%E0%A4%B0.wav",
+   "speaker": "Aparna Gondhalekar"
+  }
+ ],
+ "माँ": [
+  {
+   "f": "hi/0094.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%AE%E0%A4%BE%E0%A4%81.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "मांजर": [
+  {
+   "f": "mr/0095.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Anagha62-%E0%A4%AE%E0%A4%BE%E0%A4%82%E0%A4%9C%E0%A4%B0.wav",
+   "speaker": "Anagha62"
+  }
+ ],
+ "माझी": [],
+ "माझे": [
+  {
+   "f": "mr/0096.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AE%E0%A4%BE%E0%A4%9D%E0%A5%87.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "माझे नाव": [],
+ "माता": [
+  {
+   "f": "hi/0095.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%AE%E0%A4%BE%E0%A4%A4%E0%A4%BE.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0097.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AE%E0%A4%BE%E0%A4%A4%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "मानो": [],
+ "मामा": [
+  {
+   "f": "hi/0096.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%AE%E0%A4%BE%E0%A4%AE%E0%A4%BE.wav",
+   "speaker": "ATallSteve"
+  },
+  {
+   "f": "mr/0098.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AE%E0%A4%BE%E0%A4%AE%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "मित्र": [
+  {
+   "f": "hi/0097.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-SHUBHAM_KR_SONI-%E0%A4%AE%E0%A4%BF%E0%A4%A4%E0%A5%8D%E0%A4%B0.wav",
+   "speaker": "SHUBHAM KR SONI"
+  },
+  {
+   "f": "mr/0099.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AE%E0%A4%BF%E0%A4%A4%E0%A5%8D%E0%A4%B0.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "मिरची": [
+  {
+   "f": "mr/0100.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Sanjusao-%E0%A4%AE%E0%A4%BF%E0%A4%B0%E0%A4%9A%E0%A5%80.wav",
+   "speaker": "Sanjusao"
+  }
+ ],
+ "मिलेंगे": [],
+ "मी": [
+  {
+   "f": "mr/0101.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AE%E0%A5%80.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "मी ठीक आहे": [],
+ "मीठ": [
+  {
+   "f": "mr/0102.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AE%E0%A5%80%E0%A4%A0.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "मीठा": [
+  {
+   "f": "hi/0098.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%AE%E0%A5%80%E0%A4%A0%E0%A4%BE.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "मुंबई": [
+  {
+   "f": "mr/0103.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Aparna_Gondhalekar-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%AC%E0%A4%88.wav",
+   "speaker": "Aparna Gondhalekar"
+  }
+ ],
+ "मुलगा": [
+  {
+   "f": "mr/0104.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AE%E0%A5%81%E0%A4%B2%E0%A4%97%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "मुलगी": [
+  {
+   "f": "mr/0105.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AE%E0%A5%81%E0%A4%B2%E0%A4%97%E0%A5%80.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "मुश्किल": [],
+ "मेज": [
+  {
+   "f": "mr/0106.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AE%E0%A5%87%E0%A4%9C.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "मेरा": [],
+ "मेरा नाम": [],
+ "मेरे": [],
+ "मेरे पास माँ है": [],
+ "मैं": [
+  {
+   "f": "hi/0099.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%AE%E0%A5%88%E0%A4%82.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "मैं ठीक हूँ": [],
+ "मैदान": [
+  {
+   "f": "mr/0107.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%AE%E0%A5%88%E0%A4%A6%E0%A4%BE%E0%A4%A8.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "मोगैम्बो": [],
+ "मोगैम्बो खुश हुआ": [],
+ "मोर": [
+  {
+   "f": "hi/0100.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%AE%E0%A5%8B%E0%A4%B0.wav",
+   "speaker": "ATallSteve"
+  },
+  {
+   "f": "mr/0108.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Vj18081991-%E0%A4%AE%E0%A5%8B%E0%A4%B0.wav",
+   "speaker": "Vj18081991"
+  }
+ ],
+ "मोरया": [
+  {
+   "f": "mr/0109.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-SangeetaRH-%E0%A4%AE%E0%A5%8B%E0%A4%B0%E0%A4%AF%E0%A4%BE.wav",
+   "speaker": "SangeetaRH"
+  }
+ ],
+ "या": [
+  {
+   "f": "hi/0101.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%AF%E0%A4%BE.wav",
+   "speaker": "ATallSteve"
+  },
+  {
+   "f": "mr/0110.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%AF%E0%A4%BE.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "ये": [
+  {
+   "f": "hi/0102.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-SHUBHAM_KR_SONI-%E0%A4%AF%E0%A5%87.wav",
+   "speaker": "SHUBHAM KR SONI"
+  },
+  {
+   "f": "mr/0111.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%AF%E0%A5%87.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "ये दोस्ती हम नहीं तोड़ेंगे": [],
+ "रंग": [
+  {
+   "f": "hi/0103.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%B0%E0%A4%82%E0%A4%97.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0112.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%B0%E0%A4%82%E0%A4%97.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "रथ": [],
+ "राजा": [
+  {
+   "f": "hi/0104.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%B0%E0%A4%BE%E0%A4%9C%E0%A4%BE.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0113.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%B0%E0%A4%BE%E0%A4%9C%E0%A4%BE.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "रात्रि": [
+  {
+   "f": "hi/0105.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%B0%E0%A4%BE%E0%A4%A4%E0%A5%8D%E0%A4%B0%E0%A4%BF.wav",
+   "speaker": "ATallSteve"
+  }
+ ],
+ "रात्री": [],
+ "राम": [],
+ "राम राम": [],
+ "रोटी": [
+  {
+   "f": "hi/0106.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%B0%E0%A5%8B%E0%A4%9F%E0%A5%80.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0114.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%B0%E0%A5%8B%E0%A4%9F%E0%A5%80.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "लंबी": [],
+ "लवकर": [
+  {
+   "f": "mr/0115.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%B2%E0%A4%B5%E0%A4%95%E0%A4%B0.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "लिए": [],
+ "लिहिणे": [
+  {
+   "f": "mr/0116.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-JayashreeVI-%E0%A4%B2%E0%A4%BF%E0%A4%B9%E0%A4%BF%E0%A4%A3%E0%A5%87.wav",
+   "speaker": "JayashreeVI"
+  }
+ ],
+ "ले": [
+  {
+   "f": "mr/0117.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%B2%E0%A5%87.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "लोक": [
+  {
+   "f": "mr/0118.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%B2%E0%A5%8B%E0%A4%95.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "लोग": [
+  {
+   "f": "hi/0107.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%B2%E0%A5%8B%E0%A4%97.wav",
+   "speaker": "ATallSteve"
+  }
+ ],
+ "वन": [
+  {
+   "f": "hi/0108.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%B5%E0%A4%A8.wav",
+   "speaker": "ATallSteve"
+  },
+  {
+   "f": "mr/0119.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Anagha62-%E0%A4%B5%E0%A4%A8.wav",
+   "speaker": "Anagha62"
+  }
+ ],
+ "वर्षाच्या": [],
+ "वर्षी": [],
+ "वसुधैव": [],
+ "वसुधैव कुटुम्बकम्": [],
+ "विद्यार्थी": [],
+ "वेल": [],
+ "शंभर": [
+  {
+   "f": "mr/0120.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%B6%E0%A4%82%E0%A4%AD%E0%A4%B0.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "शहर": [
+  {
+   "f": "hi/0109.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Medhi_jyoti-%E0%A4%B6%E0%A4%B9%E0%A4%B0.wav",
+   "speaker": "Medhi jyoti"
+  },
+  {
+   "f": "mr/0121.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Anagha62-%E0%A4%B6%E0%A4%B9%E0%A4%B0.wav",
+   "speaker": "Anagha62"
+  }
+ ],
+ "शाळा": [],
+ "शुभ": [
+  {
+   "f": "mr/0122.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%B6%E0%A5%81%E0%A4%AD.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "शुभ दीपावली": [],
+ "शुभ रात्रि": [],
+ "शुभ रात्री": [],
+ "शुभकामनाएँ": [],
+ "शुभेच्छा": [],
+ "संगीत": [
+  {
+   "f": "hi/0110.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%B8%E0%A4%82%E0%A4%97%E0%A5%80%E0%A4%A4.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0123.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%B8%E0%A4%82%E0%A4%97%E0%A5%80%E0%A4%A4.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "सटकली": [],
+ "सण": [
+  {
+   "f": "mr/0124.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%B5%E0%A4%BF%E0%A4%A8%E0%A4%AF%E0%A4%BE_%E0%A4%B2%E0%A5%81%E0%A4%95%E0%A4%A4%E0%A5%81%E0%A4%95%E0%A5%87-%E0%A4%B8%E0%A4%A3.wav",
+   "speaker": "विनया लुकतुके"
+  }
+ ],
+ "सत्यमेव": [],
+ "सत्यमेव जयते": [
+  {
+   "f": "mr/0125.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Vj18081991-%E0%A4%B8%E0%A4%A4%E0%A5%8D%E0%A4%AF%E0%A4%AE%E0%A5%87%E0%A4%B5_%E0%A4%9C%E0%A4%AF%E0%A4%A4%E0%A5%87.wav",
+   "speaker": "Vj18081991"
+  }
+ ],
+ "सब": [
+  {
+   "f": "hi/0111.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%B8%E0%A4%AC.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "सहा": [
+  {
+   "f": "mr/0126.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%B8%E0%A4%B9%E0%A4%BE.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "सात": [
+  {
+   "f": "hi/0112.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%B8%E0%A4%BE%E0%A4%A4.wav",
+   "speaker": "QueerEcofeminist"
+  },
+  {
+   "f": "mr/0127.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%B8%E0%A4%BE%E0%A4%A4.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "साल": [
+  {
+   "f": "hi/0113.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%B8%E0%A4%BE%E0%A4%B2.wav",
+   "speaker": "AryamanA"
+  },
+  {
+   "f": "mr/0128.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%B8%E0%A4%BE%E0%A4%B2.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "सिमरन": [],
+ "सुंदर": [
+  {
+   "f": "mr/0129.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%B8%E0%A5%81%E0%A4%82%E0%A4%A6%E0%A4%B0.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "सुप्रभात": [],
+ "सुबह": [],
+ "सून": [
+  {
+   "f": "mr/0130.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Manjusha_Gore-%E0%A4%B8%E0%A5%82%E0%A4%A8.wav",
+   "speaker": "Manjusha Gore"
+  }
+ ],
+ "सूरज": [
+  {
+   "f": "hi/0114.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%B8%E0%A5%82%E0%A4%B0%E0%A4%9C.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "सोना": [
+  {
+   "f": "hi/0115.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%B8%E0%A5%8B%E0%A4%A8%E0%A4%BE.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "सौ": [
+  {
+   "f": "hi/0116.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-Mauryaar-%E0%A4%B8%E0%A5%8C.wav",
+   "speaker": "Mauryaar"
+  },
+  {
+   "f": "mr/0131.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%B8%E0%A5%8C.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "स्वागत": [],
+ "हम": [
+  {
+   "f": "hi/0117.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%B9%E0%A4%AE.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "हाँ": [
+  {
+   "f": "hi/0118.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-QueerEcofeminist-%E0%A4%B9%E0%A4%BE%E0%A4%81.wav",
+   "speaker": "QueerEcofeminist"
+  }
+ ],
+ "हाउ": [],
+ "हाउ इज़ द जोश": [],
+ "हात": [
+  {
+   "f": "mr/0132.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-Vj18081991-%E0%A4%B9%E0%A4%BE%E0%A4%A4.wav",
+   "speaker": "Vj18081991"
+  }
+ ],
+ "हाथ": [
+  {
+   "f": "hi/0119.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-AryamanA-%E0%A4%B9%E0%A4%BE%E0%A4%A5.wav",
+   "speaker": "AryamanA"
+  }
+ ],
+ "हारना": [],
+ "हार्दिक": [],
+ "हिंद": [],
+ "हिंदी": [],
+ "ही": [
+  {
+   "f": "mr/0133.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%B9%E0%A5%80.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "हुआ": [],
+ "हूँ": [],
+ "है": [
+  {
+   "f": "mr/0134.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%B9%E0%A5%88.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "हैं": [
+  {
+   "f": "hi/0120.mp3",
+   "lang": "hi",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1568_(hin)-ATallSteve-%E0%A4%B9%E0%A5%88%E0%A4%82.wav",
+   "speaker": "ATallSteve"
+  }
+ ],
+ "हो": [
+  {
+   "f": "mr/0135.mp3",
+   "lang": "mr",
+   "license": "CC BY-SA 4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:LL-Q1571_(mar)-%E0%A4%A8%E0%A4%82%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A5%80_%E0%A4%B0%E0%A4%BE%E0%A4%A8%E0%A4%A1%E0%A5%87-%E0%A4%B9%E0%A5%8B.wav",
+   "speaker": "नंदिनी रानडे"
+  }
+ ],
+ "होनी": [],
+ "होली": []
+}
