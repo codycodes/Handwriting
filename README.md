@@ -59,6 +59,19 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
   To save the recordings into the repo, run **Actions → Fetch Lingua Libre recordings → Run workflow** on GitHub (no keys: it uses GitHub's own token to commit). It lists every Hindi and Marathi file on Lingua Libre, matches the words in `words.js`, saves each as a small trimmed MP3 in `audio/`, commits them, and the site redeploys. Run it again after adding words. Until it has run, the app finds the same recordings live from the iPad. Lingua Libre doesn't have every word (about 40% of these have a recording); anyone can record missing ones there, and they'll be picked up next time. You can also run `python3 tools/fetch-lingualibre.py` on your own computer (needs `ffmpeg`)
 - **Anki:** **Copy for Anki** or **Save .txt** gives a list Anki imports straight into the Basic note type (Front: the word; Back: how it sounds, meaning and language; Tags: `penmanship::<level>` and the language). **Paste from Anki** takes a *Notes in Plain Text* export (or any list with one word per line, optionally a tab and its meaning) and adds it as your own list
 
+## Write along with a video
+**Video** (toolbar) lets you write a Hindi or Marathi YouTube video line by line.
+1. **Add a video:** paste its YouTube link, then its transcript in Devanagari. On YouTube, open the description, tap **Show transcript**, pick Hindi or Marathi and copy the lines with their times. `.srt` and `.vtt` subtitle files and plain text work too. Short caption pieces are joined into sentences. You can also paste the **English** transcript: each line gets the English spoken at the same time.
+2. **Write along:** the video plays in a small player you can **drag anywhere** by its top bar (**S / M / L** changes its size). The line being spoken becomes the text on the page, and the video **pauses at the end of each line** so you can write it (turn this off with **⏸ line**).
+3. Above the page, the line bar shows the Hindi with its **English underneath**. Lines without English are translated by machine when you reach them. **Next** plays the next line, **‹** goes back, and **Lines** lists the whole transcript: tap any line to jump there.
+
+The player has −5 / +5 seconds, previous and next line, speed (1×, 0.75×, 0.5×), and a seek bar. Dragging it to a point also picks the line spoken there. Your place in each video is saved, so it picks up where you left off.
+
+YouTube doesn't let web pages read captions without an API key, which is why you paste the transcript. Videos and transcripts are saved only in Safari on this iPad.
+
+## Translate
+**Translate** (toolbar, and on every transcript line) goes between Devanagari and English: Hindi → English, Marathi → English, English → Hindi or English → Marathi. It picks the direction from the script you type. Results show how the Devanagari sounds, with buttons to **Write** it on the page, **Hear** it, or **Copy** it. Single words use the app's own meanings first. Translation is by [MyMemory](https://mymemory.translated.net) (free, no account or key; about 5,000 characters a day per device), and every result is saved so nothing is translated twice.
+
 ## Progress over time
 Every letter and word you write is scored and saved when you finish its page (Clear, turn the page, change the text, or leave the app), whether **Grade** is on or not. **Progress** (toolbar) shows:
 - Totals, your last 7 days against the week before, and your best
