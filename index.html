@@ -198,6 +198,23 @@ body:not(.tutor) .tutor-only { display: none !important; }
   border-radius: 12px; box-shadow: 0 10px 32px rgba(10, 20, 40, .22); padding: 12px 14px; font-size: 14px; }
 #letterCard[hidden] { display: none; }
 #letterCard .lc-go { margin-top: 12px; gap: 8px; }
+#letterCard { padding-top: 0; touch-action: none; max-height: calc(100vh - 16px); overflow: auto; }
+#letterCard.dragging { opacity: .9; }
+#letterCard .lc-head { display: flex; align-items: center; gap: 6px; margin: 0 -14px 8px; padding: 4px 4px 4px 10px; border-bottom: 1px solid var(--line);
+  background: var(--panel); border-radius: 12px 12px 0 0; cursor: grab; font-size: 11.5px; color: var(--muted); position: sticky; top: 0; }
+#letterCard .lc-head svg { width: 14px; height: 14px; flex: none; stroke: currentColor; fill: none; stroke-width: 3; stroke-linecap: round; }
+#letterCard .lc-head span { flex: 1; }
+#letterCard .lc-head button { min-height: 30px; padding: 0 6px; border: 0; background: transparent; }
+#letterCard .lc-strokes { margin-top: 10px; border: 1px solid var(--line); border-radius: 10px; padding: 6px; background: var(--paper); }
+#letterCard .lc-strokes canvas { display: block; width: 100%; height: 120px; }
+#letterCard .lc-strokes .row { gap: 8px; margin-top: 4px; }
+#letterCard .lc-strokes button { min-height: 32px; font-size: 13px; }
+#letterCard .lc-ex { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+#letterCard .lc-ex > div { width: 100%; }
+#letterCard .ex { min-height: 34px; font-size: 13px; gap: 5px; padding: 0 8px; }
+#letterCard .ex b { font-family: "Kalam", sans-serif; font-weight: 400; font-size: 18px; }
+#letterCard .ex i { color: var(--accent); }
+#letterCard .ex span { color: var(--muted); }
 #letterCard .lc-go button { min-height: 36px; }
 #tapAnchor { position: fixed; width: 1px; height: 1px; pointer-events: none; }
 #letterCard .top { display: flex; align-items: center; gap: 12px; }
@@ -248,6 +265,9 @@ svg.off { stroke: var(--muted) !important; opacity: .7; }
 #pipSeek { width: calc(100% - 16px); margin: 6px 8px 0; accent-color: var(--accent); }
 .pip-ctl { display: flex; align-items: center; gap: 4px; padding: 4px 6px 6px; flex-wrap: wrap; }
 .pip-ctl button { min-height: 36px; padding: 0 9px; font-size: 14px; }
+.pip-speed { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+.pip-speed button { border: 0; background: transparent; min-width: 34px; justify-content: center; font-size: 17px; }
+.pip-speed span { min-width: 42px; text-align: center; font-size: 13px; font-variant-numeric: tabular-nums; font-weight: 700; }
 .pip-ctl #pipTime { margin-left: auto; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 #pip.dragging { opacity: .85; } #pip.dragging iframe { pointer-events: none; }
 #lineBar { flex-wrap: nowrap; gap: 8px; background: var(--panel); border: 1px solid var(--accent); border-radius: 10px; padding: 4px; }
@@ -425,8 +445,11 @@ body.fs #fsbar { display: flex; }
         <button data-v="scroll" title="Fingers scroll the page; only Apple Pencil writes. Long text stays on one line.">Scroll</button>
         <button data-v="off" title="Only Apple Pencil writes; fingers do nothing on the page">Off</button>
       </div></div>
-    <div class="group"><span class="label">Margin</span>
-      <button id="marksBtn" class="toggle" aria-pressed="false" title="A cross or a dot in the margin on each line, alternating">× •</button></div>
+    <div class="group"><span class="label">Page</span>
+      <div class="row" style="gap:6px;flex-wrap:nowrap">
+        <button id="marksBtn" class="toggle" aria-pressed="false" title="A cross or a dot in the margin on each line, alternating">× •</button>
+        <button id="boxesBtn" class="toggle" aria-pressed="false" title="Shade each letter blue and red, so you can see where one letter ends and the next begins. Tap a box with your finger to see that letter.">Letter boxes</button>
+      </div></div>
     <div class="group"><span class="label">Check</span>
       <button id="gradeBtn" class="toggle" aria-pressed="false" title="Score how closely your writing follows the letters">Grade</button></div>
     <div class="group"><span class="label">Help</span>
@@ -539,7 +562,7 @@ body.fs #fsbar { display: flex; }
     <button id="pipPlay" class="primary" aria-label="Play"><svg viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></svg></button>
     <button id="pipFwd" title="Forward 5 seconds">+5</button>
     <button id="pipNextLine" title="Next line" aria-label="Next line"><svg viewBox="0 0 24 24"><path d="M18 5v14M6 6l9 6-9 6z"/></svg></button>
-    <button id="pipRate" title="Speed">1×</button>
+    <span class="pip-speed" title="Speed"><button id="pipSlower" aria-label="Slower" title="Slower">−</button><span id="pipRate">1×</span><button id="pipFaster" aria-label="Faster" title="Faster">+</button></span>
     <button id="pipStop" class="toggle" aria-pressed="true" title="Pause at the end of each line so you can write it">⏸ line</button>
     <span id="pipTime"></span>
   </div>
@@ -1063,6 +1086,17 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     c.restore();
   }
 
+  // Letter boxes: each letter shaded blue or red in turn, labelled, exactly where a tap finds it.
+  function drawLetterBoxes(c, i, base) {
+    const boxes = letterBoxes(i); if (!boxes.length) return;
+    const top = base - L.ascPx, h = L.ascPx + L.descPx, cols = [css('--ink-blue'), css('--ink-red')];
+    c.save(); c.font = `600 11px ${css('--font-ui')}`; c.textBaseline = 'top';
+    boxes.forEach((b, j) => {
+      c.globalAlpha = 0.12; c.fillStyle = cols[j % 2]; c.fillRect(b.x0, top, b.x1 - b.x0 - 1, h);
+      c.globalAlpha = 0.85; c.fillText(b.ak, b.x0 + 2, top + 2);
+    });
+    c.restore();
+  }
   function drawBg() {
     const c = bctx;
     c.setTransform(dpr, 0, 0, dpr, -SX * dpr, -SY * dpr);
@@ -1094,6 +1128,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       hline(c, base - L.xPx, soft, 1, [7, 6]);
       hline(c, base, rule, 1.8);
       hline(c, base + L.descPx, soft, 1, [2, 5]);
+      if (S.boxes) drawLetterBoxes(c, i, base);
       if (r.t) drawGuideText(c, r.t, L.textX, base, r.a);
       else if (r.tutor && !r.free) drawTutorGuide(c, r.tutor, tutorXs(r.tutor, L.textX, null, L.tutorX), base, r.a);
     });
@@ -1773,6 +1808,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
 
     $('gradeBtn').setAttribute('aria-pressed', String(!!S.grade));
     $('marksBtn').setAttribute('aria-pressed', String(!!S.marks));
+    $('boxesBtn').setAttribute('aria-pressed', String(!!S.boxes));
     const hint = $('hint');
     if (S.fingers === 'off') { hint.textContent = "Fingers off: only the Pencil writes"; hint.hidden = false; }
     else if (S.fingers === 'scroll') { hint.textContent = 'Finger scrolls · Pencil writes'; hint.hidden = false; }
@@ -1906,6 +1942,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   // The app's full screen page stays up anyway; only the Exit button (or Esc) leaves it.
 
   $('marksBtn').addEventListener('click', () => { S.marks = !S.marks; render(); });
+  $('boxesBtn').addEventListener('click', () => { S.boxes = !S.boxes; render(); });
   $('gradeBtn').addEventListener('click', () => { S.grade = !S.grade; drawGrade(); updateButtons(); save(); });
   document.addEventListener('keydown', (e) => {
     if (e.target === textEl) return;
@@ -2048,32 +2085,127 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     if (!W$.canPlay(pt.ak, langs, { voiceOnly: true })) { soundTip(anchor, NO_SOUND); return; }
     W$.playNow(pt.ak, langs, { voiceOnly: true, rate: 0.6 }).then((src) => soundTip(anchor, src));
   }
+  // The parts of a letter that have stroke order: the whole thing (क्ष), or its pieces (स्ते: स, त).
+  function strokeParts(ak) {
+    if (glyph(ak)) return [ak];
+    const multi = STK ? Object.keys(STK.deva).filter((k) => k.length > 1).sort((a, b) => b.length - a.length) : [];
+    const out = [];
+    for (let i = 0; i < ak.length;) { const m = multi.find((k) => ak.startsWith(k, i)), ch = m || ak[i]; if (glyph(ch)) out.push(ch); i += ch.length; }
+    return out;
+  }
+  // Draws the letter from the same stroke data as Tutor, stroke by stroke, with numbered starts.
+  function animateStrokes(cv, keys) {
+    cancelAnimationFrame(cv._raf);
+    const c = cv.getContext('2d'), dprC = window.devicePixelRatio || 1, Wc = cv.clientWidth || 300, Hc = cv.clientHeight || 110;
+    cv.width = Math.round(Wc * dprC); cv.height = Math.round(Hc * dprC);
+    const gs = keys.map((k) => glyph(k)).filter(Boolean);
+    if (!gs.length) { c.clearRect(0, 0, cv.width, cv.height); return; }
+    let y0 = Infinity, y1 = -Infinity; for (const g of gs) for (const st of g.s) for (const q of st) { y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }
+    y0 = Math.min(y0, 50) - 8; y1 = Math.max(y1, 100) + 8;
+    const gap = 18, totW = gs.reduce((t, g) => t + g.w, 0) + gap * (gs.length - 1);
+    const K = Math.min((Hc - 8) / (y1 - y0), (Wc - 24) / totW);
+    const ox0 = (Wc - totW * K) / 2, oy = 4 - y0 * K;
+    const strokes = []; let ox = ox0;
+    for (const g of gs) { for (const st of g.s) strokes.push(st.map((q) => [ox + q[0] * K, oy + q[1] * K])); ox += (g.w + gap) * K; }
+    const lens = strokes.map((s2) => s2.reduce((t, q, i) => (i ? t + Math.hypot(q[0] - s2[i - 1][0], q[1] - s2[i - 1][1]) : 0), 0));
+    const wPen = Math.max(3, K * 5), accent = css('--accent'), guide = css('--guide'), t0 = performance.now();
+    const frame = (now) => {
+      c.setTransform(dprC, 0, 0, dprC, 0, 0); c.clearRect(0, 0, Wc, Hc);
+      c.strokeStyle = css('--rule-soft'); c.lineWidth = 1;
+      for (const yy of [0, 50, 100, 150]) { const y = oy + yy * K; if (y < 0 || y > Hc) continue; c.beginPath(); c.setLineDash(yy === 50 ? [6, 5] : []); c.moveTo(4, y); c.lineTo(Wc - 4, y); c.stroke(); }
+      c.setLineDash([]); c.lineCap = c.lineJoin = 'round';
+      c.globalAlpha = 0.3; c.strokeStyle = guide; c.lineWidth = wPen;
+      for (const s2 of strokes) { c.beginPath(); s2.forEach((q, i) => (i ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1]))); c.stroke(); }
+      c.globalAlpha = 1; c.strokeStyle = c.fillStyle = accent;
+      let t = (now - t0) / 1000 - 0.2, running = false, started = 0;
+      for (let i = 0; i < strokes.length; i++) {
+        if (t <= 0) { running = true; break; }
+        const dur = Math.max(0.25, lens[i] / (90 * K + 60)), frac = Math.min(1, t / dur), upto = lens[i] * frac;
+        started = i + 1;
+        let acc = 0, tip = strokes[i][0]; c.beginPath(); c.moveTo(tip[0], tip[1]);
+        for (let j = 1; j < strokes[i].length; j++) { const a = strokes[i][j - 1], b = strokes[i][j], d = Math.hypot(b[0] - a[0], b[1] - a[1]);
+          if (acc + d >= upto) { const f = (upto - acc) / (d || 1); tip = [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]; c.lineTo(tip[0], tip[1]); break; }
+          acc += d; tip = b; c.lineTo(b[0], b[1]); }
+        c.stroke();
+        if (frac < 1) { running = true; c.beginPath(); c.arc(tip[0], tip[1], wPen * 0.9, 0, 7); c.fill(); break; }
+        t -= dur + 0.25;
+      }
+      c.font = `700 11px ${css('--font-ui')}`; c.textAlign = 'center'; c.textBaseline = 'middle';
+      strokes.forEach((s2, i) => { const on = i < started; c.fillStyle = on ? accent : css('--paper'); c.strokeStyle = on ? accent : css('--muted'); c.lineWidth = 1.2;
+        c.beginPath(); c.arc(s2[0][0], s2[0][1], 7.5, 0, 7); c.fill(); c.stroke(); c.fillStyle = on ? css('--paper') : css('--muted'); c.fillText(String(i + 1), s2[0][0], s2[0][1] + 0.5); });
+      if (running) cv._raf = requestAnimationFrame(frame);
+    };
+    cv._raf = requestAnimationFrame(frame);
+  }
+  // A few words with this letter, from the built-in lists: ones starting with it first.
+  function examplesFor(ak) {
+    if (!W$ || !DEVANAGARI.test(ak)) return [];
+    const all = [...W$.DICT.values()].filter((e) => !/\s/.test(e.w) && e.w !== ak);
+    const has = (e, x) => W$.letters(e.w).includes(x);
+    let found = all.filter((e) => has(e, ak)), label = ak;
+    if (found.length < 2) { const base = strokeParts(ak)[0]; if (base && base !== ak) { label = found.length ? `${ak} or ${base}` : base; found = found.concat(all.filter((e) => !found.includes(e) && W$.letters(e.w).some((l) => l.startsWith(base)))); } }
+    found.sort((a, b) => (W$.letters(b.w)[0] === ak) - (W$.letters(a.w)[0] === ak) || a.w.length - b.w.length);
+    const out = found.slice(0, 4); out.label = label;
+    return out;
+  }
   function showLetter(pt, word, anchor, langs) {
     if (!pt.latin) sayLetter(pt, langs, anchor);
     const card = $('letterCard');
     // A modal dialog sits above the page, so the card has to live inside it to be seen.
     const host = anchor.closest('dialog') || document.body;
-    if (card.parentElement !== host) host.appendChild(card);
+    if (card.parentElement !== host) { host.appendChild(card); card.dataset.pinned = ''; }
     const inWord = word && word !== pt.ak;
     const tutorable = tutorFor(pt.ak, pt.latin);
-    if (pt.latin) {
-      // An English letter: no sound guide, just the letter and practising it.
-      card.innerHTML = `<div class="top"><span class="big" style="font-family:${esc(L.family)}">${esc(pt.ak)}</span>`
-        + `<div class="sub">${inWord ? `in “${esc(word)}”` : 'on its own'}</div></div>`;
-    } else card.innerHTML = `<div class="top"><span class="big" lang="hi">${esc(pt.ak)}</span><div><div class="tr">${esc(pt.alone)}</div>`
+    const parts = pt.latin && S.style === 'cursive' ? [] : strokeParts(pt.ak);
+    const fam = pt.latin ? L.family : 'Kalam, sans-serif';
+    let html = `<div class="lc-head" title="Drag to move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h.01M15 5h.01M9 12h.01M15 12h.01M9 19h.01M15 19h.01"/></svg>`
+      + `<span>${card.dataset.pinned ? 'Tap other letters: this card stays here' : 'Drag to move · it then stays put while you tap letters'}</span>`
+      + `<button class="lc-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`;
+    if (pt.latin) html += `<div class="top"><span class="big" style="font-family:${esc(fam)}">${esc(pt.ak)}</span><div class="sub">${inWord ? `in “${esc(word)}”` : 'on its own'}</div></div>`;
+    else html += `<div class="top"><span class="big" lang="hi">${esc(pt.ak)}</span><div><div class="tr">${esc(pt.alone)}</div>`
       + `<div class="sub">${inWord ? `in ${esc(word)}: <i>${esc(pt.tr)}</i>${pt.silentA ? ' (its "a" is silent)' : ''}` : 'on its own'}</div></div>`
-      + (W$.canPlay(pt.ak, langs, { voiceOnly: true }) ? `<button class="say" aria-label="Hear it again">${SPEAKER}</button>` : `<button class="say" disabled title="${esc(NO_SOUND)}" aria-label="No sound available">${SPEAKER_OFF}</button>`) + `</div>`
-      + `<ul>${pt.how.map(([ch, h]) => `<li><b lang="hi">${esc(ch === 'अ' ? 'अ' : ch)}</b><span>${esc(h)}</span></li>`).join('')}</ul>`;
-    card.insertAdjacentHTML('beforeend', `<div class="row lc-go"><button class="primary lc-practice">Practice this letter</button><span class="muted small">${tutorable ? 'in Tutor, stroke by stroke' : 'a row of it to trace'}</span></div>`);
+      + (W$.canPlay(pt.ak, langs, { voiceOnly: true }) ? `<button class="say" aria-label="Hear it again">${SPEAKER}</button>` : `<button class="say" disabled title="${esc(NO_SOUND)}" aria-label="No sound available">${SPEAKER_OFF}</button>`) + `</div>`;
+    if (parts.length) html += `<div class="lc-strokes"><canvas></canvas><div class="row"><button class="lc-replay">Replay strokes</button>`
+      + `<span class="muted small">${parts.length > 1 ? `${esc(parts.join(' + '))}, in order` : 'how the pen moves'}${pt.latin ? ' (print)' : ''}${parts.join('') !== pt.ak.replace(/[^\p{L}]/gu, '') && !pt.latin ? '; vowel signs go on after' : ''}</span></div></div>`;
+    if (!pt.latin) html += `<ul>${pt.how.map(([ch, h]) => `<li><b lang="hi">${esc(ch)}</b><span>${esc(h)}</span></li>`).join('')}</ul>`;
+    const ex = pt.latin ? [] : examplesFor(pt.ak);
+    if (ex.length) html += `<div class="lc-ex"><div class="muted small">Words with ${esc(ex.label || pt.ak)}</div>${ex.map((e, i) => `<button class="ex" data-i="${i}"><b lang="hi">${esc(e.w)}</b> <i>${esc(W$.translit(e.w))}</i> <span>${esc(W$.meaningText(e).split(/[;·(]/)[0].trim())}</span></button>`).join('')}</div>`;
+    html += `<div class="row lc-go"><button class="primary lc-practice">Practice this letter</button><span class="muted small">${tutorable ? 'in Tutor, stroke by stroke' : 'a row of it to trace'}</span></div>`;
+    card.innerHTML = html;
+    card.querySelector('.lc-close').addEventListener('click', () => { card.hidden = true; card.dataset.pinned = ''; });
     card.querySelector('.lc-practice').addEventListener('click', () => { card.hidden = true; practiceLetter(pt.ak, pt.latin); });
     card.querySelector('.say:not([disabled])')?.addEventListener('click', (ev) => sayLetter(pt, langs, ev.currentTarget));
+    card.querySelectorAll('.ex').forEach((b) => b.addEventListener('click', () => { const e = ex[+b.dataset.i]; card.hidden = true; if (S.mode === 'tutor') S.mode = 'trace'; practice(e.w, 'deva'); }));
     card.hidden = false;
+    const cv = card.querySelector('.lc-strokes canvas');
+    if (cv) { animateStrokes(cv, parts); card.querySelector('.lc-replay').addEventListener('click', () => animateStrokes(cv, parts)); }
+    if (card.dataset.pinned) { keepOnScreen(card); return; }   // you moved it: it stays where you put it
     const r = anchor.getBoundingClientRect(), cw = card.offsetWidth, ch = card.offsetHeight;
     const left = Math.min(Math.max(16, r.left + r.width / 2 - cw / 2), innerWidth - cw - 16);
     const below = r.bottom + 8 + ch < innerHeight - 8;
     card.style.left = `${left}px`; card.style.top = `${below ? r.bottom + 8 : Math.max(8, r.top - ch - 8)}px`;
     card.dataset.for = pt.ak;
   }
+  function keepOnScreen(el) {
+    el.style.left = `${Math.max(4, Math.min(innerWidth - el.offsetWidth - 4, el.offsetLeft))}px`;
+    el.style.top = `${Math.max(4, Math.min(innerHeight - 60, el.offsetTop))}px`;
+  }
+  // Drag the card by its top bar; once moved it stays put and updates as you tap other letters.
+  (() => {
+    const card = $('letterCard'); let d = null;
+    card.addEventListener('pointerdown', (e) => {
+      const head = e.target.closest('.lc-head'); if (!head || e.target.closest('button')) return;
+      d = { id: e.pointerId, dx: e.clientX - card.offsetLeft, dy: e.clientY - card.offsetTop };
+      head.setPointerCapture(e.pointerId); card.classList.add('dragging'); e.preventDefault();
+    });
+    card.addEventListener('pointermove', (e) => {
+      if (!d || e.pointerId !== d.id) return;
+      card.style.left = `${e.clientX - d.dx}px`; card.style.top = `${e.clientY - d.dy}px`; keepOnScreen(card);
+    });
+    const end = (e) => { if (!d || e.pointerId !== d.id) return; d = null; card.classList.remove('dragging'); card.dataset.pinned = '1';
+      const span = card.querySelector('.lc-head span'); if (span) span.textContent = 'Tap other letters: this card stays here'; };
+    card.addEventListener('pointerup', end); card.addEventListener('pointercancel', end);
+  })();
   // Practise one letter: in Tutor if it has stroke order, otherwise a row of it to trace.
   // Tutor's English letters are print, so a cursive letter gets a cursive row to trace instead.
   const tutorFor = (ak, latin) => !(latin && S.style === 'cursive') && (!!glyph(ak) || [...LETTERS(ak)].some((c) => glyph(c)));
@@ -2092,22 +2224,41 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     }
   }
   // The letter under a point on the page: from the guide letters of the row there.
+  // Each letter's box on row i: {ak, word, x0, x1}. Drawing the boxes and finding a tapped
+  // letter both use this, so the box you see is the letter you get.
+  const boxCache = new Map();
+  function letterBoxes(i) {
+    const r = pages[S.page] && pages[S.page][i]; if (!r || !L) return [];
+    if (r.tutor) {
+      if (r.free) return [];
+      const g = glyph(r.tutor), k = tk();
+      return tutorXs(r.tutor, L.textX, null, L.tutorX).map((x0) => ({ ak: r.tutor, word: r.tutor, x0: x0 - 4, x1: x0 + g.w * k + 4 }));
+    }
+    const t = r.t; if (!t) return [];   // freehand rows have no letters
+    const key = `${t}|${L.fontSize}|${L.family}|${L.textX}`;
+    if (boxCache.has(key)) return boxCache.get(key);
+    mctx.font = `${L.fontSize}px ${L.family}`;
+    const out = []; let pre = '', word = [], wordStart = 0;
+    for (const ch of LETTERS(t)) {
+      const x0 = L.textX + mctx.measureText(pre).width; pre += ch;
+      if (/^\s+$/.test(ch)) { word = []; continue; }
+      if (!/[\p{L}\p{M}\p{N}]/u.test(ch)) continue;
+      const b = { ak: ch, x0, x1: L.textX + mctx.measureText(pre).width };
+      word.push(b); out.push(b);
+      const w = word.map((x) => x.ak).join(''); for (const x of word) x.word = w;
+    }
+    if (boxCache.size > 200) boxCache.clear();
+    boxCache.set(key, out);
+    return out;
+  }
   function letterAt(x, y) {
     if (!L || !pages[S.page] || (L.panel && x - SX >= L.panel.x0 && x - SX <= L.panel.x1)) return null;
-    const i = Math.floor((y - L.top) / L.pitch), r = pages[S.page][i];
-    if (!r) return null;
-    if (r.tutor) return { ak: r.tutor, word: r.tutor };
-    const t = r.t; if (!t) return null;   // freehand rows have no letters to tap
-    mctx.font = `${L.fontSize}px ${L.family}`;
-    let pre = '', word = '', hit = null;
-    for (const ch of LETTERS(t)) {
-      if (/^\s+$/.test(ch)) { if (hit) break; word = ''; pre += ch; continue; }
-      const x0 = L.textX + mctx.measureText(pre).width; pre += ch; word += ch;
-      const x1 = L.textX + mctx.measureText(pre).width;
-      if (!hit && x >= x0 - 2 && x <= x1 + 2 && /[\p{L}\p{M}\p{N}]/u.test(ch)) hit = { ak: ch };
-    }
-    if (hit) hit.word = cleanWord(word);
-    return hit;
+    const i = Math.floor((y - L.top) / L.pitch);
+    const boxes = letterBoxes(i);
+    // Inside a box, or within a few px of the nearest one.
+    let best = null, bd = Infinity;
+    for (const b of boxes) { const d = x < b.x0 ? b.x0 - x : x > b.x1 ? x - b.x1 : 0; if (d < bd) { bd = d; best = b; } }
+    return best && bd <= 6 ? { ak: best.ak, word: best.word } : null;
   }
   function showLetterAt(ak, word, cx, cy) {
     let anchor = $('tapAnchor');
@@ -2143,9 +2294,9 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   // Tap anywhere else (or press Esc) to close the card.
   document.addEventListener('pointerdown', (e) => {
     const card = $('letterCard');
-    if (!card.hidden && !card.contains(e.target) && !e.target.closest('.lt, .wbtn')) card.hidden = true;
+    if (!card.hidden && !card.dataset.pinned && !card.contains(e.target) && !e.target.closest('.lt, .wbtn')) card.hidden = true;
   }, true);
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('letterCard').hidden = true; });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { $('letterCard').hidden = true; $('letterCard').dataset.pinned = ''; } });
   document.addEventListener('close', () => { $('letterCard').hidden = true; }, true);
 
   $('meanBtn').addEventListener('click', () => { S.meanings = S.meanings === false; barSig = ''; renderWordBar(); save(); });
@@ -2810,7 +2961,14 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   }
   const ytTime = () => { try { return ytp && ytReady ? ytp.getCurrentTime() : 0; } catch (_) { return 0; } };
   const ytPlaying = () => { try { return ytp && ytReady && ytp.getPlayerState() === 1; } catch (_) { return false; } };
-  function setRate(r) { S.videoRate = r; save(); $('pipRate').textContent = `${r}×`; try { ytp && ytReady && ytp.setPlaybackRate(r); } catch (_) {} }
+  // Speeds YouTube offers (0.25× to 2×); − and + step through them.
+  const RATES = [0.25, 0.5, 0.75, 1, 1.25, 1.5];
+  function setRate(r) {
+    S.videoRate = r; save(); $('pipRate').textContent = `${r}×`;
+    $('pipSlower').disabled = r <= RATES[0]; $('pipFaster').disabled = r >= RATES[RATES.length - 1];
+    try { ytp && ytReady && ytp.setPlaybackRate(r); } catch (_) {}
+  }
+  const stepRate = (dir) => { const cur = S.videoRate || 1, i = RATES.findIndex((x) => x >= cur - 0.01); setRate(RATES[Math.max(0, Math.min(RATES.length - 1, (i < 0 ? 3 : i) + dir))]); };
   $('pipPlay').addEventListener('click', () => {
     if (!ytp || !ytReady) return;
     if (ytPlaying()) ytp.pauseVideo();
@@ -2825,7 +2983,9 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   $('pipFwd').addEventListener('click', () => ytSeek(ytTime() + 5, ytPlaying()));
   $('pipPrevLine').addEventListener('click', () => gotoLine(vIdx - 1, { seek: true, play: true }));
   $('pipNextLine').addEventListener('click', () => gotoLine(vIdx + 1, { seek: true, play: true }));
-  $('pipRate').addEventListener('click', () => { const R = [1, 0.75, 0.5]; setRate(R[(R.indexOf(S.videoRate || 1) + 1) % R.length]); });
+  $('pipSlower').addEventListener('click', () => stepRate(-1));
+  $('pipFaster').addEventListener('click', () => stepRate(1));
+  setRate(S.videoRate || 1);
   $('pipStop').addEventListener('click', () => { S.videoStop = S.videoStop === false; $('pipStop').setAttribute('aria-pressed', String(S.videoStop !== false)); save(); });
   $('pipStop').setAttribute('aria-pressed', String(S.videoStop !== false));
   $('pipSize').addEventListener('click', () => { const P = S.pip || (S.pip = {}); P.size = { s: 'm', m: 'l', l: 's' }[P.size || 'm']; save(); placePip(); });
@@ -2884,11 +3044,17 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
 
   // Test hook: only with #test in the URL, exposes letter geometry so automated tests can trace it.
   if (location.hash === '#test') window.__pad = {
+    // Each letter's span on a row, as the tap test works it out.
+    segs: (i) => { const r = pages[S.page][i], out = []; const y0 = L.top + i * L.pitch;
+      for (let x = L.textX; x < W; x += 2) { const h = letterAt(x, y0 + L.pitch / 2); if (h && (!out.length || out[out.length - 1].v !== h.ak)) out.push({ v: h.ak, x0: x - SX, x1: x - SX, y0: y0 - SY, h: L.pitch }); else if (h) out[out.length - 1].x1 = x - SX; }
+      return out; },
+    // x0: left edge of the guide text on row 0 (screen px), y: middle of the letters.
+
     // Middle of the 3rd letter on row 0 (or the first tutor copy), in sheet coordinates.
     layout: () => { const r = pages[S.page][0], base = L.top + L.gapTop + L.ascPx - L.xPx * 0.5;
-      if (r.tutor) return { x: tutorXs(r.tutor, L.textX, null, L.tutorX)[0] + 20, y: base };
+      if (r.tutor) { const x0 = tutorXs(r.tutor, L.textX, null, L.tutorX)[0]; return { x: x0 + 20, x0, y: base }; }
       mctx.font = `${L.fontSize}px ${L.family}`; const ls = LETTERS(r.t); const a = mctx.measureText(ls.slice(0, 2).join('')).width, w = mctx.measureText(ls[2]).width;
-      return { x: L.textX + a + w / 2 - SX, y: base - SY }; },
+      return { x: L.textX + a + w / 2 - SX, x0: L.textX - SX, y: base - SY }; },
     log: () => readLog(), finish: () => recordAttempt(), grade: () => gradePage(),
     model: () => modelGeom(),
     scroll: () => ({ SX, SY, rows: pages[S.page].length, CH: CH(), H }),
