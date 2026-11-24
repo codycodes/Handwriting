@@ -1,0 +1,34 @@
+name: Fetch Lingua Libre recordings
+
+# Run by hand (Actions → Fetch Lingua Libre recordings → Run workflow) after adding words.
+# Downloads native-speaker recordings of the words in words.js from Lingua Libre
+# (Wikimedia Commons, CC BY-SA) into audio/ and commits them to the branch it ran on.
+# No API keys: it uses public Wikimedia endpoints and GitHub's built-in token to commit.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-audio
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ffmpeg
+        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+      - name: Download recordings
+        run: python3 -u tools/fetch-lingualibre.py
+      - name: Commit new recordings
+        run: |
+          git add audio
+          if git diff --cached --quiet; then echo "No new recordings."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update Lingua Libre recordings"
+          git push
