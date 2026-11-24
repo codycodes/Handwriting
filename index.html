@@ -206,8 +206,13 @@ body:not(.tutor) .tutor-only { display: none !important; }
 #letterCard li b { font-family: "Kalam", sans-serif; font-size: 20px; font-weight: 400; text-align: center; }
 svg.off { stroke: var(--muted) !important; opacity: .7; }
 .wbtn.nosound { cursor: default; }
-#soundNote { flex: 0 1 auto; font-size: 12px; color: var(--muted); max-width: 32%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#soundNote a { color: inherit; }
+/* Where a sound came from: a small tip above the button you tapped, gone after a few seconds */
+.soundtip { position: fixed; z-index: 30; max-width: min(360px, calc(100vw - 24px)); padding: 6px 10px; border-radius: 8px; font-size: 12.5px; line-height: 1.35;
+  background: var(--text); color: var(--paper); box-shadow: 0 6px 18px rgba(10, 20, 40, .25); pointer-events: none; opacity: 0; transform: translateY(4px);
+  transition: opacity .2s, transform .2s; }
+.soundtip.on { opacity: .96; transform: none; }
+.soundtip::after { content: ""; position: absolute; left: var(--ax, 50%); top: 100%; margin-left: -6px; border: 6px solid transparent; border-top-color: var(--text); }
+.soundtip.below::after { top: auto; bottom: 100%; border-top-color: transparent; border-bottom-color: var(--text); }
 
 /* Learning path: Letters → Words → Bollywood & culture */
 .path { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 14px; }
@@ -457,7 +462,6 @@ body.fs #fsbar { display: flex; }
   </div>
   <div class="row" id="wordBar" hidden>
     <div id="wordChips"></div>
-    <span id="soundNote" aria-live="polite"></span>
   </div>
 </header>
 <main class="sheet" id="sheet">
@@ -1947,10 +1951,28 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     }
     return out;
   }
-  function playWord(w, langs) {
-    const note = $('soundNote');
-    if (!W$.canPlay(w, langs)) { note.textContent = NO_SOUND; return; }
-    W$.playNow(w, langs).then((src) => { note.textContent = src || NO_SOUND; }, () => { note.textContent = 'Could not play this word'; });
+  // A tip above the tapped button saying where the sound came from; it fades after a few seconds.
+  let tipEl = null, tipTimer = 0;
+  function soundTip(anchor, text) {
+    if (!text || !anchor || !anchor.isConnected) return;
+    if (!tipEl) { tipEl = document.createElement('div'); tipEl.className = 'soundtip'; tipEl.setAttribute('role', 'status'); }
+    const host = anchor.closest('dialog') || document.body;   // above an open dialog too
+    if (tipEl.parentElement !== host) host.appendChild(tipEl);
+    tipEl.textContent = text; tipEl.classList.remove('on', 'below');
+    const r = anchor.getBoundingClientRect(), w = tipEl.offsetWidth, h = tipEl.offsetHeight;
+    const left = Math.min(Math.max(12, r.left + r.width / 2 - w / 2), innerWidth - w - 12);
+    const below = r.top - h - 10 < 4;
+    tipEl.classList.toggle('below', below);
+    tipEl.style.left = `${left}px`; tipEl.style.top = `${below ? r.bottom + 10 : r.top - h - 10}px`;
+    tipEl.style.setProperty('--ax', `${Math.min(Math.max(12, r.left + r.width / 2 - left), w - 12)}px`);
+    requestAnimationFrame(() => tipEl.classList.add('on'));
+    clearTimeout(tipTimer);
+    tipTimer = setTimeout(() => tipEl.classList.remove('on'), Math.min(7000, 2500 + text.length * 35));
+  }
+  addEventListener('scroll', () => tipEl && tipEl.classList.remove('on'), true);
+  function playWord(w, langs, anchor) {
+    if (!W$.canPlay(w, langs)) { soundTip(anchor, NO_SOUND); return; }
+    W$.playNow(w, langs).then((src) => soundTip(anchor, src || NO_SOUND), () => soundTip(anchor, 'Could not play this word'));
   }
   let barSig = '';
   function renderWordBar() {
@@ -1960,7 +1982,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     bar.hidden = !words.length;
     const sig = words.join(' ');
     if (!words.length || sig === barSig) return;
-    barSig = sig; $('soundNote').textContent = '';
+    barSig = sig;
     const box = $('wordChips'); box.innerHTML = '';
     for (const w of words.slice(0, 12)) {
       const chip = document.createElement('div'); chip.className = 'chip';
@@ -1977,7 +1999,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
           + `<span class="mn">${esc(m)}</span>`;
         b.title = can ? (e ? `${w} · ${W$.translit(w)} · ${W$.meaningText(e)}` : `Hear ${w}`) : NO_SOUND;
       };
-      b.onclick = () => { if (letter) showLetter(parts[0], w, b, langs); else playWord(w, langs); };
+      b.onclick = () => { if (letter) showLetter(parts[0], w, b, langs); else playWord(w, langs, b); };
       chip.appendChild(b);
       // Each letter of the word: tap one to hear it and see how it's said.
       if (!letter) chip.appendChild(letterButtons(parts, w, () => langs));
@@ -2001,13 +2023,12 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     }
     return span;
   }
-  function sayLetter(pt, langs) {
-    const note = $('soundNote');
-    if (!W$.canPlay(pt.ak, langs, { voiceOnly: true })) { if (note) note.textContent = NO_SOUND; return; }
-    W$.playNow(pt.ak, langs, { voiceOnly: true, rate: 0.6 }).then((src) => { if (note) note.textContent = src || ''; });
+  function sayLetter(pt, langs, anchor) {
+    if (!W$.canPlay(pt.ak, langs, { voiceOnly: true })) { soundTip(anchor, NO_SOUND); return; }
+    W$.playNow(pt.ak, langs, { voiceOnly: true, rate: 0.6 }).then((src) => soundTip(anchor, src));
   }
   function showLetter(pt, word, anchor, langs) {
-    sayLetter(pt, langs);
+    sayLetter(pt, langs, anchor);
     const card = $('letterCard');
     // A modal dialog sits above the page, so the card has to live inside it to be seen.
     const host = anchor.closest('dialog') || document.body;
@@ -2017,7 +2038,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       + `<div class="sub">${inWord ? `in ${esc(word)}: <i>${esc(pt.tr)}</i>${pt.silentA ? ' (its "a" is silent)' : ''}` : 'on its own'}</div></div>`
       + (W$.canPlay(pt.ak, langs, { voiceOnly: true }) ? `<button class="say" aria-label="Hear it again">${SPEAKER}</button>` : `<button class="say" disabled title="${esc(NO_SOUND)}" aria-label="No sound available">${SPEAKER_OFF}</button>`) + `</div>`
       + `<ul>${pt.how.map(([ch, h]) => `<li><b lang="hi">${esc(ch === 'अ' ? 'अ' : ch)}</b><span>${esc(h)}</span></li>`).join('')}</ul>`;
-    card.querySelector('.say:not([disabled])')?.addEventListener('click', () => sayLetter(pt, langs));
+    card.querySelector('.say:not([disabled])')?.addEventListener('click', (ev) => sayLetter(pt, langs, ev.currentTarget));
     card.hidden = false;
     const r = anchor.getBoundingClientRect(), cw = card.offsetWidth, ch = card.offsetHeight;
     const left = Math.min(Math.max(16, r.left + r.width / 2 - cw / 2), innerWidth - cw - 16);
@@ -2090,8 +2111,9 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       tr.innerHTML = `<td>${can ? `<button class="say" aria-label="Hear ${esc(e.w)}">${SPEAKER}</button>` : `<button class="say" disabled title="${esc(NO_SOUND)}" aria-label="No sound available">${SPEAKER_OFF}</button>`}</td><td class="dw" lang="hi"></td>`
         + `<td class="tr">${esc(W$.translit(e.w))}</td><td>${(e.langs || []).map((l) => `<span class="lgb">${esc(W$.LANG_NAME[l] || l)}</span>`).join(' ')}</td>`
         + `<td class="mn">${esc(W$.meaningText(e) || '…')}</td><td class="num">${b != null ? b + '%' : '–'}</td><td><button class="go">Practice</button></td>`;
-      tr.querySelector('.say').addEventListener('click', () => {
-        if (can) W$.playNow(e.w, e.langs).then((src) => { $('wlNote').textContent = src || NO_SOUND; });
+      tr.querySelector('.say').addEventListener('click', (ev) => {
+        const btn = ev.currentTarget;
+        if (can) W$.playNow(e.w, e.langs).then((src) => soundTip(btn, src || NO_SOUND));
       });
       tr.querySelector('.go').addEventListener('click', () => practice(e.w, 'deva'));
       // The word as tappable letters, one group per word of a phrase.
@@ -2445,7 +2467,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     $('trWrite')?.addEventListener('click', () => { if (S.mode === 'tutor') S.mode = 'trace'; practice(dev, 'deva'); });
     const langs = [to !== 'en' ? to : from];
     const hear = $('trHear');
-    if (hear) { if (!W$.canPlay(dev, langs)) { hear.disabled = true; hear.title = NO_SOUND; } else hear.addEventListener('click', () => W$.playNow(dev, langs).then((src) => { $('trMsg').textContent = src || ''; })); }
+    if (hear) { if (!W$.canPlay(dev, langs)) { hear.disabled = true; hear.title = NO_SOUND; } else hear.addEventListener('click', () => W$.playNow(dev, langs).then((src) => soundTip(hear, src || NO_SOUND))); }
   }
   $('translateBtn').addEventListener('click', () => openTranslate());
   $('trGo').addEventListener('click', runTranslate);
