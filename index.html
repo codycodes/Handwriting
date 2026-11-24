@@ -1879,7 +1879,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       if (!e.m) W$.lookup(e.w).then((d) => { if (d) { tr.querySelector('.mn').textContent = W$.meaningText(d); tr.cells[3].innerHTML = d.langs.map((l) => `<span class="lgb">${esc(W$.LANG_NAME[l] || l)}</span>`).join(' '); } else tr.querySelector('.mn').textContent = ''; });
       tb.appendChild(tr);
     }
-    $('wlNote').textContent = 'Sounds: your own recordings if you add them, then native speakers from Lingua Libre (Wikimedia Commons), then the iPad’s Hindi voice.';
+    $('wlNote').textContent = 'Sounds: native speakers from Lingua Libre (CC BY-SA; the speaker is shown while it plays), or the iPad’s Hindi voice when there’s no recording.';
   }
   /* ---------- Learning path: Letters → Words → Bollywood & culture ---------- */
   // A letter or word is mastered when your last 3 tries average 75% or more; a step is done

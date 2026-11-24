@@ -50,10 +50,12 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
   A letter or word is **mastered** when your last 3 tries average 75% or more, and a step is done when 80% of it is mastered. **Continue** takes you to the first step that isn't done, with only the words you haven't mastered yet. Inside a step the layout ramps too: **Trace** at first, **Trace + copy** from 40% mastered, then **Repeat & fade**. Every step stays open, so you can jump ahead.
 - Every word shows its **meaning**, which **language** it belongs to (Hindi, Marathi or both, with separate meanings where they differ, like बस: "enough" in Hindi, "sit" in Marathi), and how it **sounds** in Latin letters (IAST style, with the silent "a" dropped the way it's spoken: कमल *kamal*, मुलगा *mulgā*)
 - **Meanings** (toolbar) shows a bar above the page with each Devanagari word on it. Tap a word to hear it. Words not in the built-in lists are looked up on Wiktionary
-- **Sound**, best first:
-  1. Your own recordings in `audio/` (listed in `audio/index.json`). `tools/make-audio.py` makes them for every word with Azure neural voices (hi-IN Swara, mr-IN Aarohi); the free tier covers it easily
-  2. Native speakers on [Lingua Libre](https://lingualibre.org) (Wikimedia Commons, CC BY-SA 4.0); the speaker's name is shown while it plays
+- **Sound**, best first, with no API keys anywhere:
+  1. **Native speakers from [Lingua Libre](https://lingualibre.org)**, saved in this repo under `audio/` so GitHub Pages serves them directly. `audio/index.json` lists each word's Hindi and Marathi recording with the speaker's name and the file's Wikimedia Commons page; the app shows the speaker while it plays (the recordings are CC BY-SA, which asks for that credit). A phrase with no recording of its own plays its words one after another
+  2. Words that aren't in the lists (your own text, Anki lists): Lingua Libre is searched live from the iPad
   3. The iPad's Hindi voice. For a better one: **Settings → Accessibility → Spoken Content → Voices → Hindi** and download an Enhanced voice. iPad has no Marathi voice, so Marathi words use the Hindi one
+
+  After adding words to `words.js`, run `python3 tools/fetch-lingualibre.py` (needs `ffmpeg`) and commit `audio/`. It lists every Hindi and Marathi file on Lingua Libre, matches your words, and saves each one as a small trimmed MP3. Lingua Libre doesn't have every word; anyone can record missing ones there, and they'll show up the next time you run it
 - **Anki:** **Copy for Anki** or **Save .txt** gives a list Anki imports straight into the Basic note type (Front: the word; Back: how it sounds, meaning and language; Tags: `penmanship::<level>` and the language). **Paste from Anki** takes a *Notes in Plain Text* export (or any list with one word per line, optionally a tab and its meaning) and adds it as your own list
 
 ## Progress over time

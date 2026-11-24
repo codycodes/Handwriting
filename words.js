@@ -293,20 +293,40 @@
   const langText = (langs) => (langs || []).map((l) => LANG_NAME[l] || l).join(' & ');
 
   /* ---------- Sound ---------- */
-  // 1. Your own recordings: audio/index.json maps a word to a file (see tools/make-audio.py).
-  // 2. Native speakers on Lingua Libre (Wikimedia Commons), CC BY-SA.
+  // 1. Lingua Libre recordings saved in this repo: audio/index.json maps each word to its files,
+  //    one per language, with the speaker (made by tools/fetch-lingualibre.py, no keys needed).
+  // 2. For words that aren't in the lists (your own text, Anki lists): Lingua Libre, searched live.
   // 3. The device's Hindi or Marathi voice.
   const QID = { hi: 'Q1568 (hin)', mr: 'Q1571 (mar)' };
   let manifest = null;
   const manifestP = fetch('audio/index.json').then((r) => (r.ok ? r.json() : {})).catch(() => ({})).then((m) => (manifest = m || {}));
 
+  const credit = (lang, speaker, license) => `${LANG_NAME[lang] || ''} recording by ${speaker} · Lingua Libre · ${license || 'CC BY-SA 4.0'}`.trim();
+  // Marathi-only words try the Marathi recording first; everything else tries Hindi first.
+  const langOrder = (langs) => (langs && langs.length === 1 && langs[0] === 'mr' ? ['mr', 'hi'] : ['hi', 'mr']);
+  function fromManifest(word, langs) {
+    const list = manifest[word];
+    if (!Array.isArray(list)) return typeof list === 'string' ? { url: 'audio/' + list, src: 'Recording' } : undefined;
+    for (const l of langOrder(langs)) {
+      const r = list.find((x) => x.lang === l);
+      if (r) return { url: 'audio/' + r.f, src: credit(r.lang, r.speaker, r.license), page: r.page };
+    }
+    // No recording of the whole phrase: play its words one after another, if each has one.
+    const parts = word.split(/\s+/).map((w) => w.replace(/[^\p{L}\p{M}\p{N}]+/gu, '')).filter(Boolean);
+    if (parts.length > 1) {
+      const recs = parts.map((w) => fromManifest(w, langs));
+      if (recs.every((r) => r && r.url)) return { urls: recs.map((r) => r.url), src: `Word by word: ${[...new Set(recs.map((r) => r.src.replace(/ · Lingua Libre.*/, '')))].join(', ')} · Lingua Libre` };
+    }
+    return null; // searched already: Lingua Libre has none
+  }
+
   async function findRecording(word, langs) {
     await manifestP;
-    if (manifest[word]) return { url: 'audio/' + manifest[word], src: 'Your recording' };
+    const saved = fromManifest(word, langs);
+    if (saved !== undefined) return saved;
     const key = 'rec:' + word;
     if (cache[key] !== undefined) return cache[key];
-    const order = langs && langs.length ? [...langs] : ['hi', 'mr'];
-    for (const l of ['hi', 'mr']) if (!order.includes(l)) order.push(l);
+    const order = langOrder(langs);
     try {
       for (const l of order) {
         const q = `intitle:"LL-${QID[l]}" intitle:"${word}"`;
@@ -322,7 +342,7 @@
         });
         if (hit && hit.imageinfo && hit.imageinfo[0]) {
           const speaker = hit.title.slice(`File:LL-${QID[l]}-`.length, -(want.length + 1 + hit.title.split('.').pop().length + 1));
-          const res = { url: hit.imageinfo[0].url, src: `${LANG_NAME[l]} recording by ${speaker} · Lingua Libre · CC BY-SA 4.0`, page: hit.imageinfo[0].descriptionurl };
+          const res = { url: hit.imageinfo[0].url, src: credit(l, speaker), page: hit.imageinfo[0].descriptionurl };
           cache[key] = res; saveCache(); return res;
         }
       }
@@ -332,6 +352,8 @@
 
   const player = new Audio();
   player.preload = 'auto';
+  let playSeq = [];   // the rest of a phrase played word by word
+  player.addEventListener('ended', () => { if (playSeq.length) { player.src = playSeq.shift(); player.play().catch(() => {}); } });
   const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA=';
   // iPad only lets a page play sound from a tap; touching the player and the voice inside the
   // tap keeps them allowed after the lookup finishes.
@@ -365,7 +387,10 @@
     if (!opts.voiceOnly) {
       const rec = await findRecording(word, langs);
       if (rec) {
-        try { player.src = rec.url; await player.play(); return rec.src; } catch (_) {}
+        try {
+          const urls = rec.urls || [rec.url];
+          playSeq = urls.slice(1); player.src = urls[0]; await player.play(); return rec.src;
+        } catch (_) {}
       }
     }
     return speakTTS(word, langs) || 'No sound available on this device';
