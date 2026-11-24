@@ -41,6 +41,29 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
 - **Tips:** a tip bar under the toolbar with advice on grip, posture, letter sizes and stroke order, chosen for the script and mode you're using. Flip through with the arrows, or hide it with × (the **Tips** button brings it back)
 - Pressure-sensitive ink, eraser, undo/redo, clear, and 3 ink colors
 
+## Hindi & Marathi
+- **Learn** (toolbar) opens a path that ramps up in three stages:
+  1. **Letters:** स्वर vowels, व्यंजन consonants and अंक numerals, in Tutor mode
+  2. **Words:** 7 levels in the order Devanagari is taught (no vowel signs → ा → ि ी → ु ू → े ै ो ौ → nasal marks → joined letters), plus number words
+  3. **Bollywood & culture:** everyday phrases, festival greetings and sayings (Diwali, Holi, Ganeshotsav, Sankranti), and famous film lines from Sholay, Deewaar, DDLJ, 3 Idiots, Sairat and more
+
+  A letter or word is **mastered** when your last 3 tries average 75% or more, and a step is done when 80% of it is mastered. **Continue** takes you to the first step that isn't done, with only the words you haven't mastered yet. Inside a step the layout ramps too: **Trace** at first, **Trace + copy** from 40% mastered, then **Repeat & fade**. Every step stays open, so you can jump ahead.
+- Every word shows its **meaning**, which **language** it belongs to (Hindi, Marathi or both, with separate meanings where they differ, like बस: "enough" in Hindi, "sit" in Marathi), and how it **sounds** in Latin letters (IAST style, with the silent "a" dropped the way it's spoken: कमल *kamal*, मुलगा *mulgā*)
+- **Meanings** (toolbar) shows a bar above the page with each Devanagari word on it. Tap a word to hear it. Words not in the built-in lists are looked up on Wiktionary
+- **Sound**, best first:
+  1. Your own recordings in `audio/` (listed in `audio/index.json`). `tools/make-audio.py` makes them for every word with Azure neural voices (hi-IN Swara, mr-IN Aarohi); the free tier covers it easily
+  2. Native speakers on [Lingua Libre](https://lingualibre.org) (Wikimedia Commons, CC BY-SA 4.0); the speaker's name is shown while it plays
+  3. The iPad's Hindi voice. For a better one: **Settings → Accessibility → Spoken Content → Voices → Hindi** and download an Enhanced voice. iPad has no Marathi voice, so Marathi words use the Hindi one
+- **Anki:** **Copy for Anki** or **Save .txt** gives a list Anki imports straight into the Basic note type (Front: the word; Back: how it sounds, meaning and language; Tags: `penmanship::<level>` and the language). **Paste from Anki** takes a *Notes in Plain Text* export (or any list with one word per line, optionally a tab and its meaning) and adds it as your own list
+
+## Progress over time
+Every letter and word you write is scored and saved when you finish its page (Clear, turn the page, change the text, or leave the app), whether **Grade** is on or not. **Progress** (toolbar) shows:
+- Totals, your last 7 days against the week before, and your best
+- A chart of your daily average accuracy; tap a letter or word in the table for a chart of every attempt at it, and **Practice** to write it again
+- A table of every letter or word, weakest first: tries, last, best, the average of your last 5 and its trend
+
+Filter by **Letters** or **Words**, and by English or देवनागरी. Scores stay in the browser's storage on the iPad (`penmanship-pad:log`, one JSON entry per letter or word: time, text, script, mode, accuracy and each criterion). **Export** saves them as a JSON file, and **Import** merges one back in.
+
 ## Apple Pencil handling
 | Issue on iPad | What the app does |
 | --- | --- |

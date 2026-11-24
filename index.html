@@ -107,6 +107,7 @@ button {
   touch-action: manipulation; display: inline-flex; align-items: center; gap: 6px;
 }
 button:disabled { opacity: .4; cursor: default; }
+button[hidden] { display: none; }
 button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .tools { gap: 8px 10px; align-items: flex-end; }
 .group { display: flex; flex-direction: column; gap: 3px; flex: none; }
@@ -170,6 +171,82 @@ body:not(.tutor) .tutor-only { display: none !important; }
   position: absolute; right: 14px; bottom: 70px; white-space: nowrap; font-size: 12px; color: var(--muted);
   pointer-events: none; background: var(--paper); padding: 2px 6px; border-radius: 6px;
 }
+/* Word bar: meanings and sounds for the Devanagari words on the page */
+#wordBar { gap: 8px; flex-wrap: nowrap; align-items: center; }
+#wordBar[hidden] { display: none; }
+#wordChips { display: flex; gap: 6px; overflow-x: auto; flex: 1; min-width: 0; scrollbar-width: none; }
+#wordChips::-webkit-scrollbar { display: none; }
+.chip { flex: none; min-height: 38px; padding: 2px 12px 2px 8px; gap: 8px; max-width: 520px; }
+.chip svg { flex: none; stroke: var(--accent); }
+.chip .dw { font-family: "Kalam", sans-serif; font-size: 20px; line-height: 1; }
+.chip .tr { color: var(--accent); font-style: italic; }
+.chip .lg, .lgb { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 1px 5px; white-space: nowrap; }
+.chip .mn { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+#soundNote { flex: 0 1 auto; font-size: 12px; color: var(--muted); max-width: 32%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#soundNote a { color: inherit; }
+
+/* Learning path: Letters → Words → Bollywood & culture */
+.path { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.stage { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.stage.now { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.stage.locked { opacity: .7; }
+.stage h3 { margin: 0; font-size: 15px; display: flex; gap: 8px; align-items: baseline; }
+.stage h3 .n { color: var(--muted); font-weight: 400; font-size: 12.5px; margin-left: auto; }
+.steps { display: flex; flex-wrap: wrap; gap: 6px; }
+.step { min-height: 34px; padding: 0 10px; font-size: 13.5px; position: relative; overflow: hidden; }
+.step .bar { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--accent); }
+.step.done { border-color: var(--grade-good); }
+.step.done::before { content: "✓"; color: var(--grade-good); font-weight: 700; }
+.step.next { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+.step.cur { background: var(--accent-soft); }
+.path-next { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.path-next .muted { font-size: 13px; }
+/* Dialogs (Words, Progress) */
+.dlg { width: min(980px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); padding: 0; border: 1px solid var(--line); border-radius: 14px;
+  background: var(--paper); color: var(--text); box-shadow: 0 20px 60px rgba(10, 20, 40, .3); overflow: hidden; }
+.dlg[open] { display: flex; flex-direction: column; }
+.dlg::backdrop { background: rgba(10, 16, 28, .45); }
+.dlg-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 12px 14px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.dlg-head h2 { margin: 0 6px 0 2px; font-size: 18px; }
+.dlg-head select { flex: 0 1 280px; }
+.dlg-body { overflow: auto; padding: 14px; -webkit-user-select: text; user-select: text; }
+.dlg-close { padding: 0 10px; }
+button.primary { background: var(--accent); color: var(--paper); border-color: var(--accent); font-weight: 700; }
+.muted { color: var(--muted); }
+.small { font-size: 12.5px; }
+.card { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; background: var(--panel); }
+.card p { margin: 0 0 8px; }
+.card textarea { width: 100%; box-sizing: border-box; font: 16px/1.4 var(--font-ui); color: var(--text); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+.card .row { margin-top: 8px; }
+.card input { font: inherit; font-size: 16px; color: var(--text); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; flex: 0 1 240px; }
+.tbl { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.tbl th { text-align: left; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 400; padding: 6px 8px; border-bottom: 1px solid var(--line); position: sticky; top: -14px; background: var(--paper); }
+.tbl td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.tbl .num { text-align: right; }
+.tbl .dw { font-family: "Kalam", sans-serif; font-size: 24px; line-height: 1.2; }
+.tbl .tr { color: var(--accent); font-style: italic; }
+#wlTable td.dw { min-width: 4em; }
+#wlTable td.mn { min-width: 12em; }
+#wlTable td.tr { min-width: 5em; }
+.lgb { display: inline-block; margin: 1px 0; }
+.tbl td button { min-height: 36px; padding: 0 10px; }
+.tbl tr.sel td { background: var(--accent-soft); }
+#pgTable tbody tr { cursor: pointer; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.tile { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.tile .k { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.tile .v { font-size: 26px; font-weight: 700; margin-top: 2px; }
+.tile .d { font-size: 12.5px; color: var(--muted); }
+.chart { position: relative; margin: 0 0 14px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px 6px; }
+.chart figcaption { display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 4px; min-height: 36px; }
+.chart figcaption button { min-height: 32px; font-weight: 400; }
+.chart figcaption button.primary { font-weight: 700; }
+#pgChart svg { display: block; width: 100%; touch-action: pan-y; }
+#pgChart .empty { color: var(--muted); padding: 40px 0; text-align: center; }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; font-size: 13px;
+  box-shadow: 0 4px 14px rgba(10, 20, 40, .15); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.tip[hidden] { display: none; }
+.up { color: var(--grade-good); } .down { color: var(--grade-off); }
 @media (max-width: 700px) { .brand { display: none; } }
 
 /* Full screen: hide the toolbar so the sheet runs edge to edge like a plain page. */
@@ -286,7 +363,15 @@ body.fs #fsbar { display: flex; }
     <div class="group"><span class="label">Check</span>
       <button id="gradeBtn" class="toggle" aria-pressed="false" title="Score how closely your writing follows the letters">Grade</button></div>
     <div class="group"><span class="label">Help</span>
-      <button id="tipsBtn" class="toggle" aria-pressed="true" title="Show handwriting tips">Tips</button></div>
+      <div class="row" style="gap:6px;flex-wrap:nowrap">
+        <button id="tipsBtn" class="toggle" aria-pressed="true" title="Show handwriting tips">Tips</button>
+        <button id="meanBtn" class="toggle" aria-pressed="true" title="Show the meaning and sound of Hindi and Marathi words on the page">Meanings</button>
+      </div></div>
+    <div class="group"><span class="label">Learn</span>
+      <div class="row" style="gap:6px;flex-wrap:nowrap">
+        <button id="wordsBtn" title="Your path through Hindi and Marathi: letters, then words, then Bollywood and culture. Meanings, sounds and Anki lists.">Learn</button>
+        <button id="progressBtn" title="Your accuracy for each letter and word over time">Progress</button>
+      </div></div>
     <div class="group"><span class="label">Theme</span>
       <div class="seg" data-key="theme">
         <button data-v="auto">Auto</button>
@@ -300,6 +385,10 @@ body.fs #fsbar { display: flex; }
     <button id="tipPrev" aria-label="Previous tip"><svg viewBox="0 0 24 24" style="stroke:currentColor"><path d="M15 18l-6-6 6-6"/></svg></button>
     <button id="tipNext" aria-label="Next tip"><svg viewBox="0 0 24 24" style="stroke:currentColor"><path d="M9 18l6-6-6-6"/></svg></button>
     <button id="tipClose" aria-label="Hide tips"><svg viewBox="0 0 24 24" style="stroke:currentColor"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="row" id="wordBar" hidden>
+    <div id="wordChips"></div>
+    <span id="soundNote" aria-live="polite"></span>
   </div>
 </header>
 <main class="sheet" id="sheet">
@@ -331,7 +420,56 @@ body.fs #fsbar { display: flex; }
   <button id="fsExit" aria-label="Exit full screen" title="Exit full screen"><svg viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button>
 </div>
 
+<dialog id="wordsDlg" class="dlg" aria-labelledby="wordsTitle">
+  <div class="dlg-head">
+    <h2 id="wordsTitle">Learn</h2>
+    <select id="wlLevel" aria-label="Word level"></select>
+    <span class="spacer"></span>
+    <button id="wlPractice" class="primary">Practice all</button>
+    <button id="wlCopy" title="Copy this list as text Anki can import">Copy for Anki</button>
+    <button id="wlSave" title="Save this list as a .txt file for Anki">Save .txt</button>
+    <button id="wlImportBtn" title="Paste words exported from Anki">Paste from Anki</button>
+    <button id="wlDelete" hidden>Delete list</button>
+    <button class="dlg-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="dlg-body">
+    <div id="path" class="path"></div>
+    <div id="wlImport" class="card" hidden>
+      <p><b>Paste from Anki.</b> In Anki, choose <b>File → Export…</b>, pick <b>Notes in Plain Text (.txt)</b>, then open the file and copy everything here.
+        Any list with one Devanagari word per line also works, optionally followed by a tab and its meaning.</p>
+      <textarea id="wlText" rows="6" placeholder="घर&#9;house&#10;पाणी&#9;water (Marathi)"></textarea>
+      <div class="row"><input id="wlName" type="text" placeholder="List name" value="My Anki words" aria-label="List name">
+        <button id="wlImportGo" class="primary">Add list</button><button id="wlImportCancel">Cancel</button><span id="wlImportMsg" class="muted"></span></div>
+    </div>
+    <p id="wlHint" class="muted"></p>
+    <table class="tbl" id="wlTable"><thead><tr><th></th><th>Word</th><th>Sounds like</th><th>Language</th><th>Meaning</th><th class="num">Best</th><th></th></tr></thead><tbody></tbody></table>
+    <p class="muted small" id="wlNote"></p>
+  </div>
+</dialog>
+<dialog id="progressDlg" class="dlg" aria-labelledby="progressTitle">
+  <div class="dlg-head">
+    <h2 id="progressTitle">Progress</h2>
+    <div class="seg" id="pgKind"><button data-v="L">Letters</button><button data-v="W">Words</button></div>
+    <div class="seg" id="pgScript"><button data-v="all">All</button><button data-v="latin">English</button><button data-v="deva" lang="hi">देवनागरी</button></div>
+    <span class="spacer"></span>
+    <button id="pgExport" title="Save all your scores as a JSON file">Export</button>
+    <button id="pgImportBtn" title="Load scores from a JSON file saved with Export">Import</button>
+    <input id="pgFile" type="file" accept="application/json,.json" hidden>
+    <button class="dlg-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="dlg-body">
+    <div class="tiles" id="pgTiles"></div>
+    <figure class="chart">
+      <figcaption><span id="pgChartTitle"></span> <button id="pgAll" hidden>All</button><button id="pgPracticeOne" class="primary" hidden>Practice</button></figcaption>
+      <div id="pgChart"></div>
+      <div id="pgTip" class="tip" hidden></div>
+    </figure>
+    <table class="tbl" id="pgTable"><thead><tr><th>Item</th><th class="num">Tries</th><th class="num">Last</th><th class="num">Best</th><th class="num">Last 5</th><th>Trend</th></tr></thead><tbody></tbody></table>
+    <p class="muted small">Every letter and word you write is scored when you finish its page (Clear, turn the page, change the text, or leave the app), whether Grade is on or not. Scores stay on this iPad; use Export to back them up.</p>
+  </div>
+</dialog>
 <script src="strokes.js"></script>
+<script src="words.js"></script>
 <script>
 // Older Safari (before iPadOS 16) has no roundRect; without it drawing badges would throw.
 if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
@@ -349,12 +487,14 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   const SLANT = 15 * Math.PI / 180;           // slant line angle from vertical
   const STORE = 'penmanship-pad:v2';
   const DEVANAGARI = /[ऀ-ॿ]/;
+  const LETTERS = (t) => (window.WORDS ? window.WORDS.letters(t) : Array.from(t));
 
   const defaults = {
     text: 'Cody codes',
     style: 'cursive', guide: 'outline', mode: 'trace', size: 'l',
     tool: 'pen', color: 'ink', fingers: 'draw', fingersSet: false, page: 0, theme: 'auto',
     paper: 'lines', grade: false, marks: false, tutorSet: 'lower', panel: true, tips: true, tipI: 0,
+    meanings: true, wordLevel: 'l1',
   };
   let S = { ...defaults };
   try { Object.assign(S, JSON.parse(localStorage.getItem(STORE) || '{}')); } catch (_) {}
@@ -984,7 +1124,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       const over = new ImageData(gw, bh), od = over.data;
       const y0 = L.top + i * L.pitch, base = y0 + L.gapTop + L.ascPx;
       let x = L.textX, text, order = null;
-      const straight = [];
+      const straight = [], segs = [];   // segs: each letter's span on the row, for per-letter scores
       if (r.tutor) {
         // Compare with the copies of the letter your writing spans (freehand rows start where you started).
         const g = glyph(r.tutor), k = tk();
@@ -1004,6 +1144,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
           const user = grp.map((st) => st.pts.map((q) => [q[0], q[1]]));
           const exp = g.s.map((st) => st.map((q) => toPx(q, xs[j], base, k)));
           const chk = strokeCheck(user, exp, L.xPx);
+          segs.push({ v: r.tutor, x0: xs[j], x1: xs[j] + g.w * k, path: chk.ok });
           order.ok += chk.ok; order.n++; order.marks.push({ user, chk, exp });
           chk.per.forEach((pp, u) => { if (pp.i >= 0 && isStraight(exp[pp.i])) { const v = straightness(user[u]); if (v != null) straight.push(v); } });
         });
@@ -1018,6 +1159,24 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
         x += inkLeft - glyphLeft;
       }
       text = text || ((c, grow) => { c.font = font; c.fillText(target, x, base); if (grow) { c.lineWidth = grow; c.strokeText(target, x, base); } });
+      if (!r.tutor) {
+        // Where each letter (a Devanagari letter with its vowel sign counts as one) sits along the row.
+        mctx.font = font;
+        let pre = '', wi = 0;
+        for (const ch of LETTERS(target)) {
+          if (/^\s+$/.test(ch)) { wi++; pre += ch; continue; }
+          const x0 = x + mctx.measureText(pre).width; pre += ch;
+          if (/^[\p{L}\p{M}\p{N}]/u.test(ch)) segs.push({ v: ch, x0, x1: x + mctx.measureText(pre).width, word: wi });
+        }
+      }
+      // Each pixel column belongs to the nearest letter, so stray ink counts against that letter.
+      const segOf = new Int16Array(gw).fill(-1);
+      if (segs.length) for (let xx = 0, j = 0; xx < gw; xx++) {
+        const cx = xx / GK;
+        while (j < segs.length - 1 && Math.abs((segs[j + 1].x0 + segs[j + 1].x1) / 2 - cx) < Math.abs((segs[j].x0 + segs[j].x1) / 2 - cx)) j++;
+        segOf[xx] = j;
+      }
+      const sa = new Float32Array(segs.length), saH = new Float32Array(segs.length), sn = new Float32Array(segs.length), snH = new Float32Array(segs.length);
       const A = maskOf(gw, bh, y0, (c) => text(c, 0));
       const At = maskOf(gw, bh, y0, (c) => text(c, tol1 * 2));
       const Al = maskOf(gw, bh, y0, (c) => text(c, tol2 * 2));
@@ -1031,13 +1190,18 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       const paint = (o, col, al) => { od[o] = col[0]; od[o + 1] = col[1]; od[o + 2] = col[2]; od[o + 3] = Math.max(od[o + 3], al); };
       for (let j = 0; j < A.length; j++) {
         const ry = Math.floor(j / gw), xx = j % gw, o = j * 4;
+        const sg = segOf[xx];
         if (A[j]) {
           a++; if (xx >= ix0 && xx <= ix1) { if (ry < ty0) ty0 = ry; if (ry > ty1) ty1 = ry; }
-          if (It[j]) aHit++; else if (Il[j]) { aHit += 0.5; if (o >= 0) paint(o, miss, 60); } else if (o >= 0) paint(o, miss, 130);
+          const h = It[j] ? 1 : Il[j] ? 0.5 : 0; aHit += h;
+          if (sg >= 0) { sa[sg]++; saH[sg] += h; }
+          if (h === 0.5) { if (o >= 0) paint(o, miss, 60); } else if (!h && o >= 0) paint(o, miss, 130);
         }
         if (I[j]) {
           n++; if (ry < iy0) iy0 = ry; if (ry > iy1) iy1 = ry;
-          if (At[j]) nHit++; else if (Al[j]) { nHit += 0.5; if (o >= 0) paint(o, off, 110); } else if (o >= 0) paint(o, off, 235);
+          const h = At[j] ? 1 : Al[j] ? 0.5 : 0; nHit += h;
+          if (sg >= 0) { sn[sg]++; snH[sg] += h; }
+          if (h === 0.5) { if (o >= 0) paint(o, off, 110); } else if (!h && o >= 0) paint(o, off, 235);
         }
       }
       if (!n || !a) return null;
@@ -1056,7 +1220,29 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       if (S.style === 'cursive' && !r.tutor) crit.connected = connectedness(target, x, mine);
       const dir = crit.path ?? null;
       const can = document.createElement('canvas'); can.width = gw; can.height = bh; can.getContext('2d').putImageData(over, 0, 0);
-      return { i, base, y0, can, on, cov, crit, dir, score: overall(crit), marks: order ? order.marks : [] };
+      // Scores for each letter you wrote, and each word whose letters you all wrote.
+      const shapeOf = (A0, AH, N0, NH) => { const o2 = N0 ? NH / N0 : 0, c2 = A0 ? AH / A0 : 0; return o2 + c2 ? ((2 * o2 * c2) / (o2 + c2)) ** 2 : 0; };
+      const written = (j) => sn[j] > 0 && sa[j] > 0 && saH[j] / sa[j] >= 0.3;
+      const { connected, ...letterCrit } = crit;
+      const items = [];
+      segs.forEach((sg, j) => {
+        if (!written(j)) return;
+        const c = { ...letterCrit, shape: shapeOf(sa[j], saH[j], sn[j], snH[j]) };
+        if (sg.path != null) c.path = sg.path;
+        items.push({ k: 'L', v: sg.v, score: overall(c), crit: c });
+      });
+      if (!r.tutor) {
+        const words = new Map();
+        segs.forEach((sg, j) => { const w = words.get(sg.word) || { v: '', js: [] }; w.v += sg.v; w.js.push(j); words.set(sg.word, w); });
+        const parts = target.split(/\s+/).filter(Boolean);
+        for (const [wi, w] of words) {
+          if (!w.js.every(written)) continue;
+          const sum = (arr) => w.js.reduce((t, j) => t + arr[j], 0);
+          const c = { ...crit, shape: shapeOf(sum(sa), sum(saH), sum(sn), sum(snH)) };
+          items.push({ k: 'W', v: (parts[wi] || w.v).replace(/[^\p{L}\p{M}\p{N}'’-]+/gu, ''), score: overall(c), crit: c });
+        }
+      }
+      return { i, base, y0, can, on, cov, crit, dir, score: overall(crit), marks: order ? order.marks : [], items };
     }
   }
   const rowCache = new Map();
@@ -1073,12 +1259,38 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   }
   const pageScore = (res) => res && res.length ? Math.round(100 * res.reduce((t, r) => t + r.score, 0) / res.length) : null;
   function recordAttempt() {
-    if (!pageDirty || !S.grade) return;
+    if (!pageDirty || !L || !ink[S.page]) return;
     pageDirty = false;
-    const v = pageScore(lastGrade); if (v == null) return;
+    let res; try { res = gradePage().filter(Boolean); } catch (err) { console.error(err); return; }
+    logAttempt(res);
+    if (!S.grade) return;
+    const v = pageScore(res); if (v == null) return;
     const k = pageKey(), list = scores[k] || (scores[k] = []);
     list.push(v); if (list.length > 30) list.splice(0, list.length - 30);
     try { localStorage.setItem(SCORES, JSON.stringify(scores)); } catch (_) {}
+  }
+
+  /* ---------- Progress log ---------- */
+  // One entry per letter or word you write: {t: time, k: 'L' letter | 'W' word, v: the text,
+  // f: 'cursive' | 'print' | 'deva', m: practice mode, a: accuracy 0-100, c: each criterion 0-100}.
+  const LOG = 'penmanship-pad:log';
+  const LOG_MAX = 20000;
+  function readLog() { try { const j = JSON.parse(localStorage.getItem(LOG) || 'null'); return j && Array.isArray(j.entries) ? j.entries : []; } catch (_) { return []; } }
+  function writeLog(entries) {
+    if (entries.length > LOG_MAX) entries.splice(0, entries.length - LOG_MAX);
+    try { localStorage.setItem(LOG, JSON.stringify({ v: 1, entries })); return true; }
+    catch (_) { entries.splice(0, Math.ceil(entries.length / 4)); try { localStorage.setItem(LOG, JSON.stringify({ v: 1, entries })); return true; } catch (__) { return false; } }
+  }
+  const fontOf = (v) => (DEVANAGARI.test(v) ? 'deva' : S.mode === 'tutor' || S.style !== 'cursive' ? 'print' : 'cursive');
+  function logAttempt(res) {
+    const t = Date.now(), add = [];
+    for (const r of res) for (const it of r.items || []) {
+      if (!it.v) continue;
+      const c = {}; for (const [k] of CRIT) if (it.crit[k] != null) c[k] = Math.round(100 * it.crit[k]);
+      add.push({ t, k: it.k, v: it.v, f: fontOf(it.v), m: S.mode, a: Math.round(100 * it.score), c });
+    }
+    if (!add.length) return;
+    const entries = readLog(); entries.push(...add); writeLog(entries);
   }
   function sparkline(vals) {
     if (vals.length < 2) return '';
@@ -1403,7 +1615,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     else hint.hidden = true;
   }
 
-  function render() { drawBg(); drawInk(); syncDemo(); placeScrollbar(); updateButtons(); showTip(); save(); }
+  function render() { drawBg(); drawInk(); syncDemo(); placeScrollbar(); updateButtons(); showTip(); renderWordBar(); save(); }
 
   async function relayout(clear) {
     if (clear) resetInk();
@@ -1416,6 +1628,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       const b = e.target.closest('button'); if (!b) return;
       const key = seg.dataset.key;
       if (S[key] === b.dataset.v) return;
+      if (CONTENT_KEYS.includes(key)) recordAttempt();   // score the page with the settings it was written with
       S[key] = b.dataset.v;
       if (key === 'mode' && S.mode === 'tutor') matchTutorScript();
       if (key === 'style' && S.mode === 'tutor') matchTutorScript();
@@ -1556,6 +1769,393 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   $('tipClose').addEventListener('click', () => { S.tips = false; showTip(); save(); });
   $('tipsBtn').addEventListener('click', () => { S.tips = !S.tips; showTip(); save(); });
 
+  /* ---------- Meanings and sounds (word bar) ---------- */
+  const W$ = window.WORDS || null;
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const SPEAKER = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>';
+  const cleanWord = (w) => w.replace(/[^\p{L}\p{M}\p{N}]+/gu, '');
+  function pageWords() {
+    const out = [];
+    if (S.mode === 'tutor' && S.tutorSet === 'text') for (const w of S.text.split(/\s+/).map(cleanWord)) if (w && DEVANAGARI.test(w) && !out.includes(w)) out.push(w);
+    for (const r of pages[S.page] || []) {
+      const t = r.tutor || r.t || r.copy; if (!t) continue;
+      for (const w of t.split(/\s+/).map(cleanWord)) if (w && DEVANAGARI.test(w) && !out.includes(w)) out.push(w);
+    }
+    return out;
+  }
+  async function playWord(w, langs) {
+    const note = $('soundNote'); note.textContent = 'Finding a recording…';
+    try { const src = await W$.play(w, langs); note.textContent = src || ''; }
+    catch (_) { note.textContent = 'Could not play this word'; }
+  }
+  let barSig = '';
+  function renderWordBar() {
+    const bar = $('wordBar');
+    $('meanBtn').setAttribute('aria-pressed', String(S.meanings !== false));
+    const words = W$ && S.meanings !== false ? pageWords() : [];
+    bar.hidden = !words.length;
+    const sig = words.join(' ');
+    if (!words.length || sig === barSig) return;
+    barSig = sig; $('soundNote').textContent = '';
+    const box = $('wordChips'); box.innerHTML = '';
+    for (const w of words.slice(0, 12)) {
+      const b = document.createElement('button'); b.className = 'chip'; b.title = `Hear ${w}`;
+      const letter = W$.letters(w).length === 1 && w.length <= 2 && !W$.DICT.has(w);
+      const fill = (e) => {
+        const m = letter ? 'the letter' : e ? W$.meaningText(e) : e === null ? 'no meaning found' : '…';
+        b.innerHTML = `${SPEAKER}<span class="dw" lang="hi">${esc(w)}</span><span class="tr">${esc(W$.translit(w))}</span>`
+          + (e && e.langs && e.langs.length ? `<span class="lg">${esc(W$.langText(e.langs))}</span>` : '')
+          + `<span class="mn">${esc(m)}</span>`;
+        if (e) b.title = `${w} · ${W$.translit(w)} · ${W$.meaningText(e)}`;
+        b.onclick = () => playWord(w, e ? e.langs : null);
+      };
+      const known = W$.local(w);
+      fill(known || (known === null ? null : undefined));
+      if (known === undefined && !letter) W$.lookup(w).then((e) => { if (barSig === sig) fill(e); });
+      W$.findRecording(w, known ? known.langs : null).catch(() => {}); // get it ready for the tap
+      box.appendChild(b);
+    }
+  }
+  $('meanBtn').addEventListener('click', () => { S.meanings = S.meanings === false; barSig = ''; renderWordBar(); save(); });
+
+  /* ---------- Practising a word or letter from the dialogs ---------- */
+  function practice(text, font) {
+    recordAttempt();
+    const deva = DEVANAGARI.test(text);
+    if (S.mode === 'tutor') {
+      const hasStrokes = LETTERS(text).some((ch) => glyph(ch));
+      if (hasStrokes) S.tutorSet = 'text'; else S.mode = 'trace';
+    }
+    if (deva) S.style = 'devanagari';
+    else if (S.style === 'devanagari' || (font && font !== 'deva' && S.mode !== 'tutor')) S.style = font === 'cursive' ? 'cursive' : 'print';
+    S.text = textEl.value = text;
+    document.querySelectorAll('dialog[open]').forEach((d) => d.close());
+    relayout(true);
+  }
+  document.querySelectorAll('.dlg-close').forEach((b) => b.addEventListener('click', () => b.closest('dialog').close()));
+  // Tapping the dark area around a dialog closes it.
+  document.querySelectorAll('dialog').forEach((d) => d.addEventListener('click', (e) => { if (e.target === d) d.close(); }));
+
+  /* ---------- Words dialog: levels, Anki lists ---------- */
+  const LISTS = 'penmanship-pad:lists';
+  const customLists = () => (W$ ? W$.custom() : []);
+  const saveLists = (ls) => { try { localStorage.setItem(LISTS, JSON.stringify(ls)); } catch (_) {} };
+  function currentList() {
+    const id = S.wordLevel || 'l1';
+    const lv = W$.LEVELS.find((x) => x.id === id);
+    if (lv) return { ...lv, custom: false };
+    const c = customLists().find((x) => x.id === id);
+    if (c) return { id: c.id, name: c.name, hint: `${c.words.length} words you added from Anki.`, words: c.words.map((x) => ({ w: x.w, langs: x.langs || [], m: x.m || '' })), custom: true };
+    return { ...W$.LEVELS[0], custom: false };
+  }
+  function bestScores(k) {
+    const best = new Map();
+    for (const e of readLog()) if (e.k === k) best.set(e.v, Math.max(best.get(e.v) ?? 0, e.a));
+    return best;
+  }
+  function renderWords() {
+    const sel = $('wlLevel');
+    const grp = (ids, label) => `<optgroup label="${label}">${W$.LEVELS.filter((l) => ids.includes(l.id)).map((l) => `<option value="${l.id}">${esc(l.name)}</option>`).join('')}</optgroup>`;
+    const culture = W$.PATH.find((p) => p.id === 'culture').steps.map((x) => x.level);
+    sel.innerHTML = grp(W$.LEVELS.map((l) => l.id).filter((id) => !culture.includes(id)), '2 · Words') + grp(culture, '3 · Bollywood & culture')
+      + (customLists().length ? `<optgroup label="Your lists">${customLists().map((l) => `<option value="${esc(l.id)}">${esc(l.name)}</option>`).join('')}</optgroup>` : '');
+    renderPath();
+    const list = currentList(); sel.value = list.id;
+    $('wlHint').textContent = list.hint || '';
+    $('wlDelete').hidden = !list.custom;
+    const best = bestScores('W'), tb = $('wlTable').tBodies[0]; tb.innerHTML = '';
+    for (const e of list.words) {
+      const tr = document.createElement('tr');
+      // A phrase is scored word by word: show the average of its words' bests once all are written.
+      const ws = e.w.split(/\s+/).map(cleanWord).filter(Boolean), bs = ws.map((w) => best.get(w));
+      const b = bs.every((x) => x != null) ? Math.round(avg(bs)) : null;
+      tr.innerHTML = `<td><button class="say" aria-label="Hear ${esc(e.w)}">${SPEAKER}</button></td><td class="dw" lang="hi">${esc(e.w)}</td>`
+        + `<td class="tr">${esc(W$.translit(e.w))}</td><td>${(e.langs || []).map((l) => `<span class="lgb">${esc(W$.LANG_NAME[l] || l)}</span>`).join(' ')}</td>`
+        + `<td class="mn">${esc(W$.meaningText(e) || '…')}</td><td class="num">${b != null ? b + '%' : '–'}</td><td><button class="go">Practice</button></td>`;
+      tr.querySelector('.say').addEventListener('click', () => {
+        W$.play(e.w, e.langs).then((src) => { $('wlNote').textContent = src || ''; });
+      });
+      tr.querySelector('.go').addEventListener('click', () => practice(e.w, 'deva'));
+      if (!e.m) W$.lookup(e.w).then((d) => { if (d) { tr.querySelector('.mn').textContent = W$.meaningText(d); tr.cells[3].innerHTML = d.langs.map((l) => `<span class="lgb">${esc(W$.LANG_NAME[l] || l)}</span>`).join(' '); } else tr.querySelector('.mn').textContent = ''; });
+      tb.appendChild(tr);
+    }
+    $('wlNote').textContent = 'Sounds: your own recordings if you add them, then native speakers from Lingua Libre (Wikimedia Commons), then the iPad’s Hindi voice.';
+  }
+  /* ---------- Learning path: Letters → Words → Bollywood & culture ---------- */
+  // A letter or word is mastered when your last 3 tries average 75% or more; a step is done
+  // when 80% of its items are mastered. The path suggests the first step that isn't done,
+  // and the practice layout ramps up inside a step: Trace, then Trace + copy, then Repeat & fade.
+  const MASTER = 75, STEP_DONE = 0.8;
+  function mastery() {
+    const by = new Map(), m = new Map();
+    for (const e of readLog()) if (e.f === 'deva') { const k = `${e.k}|${e.v}`; (by.get(k) || by.set(k, []).get(k)).push(e.a); }
+    for (const [k, a] of by) m.set(k, avg(a.slice(-3)));
+    return m;
+  }
+  function stepItems(st) {
+    if (st.tutor) return ((STK && STK.sets[st.tutor] && STK.sets[st.tutor].chars) || []).map((ch) => ({ text: ch, keys: [`L|${ch}`] }));
+    const lv = W$.LEVELS.find((l) => l.id === st.level);
+    return (lv ? lv.words : []).map((e) => ({ text: e.w, keys: e.w.split(/\s+/).map(cleanWord).filter(Boolean).map((w) => `W|${w}`) }));
+  }
+  function pathState() {
+    const m = mastery(); let next = null;
+    const stages = W$.PATH.map((sg) => ({ ...sg, steps: sg.steps.map((st) => {
+      const items = stepItems(st), left = items.filter((it) => !it.keys.every((k) => (m.get(k) ?? 0) >= MASTER));
+      const ok = items.length - left.length, frac = items.length ? ok / items.length : 0;
+      const lv = st.level && W$.LEVELS.find((l) => l.id === st.level);
+      const r = { ...st, name: st.name || lv.name.replace(/^Level /, ''), items, left, ok, n: items.length, frac, done: frac >= STEP_DONE, stage: sg };
+      if (!r.done && !next) next = r;
+      return r;
+    }) }));
+    return { stages, next };
+  }
+  const rampMode = (frac) => (frac < 0.4 ? 'trace' : frac < STEP_DONE ? 'copy' : 'repeat');
+  const MODE_NAME = { trace: 'Trace', copy: 'Trace + copy', repeat: 'Repeat & fade', tutor: 'Tutor' };
+  function startStep(st) {
+    recordAttempt();
+    if (st.tutor) {
+      S.mode = 'tutor'; S.tutorSet = st.tutor; S.style = 'devanagari';
+      document.querySelectorAll('dialog[open]').forEach((d) => d.close());
+      relayout(true); return;
+    }
+    S.wordLevel = st.level; S.mode = rampMode(st.frac);
+    // Focus on what isn't mastered yet; once it all is, practise the whole step.
+    const items = st.left.length ? st.left : st.items;
+    practice(items.map((it) => it.text).join(' '), 'deva');
+  }
+  function renderPath() {
+    const { stages, next } = pathState(), box = $('path'); box.innerHTML = '';
+    const nowIdx = next ? stages.findIndex((sg) => sg.id === next.stage.id) : stages.length;
+    stages.forEach((sg, i) => {
+      const done = sg.steps.filter((st) => st.done).length;
+      const el = document.createElement('div');
+      el.className = `stage${i === nowIdx ? ' now' : ''}${i > nowIdx ? ' locked' : ''}`;
+      el.innerHTML = `<h3>${i + 1} · ${esc(sg.name)}<span class="n">${done} / ${sg.steps.length} done</span></h3><div class="steps"></div>`;
+      for (const st of sg.steps) {
+        const b = document.createElement('button');
+        b.className = `step${st.done ? ' done' : ''}${st === next ? ' next' : ''}${st.level && st.level === (S.wordLevel || 'l1') ? ' cur' : ''}`;
+        b.innerHTML = `${esc(st.name)}<span class="bar" style="width:${Math.round(st.frac * 100)}%"></span>`;
+        b.title = `${st.ok} of ${st.n} mastered`;
+        b.addEventListener('click', () => { if (st.tutor) startStep(st); else { S.wordLevel = st.level; save(); renderWords(); } });
+        el.querySelector('.steps').appendChild(b);
+      }
+      box.appendChild(el);
+    });
+    const nx = document.createElement('div'); nx.className = 'path-next';
+    if (next) {
+      const how = next.tutor ? 'Tutor' : MODE_NAME[rampMode(next.frac)];
+      nx.innerHTML = `<button class="primary">Continue: ${esc(next.name)}</button><span class="muted">${next.ok} of ${next.n} mastered · practice: ${how}. `
+        + `A ${next.tutor ? 'letter' : 'word'} is mastered when your last 3 tries average ${MASTER}%+; a step is done at ${Math.round(STEP_DONE * 100)}%.</span>`;
+      nx.querySelector('button').addEventListener('click', () => startStep(next));
+    } else nx.innerHTML = '<span class="muted">Every step is done. Keep any level fresh by practising it again, or add your own lists from Anki.</span>';
+    box.appendChild(nx);
+  }
+
+  $('wordsBtn').addEventListener('click', () => { if (!W$) return; renderWords(); $('wlImport').hidden = true; $('wordsDlg').showModal(); });
+  $('wlLevel').addEventListener('change', () => { S.wordLevel = $('wlLevel').value; save(); renderWords(); });
+  $('wlPractice').addEventListener('click', () => {
+    const list = currentList(), st = !list.custom && pathState().stages.flatMap((sg) => sg.steps).find((x) => x.level === list.id);
+    if (st) { st.left = []; startStep(st); } else practice(list.words.map((e) => e.w).join(' '), 'deva');
+  });
+
+  // Anki text: one note per line, fields separated by tabs. Front = word, Back = sound, meaning, language.
+  function ankiText(list) {
+    const tag = `penmanship::${list.id}`;
+    const lines = ['#separator:tab', '#html:true', '#columns:Front\tBack\tTags', '#tags column:3'];
+    const clean = (t) => String(t).replace(/[\t\r\n]+/g, ' ');
+    for (const e of list.words) {
+      const tags = [tag, ...(e.langs || []).map((l) => (W$.LANG_NAME[l] || l).toLowerCase())].join(' ');
+      lines.push([clean(e.w), clean(`${W$.translit(e.w)}<br>${esc(W$.meaningText(e))}<br><small>${W$.langText(e.langs)}</small>`), tags].join('\t'));
+    }
+    return lines.join('\n') + '\n';
+  }
+  function parseAnki(text) {
+    let sep = '\t'; const words = [], seen = new Set();
+    const SEPS = { tab: '\t', comma: ',', semicolon: ';', pipe: '|', space: ' ', colon: ':' };
+    const unq = (f) => { f = f.trim(); return /^".*"$/s.test(f) ? f.slice(1, -1).replace(/""/g, '"') : f; };
+    const plain = (h) => { const d = document.createElement('div'); d.innerHTML = h.replace(/\[sound:[^\]]*\]/g, '').replace(/<br\s*\/?>|<\/div>|<\/p>/gi, '\n'); return (d.textContent || '').split('\n').map((x) => x.trim()).filter(Boolean); };
+    for (const line of text.split(/\r?\n/)) {
+      const m = /^#separator:(.+)$/i.exec(line.trim()); if (m) { sep = SEPS[m[1].trim().toLowerCase()] || m[1].trim(); continue; }
+      if (!line.trim() || line.startsWith('#')) continue;
+      let fields = line.split(sep);
+      if (fields.length === 1 && sep === '\t') fields = line.split(/;|,(?=\s*[^\s])/).length > 1 && !DEVANAGARI.test(line.split(/;|,/)[1] || '') ? line.split(/;|,/) : [line];
+      fields = fields.map(unq);
+      const wi = fields.findIndex((f) => DEVANAGARI.test(plain(f).join(' ')));
+      if (wi < 0) continue;
+      const w = plain(fields[wi]).join(' ').replace(/[^\p{L}\p{M}\p{N}\s]+/gu, '').trim();
+      if (!w || seen.has(w)) continue; seen.add(w);
+      let langs = [], tr = W$.translit(w);
+      const rest = fields.filter((_, i) => i !== wi).flatMap(plain).filter((x) => {
+        const lm = /^(Hindi|Marathi)(\s*(&|and|,)\s*(Hindi|Marathi))?$/i.exec(x);
+        if (lm) { langs = x.toLowerCase().includes('hindi') ? ['hi'] : []; if (x.toLowerCase().includes('marathi')) langs.push('mr'); return false; }
+        if (x === tr || /^penmanship::/.test(x)) return false;
+        return !DEVANAGARI.test(x);
+      });
+      // A last field that is only tags (lowercase words, no spaces in each) isn't a meaning.
+      if (rest.length > 1 && /^([a-z0-9:_-]+\s*)+$/.test(rest[rest.length - 1])) rest.pop();
+      const known = W$.local(w);
+      words.push({ w, m: rest.join(' · ') || (known && W$.meaningText(known)) || '', langs: langs.length ? langs : known ? known.langs : [] });
+    }
+    return words;
+  }
+  $('wlCopy').addEventListener('click', async () => {
+    const t = ankiText(currentList());
+    try { await navigator.clipboard.writeText(t); $('wlNote').textContent = 'Copied. In Anki: File → Import, paste into a .txt file first if your Anki can’t import from the clipboard. Fields: Front, Back, Tags.'; }
+    catch (_) { $('wlNote').textContent = 'Copy was blocked: use Save .txt instead.'; }
+  });
+  $('wlSave').addEventListener('click', () => {
+    const list = currentList(), a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([ankiText(list)], { type: 'text/plain' }));
+    a.download = `penmanship-${list.id}.txt`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    $('wlNote').textContent = 'Saved. In Anki choose File → Import, pick the file and the Basic note type: Front, Back and Tags fill in by themselves.';
+  });
+  $('wlImportBtn').addEventListener('click', () => { $('wlImport').hidden = false; $('wlImportMsg').textContent = ''; $('wlText').focus(); });
+  $('wlImportCancel').addEventListener('click', () => { $('wlImport').hidden = true; });
+  $('wlImportGo').addEventListener('click', () => {
+    const words = parseAnki($('wlText').value);
+    if (!words.length) { $('wlImportMsg').textContent = 'No Devanagari words found in that text.'; return; }
+    const ls = customLists(), id = 'c' + Date.now().toString(36);
+    ls.push({ id, name: $('wlName').value.trim() || 'My Anki words', words });
+    saveLists(ls); S.wordLevel = id; save();
+    $('wlText').value = ''; $('wlImport').hidden = true; renderWords();
+    $('wlNote').textContent = `Added ${words.length} words.`;
+  });
+  $('wlDelete').addEventListener('click', () => {
+    const list = currentList(); if (!list.custom || !confirm(`Delete the list “${list.name}”? Your scores are kept.`)) return;
+    saveLists(customLists().filter((l) => l.id !== list.id)); S.wordLevel = 'l1'; save(); renderWords();
+  });
+
+  /* ---------- Progress dialog ---------- */
+  const PG = { kind: 'L', script: 'all', item: null };
+  const dayKey = (t) => { const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const dayStart = (t) => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
+  const avg = (xs) => (xs.length ? xs.reduce((t, v) => t + v, 0) / xs.length : null);
+  const FONT_NAME = { cursive: 'cursive', print: 'print', deva: '' };
+  const itemKey = (e) => `${e.f}|${e.v}`;
+  function filtered() {
+    return readLog().filter((e) => e.k === PG.kind && (PG.script === 'all' || (PG.script === 'deva') === (e.f === 'deva')));
+  }
+  function renderProgress() {
+    document.querySelectorAll('#pgKind button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === PG.kind)));
+    document.querySelectorAll('#pgScript button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === PG.script)));
+    const all = filtered(), noun = PG.kind === 'L' ? 'letters' : 'words';
+    // Tiles: totals and the last 7 days against the 7 before.
+    const now = Date.now(), wk = 7 * 864e5;
+    const thisWk = avg(all.filter((e) => e.t > now - wk).map((e) => e.a)), lastWk = avg(all.filter((e) => e.t <= now - wk && e.t > now - 2 * wk).map((e) => e.a));
+    const items = new Map();
+    for (const e of all) { const k = itemKey(e); (items.get(k) || items.set(k, []).get(k)).push(e); }
+    const delta = thisWk != null && lastWk != null ? Math.round(thisWk - lastWk) : null;
+    const days = new Set(all.map((e) => dayKey(e.t))).size;
+    $('pgTiles').innerHTML = [
+      ['Written', all.length.toLocaleString(), `${noun} scored`],
+      ['Last 7 days', thisWk != null ? Math.round(thisWk) + '%' : '–', delta == null ? 'average accuracy' : `${delta > 0 ? '▲' : delta < 0 ? '▼' : '='} ${Math.abs(delta)} vs the week before`],
+      ['Different ' + noun, items.size.toLocaleString(), `on ${days} day${days === 1 ? '' : 's'}`],
+      ['Best', all.length ? Math.max(...all.map((e) => e.a)) + '%' : '–', 'single attempt'],
+    ].map(([k, v, d]) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join('');
+
+    // Chart: one item's attempts, or the daily average of everything shown.
+    const sel = PG.item && items.get(PG.item);
+    if (PG.item && !sel) PG.item = null;
+    let pts, title;
+    if (sel) {
+      const [f, v] = PG.item.split(/\|(.*)/s);
+      title = `${v}${FONT_NAME[f] ? ` (${FONT_NAME[f]})` : ''} · every attempt`;
+      pts = sel.map((e) => ({ t: e.t, v: e.a, label: new Date(e.t).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }), n: null }));
+    } else {
+      title = `Daily average accuracy · all ${noun}`;
+      const byDay = new Map();
+      for (const e of all) { const k = dayStart(e.t); (byDay.get(k) || byDay.set(k, []).get(k)).push(e.a); }
+      pts = [...byDay].sort((a, b) => a[0] - b[0]).map(([t, vs]) => ({ t, v: Math.round(avg(vs)), n: vs.length, label: new Date(t).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }) }));
+    }
+    $('pgChartTitle').textContent = title;
+    $('pgAll').hidden = !sel; $('pgPracticeOne').hidden = !sel;
+    drawChart($('pgChart'), pts, !!sel);
+
+    // Table: what needs work first (lowest of the last 5 attempts).
+    const rows = [...items].map(([k, es]) => {
+      const last5 = avg(es.slice(-5).map((e) => e.a)), prev5 = avg(es.slice(-10, -5).map((e) => e.a));
+      return { k, es, last: es[es.length - 1].a, best: Math.max(...es.map((e) => e.a)), last5, d: prev5 == null ? null : Math.round(last5 - prev5) };
+    }).sort((a, b) => a.last5 - b.last5);
+    const tb = $('pgTable').tBodies[0]; tb.innerHTML = '';
+    if (!rows.length) tb.innerHTML = `<tr><td colspan="6" class="muted">No ${noun} yet. Write on a page, then press Clear or turn the page to save its scores.</td></tr>`;
+    for (const r of rows.slice(0, 300)) {
+      const [f, v] = r.k.split(/\|(.*)/s), tr = document.createElement('tr');
+      if (r.k === PG.item) tr.className = 'sel';
+      const dTxt = r.d == null ? '' : r.d > 0 ? ` <span class="up">▲${r.d}</span>` : r.d < 0 ? ` <span class="down">▼${-r.d}</span>` : '';
+      tr.innerHTML = `<td><span class="${f === 'deva' ? 'dw' : ''}" style="${f === 'cursive' ? 'font-family:var(--font-brand);font-size:18px' : f === 'print' ? 'font-family:Andika,sans-serif;font-size:20px' : ''}">${esc(v)}</span>`
+        + `${f === 'deva' && W$ ? ` <span class="tr">${esc(W$.translit(v))}</span>` : ''}</td>`
+        + `<td class="num">${r.es.length}</td><td class="num">${r.last}%</td><td class="num">${r.best}%</td><td class="num">${Math.round(r.last5)}%${dTxt}</td><td>${sparkline(r.es.slice(-12).map((e) => e.a))}</td>`;
+      tr.addEventListener('click', () => { PG.item = PG.item === r.k ? null : r.k; renderProgress(); $('pgChart').scrollIntoView({ block: 'nearest' }); });
+      tb.appendChild(tr);
+    }
+  }
+  // A single-series line chart: accuracy 0-100% over time, with a crosshair and tooltip.
+  function drawChart(box, pts, perAttempt) {
+    const tip = $('pgTip'); tip.hidden = true;
+    if (!pts.length) { box.innerHTML = '<div class="empty">Nothing here yet</div>'; return; }
+    const w = Math.max(280, box.clientWidth || 600), h = 220, ml = 40, mr = 14, mt = 10, mb = 26;
+    const t0 = pts[0].t, t1 = pts[pts.length - 1].t, span = Math.max(t1 - t0, perAttempt ? 1 : 864e5);
+    // Attempts are spaced evenly (they come in bursts); days are placed on a time axis.
+    const X = (p, i) => ml + (pts.length === 1 ? (w - ml - mr) / 2 : perAttempt ? (i / (pts.length - 1)) * (w - ml - mr) : ((p.t - t0) / span) * (w - ml - mr));
+    const Y = (v) => mt + (1 - v / 100) * (h - mt - mb);
+    const grid = [0, 25, 50, 75, 100].map((v) => `<line x1="${ml}" x2="${w - mr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width="1"${v % 50 ? ' stroke-dasharray="2 4"' : ''}/>`
+      + (v % 50 === 0 ? `<text x="${ml - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="var(--muted)">${v}%</text>` : '')).join('');
+    const xy = pts.map((p, i) => [X(p, i), Y(p.v)]);
+    const ticks = [];
+    const nT = Math.min(pts.length, Math.max(2, Math.floor((w - ml - mr) / 110)));
+    for (let j = 0; j < nT; j++) {
+      const i = nT === 1 ? 0 : Math.round(j * (pts.length - 1) / (nT - 1)), p = pts[i];
+      const lab = new Date(p.t).toLocaleDateString([], { month: 'short', day: 'numeric' });
+      if (!ticks.some((t) => t.lab === lab)) ticks.push({ x: xy[i][0], lab });
+    }
+    const axis = ticks.map((t, j) => `<text x="${t.x}" y="${h - 8}" text-anchor="${j === 0 && ticks.length > 1 ? 'start' : j === ticks.length - 1 && ticks.length > 1 ? 'end' : 'middle'}" font-size="11" fill="var(--muted)">${esc(t.lab)}</text>`).join('');
+    const line = xy.length > 1 ? `<polyline points="${xy.map((q) => q.join(',')).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` : '';
+    const dots = xy.length <= 60 ? xy.map((q) => `<circle cx="${q[0]}" cy="${q[1]}" r="4" fill="var(--accent)" stroke="var(--paper)" stroke-width="2"/>`).join('') : '';
+    box.innerHTML = `<svg viewBox="0 0 ${w} ${h}" height="${h}" role="img" aria-label="Accuracy over time">${grid}${axis}${line}${dots}`
+      + `<line id="pgCross" y1="${mt}" y2="${h - mb}" stroke="var(--muted)" stroke-width="1" visibility="hidden"/><circle id="pgDot" r="5" fill="var(--accent)" stroke="var(--paper)" stroke-width="2" visibility="hidden"/>`
+      + `<rect x="${ml}" y="0" width="${w - ml - mr}" height="${h}" fill="transparent" id="pgHit"/></svg>`;
+    const svg = box.querySelector('svg'), cross = svg.querySelector('#pgCross'), dot = svg.querySelector('#pgDot');
+    const show = (ev) => {
+      const r = svg.getBoundingClientRect(), sx = (ev.clientX - r.left) * (w / r.width);
+      let bi = 0; xy.forEach((q, i) => { if (Math.abs(q[0] - sx) < Math.abs(xy[bi][0] - sx)) bi = i; });
+      const [qx, qy] = xy[bi], p = pts[bi];
+      cross.setAttribute('x1', qx); cross.setAttribute('x2', qx); cross.setAttribute('visibility', 'visible');
+      dot.setAttribute('cx', qx); dot.setAttribute('cy', qy); dot.setAttribute('visibility', 'visible');
+      tip.innerHTML = `<b>${p.v}%</b> · ${esc(p.label)}${p.n ? ` · ${p.n} written` : ''}`;
+      tip.hidden = false;
+      const fr = box.parentElement.getBoundingClientRect(), px = (qx * r.width) / w + r.left - fr.left, py = (qy * r.height) / h + r.top - fr.top;
+      tip.style.left = `${Math.min(Math.max(4, px - tip.offsetWidth / 2), fr.width - tip.offsetWidth - 4)}px`;
+      tip.style.top = `${Math.max(4, py - tip.offsetHeight - 12)}px`;
+    };
+    const hide = () => { tip.hidden = true; cross.setAttribute('visibility', 'hidden'); dot.setAttribute('visibility', 'hidden'); };
+    svg.addEventListener('pointermove', show); svg.addEventListener('pointerdown', show); svg.addEventListener('pointerleave', hide);
+  }
+  $('progressBtn').addEventListener('click', () => { recordAttempt(); PG.item = null; $('progressDlg').showModal(); renderProgress(); });
+  document.querySelectorAll('#pgKind button').forEach((b) => b.addEventListener('click', () => { PG.kind = b.dataset.v; PG.item = null; renderProgress(); }));
+  document.querySelectorAll('#pgScript button').forEach((b) => b.addEventListener('click', () => { PG.script = b.dataset.v; PG.item = null; renderProgress(); }));
+  $('pgAll').addEventListener('click', () => { PG.item = null; renderProgress(); });
+  $('pgPracticeOne').addEventListener('click', () => { if (!PG.item) return; const [f, v] = PG.item.split(/\|(.*)/s); practice(v, f); });
+  $('pgExport').addEventListener('click', () => {
+    const data = { app: 'penmanship-pad', exported: new Date().toISOString(), log: readLog(), pages: scores, lists: customLists() };
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' }));
+    a.download = `penmanship-progress-${dayKey(Date.now())}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  });
+  $('pgImportBtn').addEventListener('click', () => $('pgFile').click());
+  $('pgFile').addEventListener('change', async () => {
+    const f = $('pgFile').files[0]; $('pgFile').value = ''; if (!f) return;
+    try {
+      const d = JSON.parse(await f.text());
+      const incoming = Array.isArray(d) ? d : d.log || d.entries || [];
+      const have = readLog(), seen = new Set(have.map((e) => `${e.t}|${e.k}|${e.v}|${e.a}`));
+      const add = incoming.filter((e) => e && e.t && e.k && e.v != null && typeof e.a === 'number' && !seen.has(`${e.t}|${e.k}|${e.v}|${e.a}`));
+      writeLog([...have, ...add].sort((a, b) => a.t - b.t));
+      if (d.lists && Array.isArray(d.lists)) { const ls = customLists(); for (const l of d.lists) if (!ls.some((x) => x.id === l.id)) ls.push(l); saveLists(ls); }
+      alert(`Added ${add.length} scores.`); renderProgress();
+    } catch (_) { alert('That file isn’t a Penmanship Pad export.'); }
+  });
+  addEventListener('resize', () => { if ($('progressDlg').open) renderProgress(); });
+
   /* ---------- Sizing + theme ---------- */
   function resize() {
     const r = sheet.getBoundingClientRect();
@@ -1570,6 +2170,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
 
   // Test hook: only with #test in the URL, exposes letter geometry so automated tests can trace it.
   if (location.hash === '#test') window.__pad = {
+    log: () => readLog(), finish: () => recordAttempt(), grade: () => gradePage(),
     model: () => modelGeom(),
     scroll: () => ({ SX, SY, rows: pages[S.page].length, CH: CH(), H }),
     row: (i) => { const r = pages[S.page][i], g = glyph(r.tutor), k = tk(), base = L.top + i * L.pitch + L.gapTop + L.ascPx;
