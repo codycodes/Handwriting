@@ -20,16 +20,22 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  # Upload in one job and deploy in another (GitHub's recommended layout): the deploy only
+  # starts once the upload has fully finished, so it can always find it.
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4
