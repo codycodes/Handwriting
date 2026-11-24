@@ -94,6 +94,7 @@ header { display: flex; flex-direction: column; gap: 8px; padding-bottom: 10px; 
   background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
   padding: 9px 12px; -webkit-user-select: text; user-select: text;
 }
+#text.vname { color: var(--accent); font-weight: 700; }
 #text:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 select {
   flex: 0 1 180px; min-width: 0;
@@ -196,6 +197,9 @@ body:not(.tutor) .tutor-only { display: none !important; }
 #letterCard { position: fixed; z-index: 20; width: min(340px, calc(100vw - 32px)); background: var(--paper); color: var(--text); border: 1px solid var(--line);
   border-radius: 12px; box-shadow: 0 10px 32px rgba(10, 20, 40, .22); padding: 12px 14px; font-size: 14px; }
 #letterCard[hidden] { display: none; }
+#letterCard .lc-go { margin-top: 12px; gap: 8px; }
+#letterCard .lc-go button { min-height: 36px; }
+#tapAnchor { position: fixed; width: 1px; height: 1px; pointer-events: none; }
 #letterCard .top { display: flex; align-items: center; gap: 12px; }
 #letterCard .big { font-family: "Kalam", sans-serif; font-size: 44px; line-height: 1; }
 #letterCard .say { margin-left: auto; }
@@ -1776,7 +1780,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     else hint.hidden = true;
   }
 
-  function render() { drawBg(); drawInk(); syncDemo(); placeScrollbar(); updateButtons(); showTip(); renderWordBar(); save(); }
+  function render() { drawBg(); drawInk(); syncDemo(); placeScrollbar(); updateButtons(); showTip(); renderWordBar(); syncTextBox(); save(); }
 
   async function relayout(clear) {
     if (clear) resetInk();
@@ -1813,12 +1817,29 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   const unlockText = () => { if (textEl.readOnly) { textEl.readOnly = false; textEl.focus(); } };
   textEl.addEventListener('click', unlockText); // click counts as a user tap, so iOS opens the keyboard
   textEl.addEventListener('keydown', (e) => { if (textEl.readOnly && e.key === 'Enter') unlockText(); });
-  textEl.addEventListener('blur', () => { textEl.readOnly = true; });
+  textEl.addEventListener('blur', () => { textEl.readOnly = true; if (S.videoOn) syncTextBox(); });
 
   let typing;
+  // While writing along with a video, this box shows the video's name instead (the line to write
+  // is in the line bar), and typing in it renames the video.
+  function syncTextBox() {
+    let vid = null; try { vid = S.videoOn ? curVideo() : null; } catch (_) {}   // (video code loads further down)
+    textEl.classList.toggle('vname', !!vid);
+    textEl.placeholder = vid ? 'Name this video' : '';
+    textEl.setAttribute('aria-label', vid ? 'Video name (tap to rename)' : 'Text to practice');
+    textEl.title = vid ? 'Tap to rename this video' : '';
+    if (document.activeElement !== textEl) textEl.value = vid ? vid.name || '' : S.text;
+  }
   textEl.value = S.text;
   textEl.addEventListener('input', () => {
     clearTimeout(typing);
+    if (S.videoOn && curVideo()) {
+      typing = setTimeout(() => {
+        const vs = readVideos(), v = vs.find((x) => x.id === S.videoId);
+        if (v) { v.name = textEl.value.trim(); writeVideos(vs); $('pipTitle').textContent = v.name || 'YouTube'; }
+      }, 300);
+      return;
+    }
     typing = setTimeout(() => { S.text = textEl.value; relayout(true); }, 300);
   });
   textEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') textEl.blur(); });
@@ -2028,16 +2049,23 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     W$.playNow(pt.ak, langs, { voiceOnly: true, rate: 0.6 }).then((src) => soundTip(anchor, src));
   }
   function showLetter(pt, word, anchor, langs) {
-    sayLetter(pt, langs, anchor);
+    if (!pt.latin) sayLetter(pt, langs, anchor);
     const card = $('letterCard');
     // A modal dialog sits above the page, so the card has to live inside it to be seen.
     const host = anchor.closest('dialog') || document.body;
     if (card.parentElement !== host) host.appendChild(card);
     const inWord = word && word !== pt.ak;
-    card.innerHTML = `<div class="top"><span class="big" lang="hi">${esc(pt.ak)}</span><div><div class="tr">${esc(pt.alone)}</div>`
+    const tutorable = tutorFor(pt.ak, pt.latin);
+    if (pt.latin) {
+      // An English letter: no sound guide, just the letter and practising it.
+      card.innerHTML = `<div class="top"><span class="big" style="font-family:${esc(L.family)}">${esc(pt.ak)}</span>`
+        + `<div class="sub">${inWord ? `in “${esc(word)}”` : 'on its own'}</div></div>`;
+    } else card.innerHTML = `<div class="top"><span class="big" lang="hi">${esc(pt.ak)}</span><div><div class="tr">${esc(pt.alone)}</div>`
       + `<div class="sub">${inWord ? `in ${esc(word)}: <i>${esc(pt.tr)}</i>${pt.silentA ? ' (its "a" is silent)' : ''}` : 'on its own'}</div></div>`
       + (W$.canPlay(pt.ak, langs, { voiceOnly: true }) ? `<button class="say" aria-label="Hear it again">${SPEAKER}</button>` : `<button class="say" disabled title="${esc(NO_SOUND)}" aria-label="No sound available">${SPEAKER_OFF}</button>`) + `</div>`
       + `<ul>${pt.how.map(([ch, h]) => `<li><b lang="hi">${esc(ch === 'अ' ? 'अ' : ch)}</b><span>${esc(h)}</span></li>`).join('')}</ul>`;
+    card.insertAdjacentHTML('beforeend', `<div class="row lc-go"><button class="primary lc-practice">Practice this letter</button><span class="muted small">${tutorable ? 'in Tutor, stroke by stroke' : 'a row of it to trace'}</span></div>`);
+    card.querySelector('.lc-practice').addEventListener('click', () => { card.hidden = true; practiceLetter(pt.ak, pt.latin); });
     card.querySelector('.say:not([disabled])')?.addEventListener('click', (ev) => sayLetter(pt, langs, ev.currentTarget));
     card.hidden = false;
     const r = anchor.getBoundingClientRect(), cw = card.offsetWidth, ch = card.offsetHeight;
@@ -2046,6 +2074,72 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     card.style.left = `${left}px`; card.style.top = `${below ? r.bottom + 8 : Math.max(8, r.top - ch - 8)}px`;
     card.dataset.for = pt.ak;
   }
+  // Practise one letter: in Tutor if it has stroke order, otherwise a row of it to trace.
+  // Tutor's English letters are print, so a cursive letter gets a cursive row to trace instead.
+  const tutorFor = (ak, latin) => !(latin && S.style === 'cursive') && (!!glyph(ak) || [...LETTERS(ak)].some((c) => glyph(c)));
+  function practiceLetter(ak, latin) {
+    const hasStrokes = tutorFor(ak, latin);
+    if (hasStrokes) {
+      recordAttempt();
+      S.mode = 'tutor'; S.tutorSet = 'text';
+      if (DEVANAGARI.test(ak)) S.style = 'devanagari'; else if (S.style === 'devanagari') S.style = 'print';
+      S.text = textEl.value = ak;
+      document.querySelectorAll('dialog[open]').forEach((d) => d.close());
+      relayout(true);
+    } else {
+      if (S.mode === 'tutor') S.mode = 'trace';
+      practice(Array(6).fill(ak).join(' '), latin ? S.style : 'deva');
+    }
+  }
+  // The letter under a point on the page: from the guide letters of the row there.
+  function letterAt(x, y) {
+    if (!L || !pages[S.page] || (L.panel && x - SX >= L.panel.x0 && x - SX <= L.panel.x1)) return null;
+    const i = Math.floor((y - L.top) / L.pitch), r = pages[S.page][i];
+    if (!r) return null;
+    if (r.tutor) return { ak: r.tutor, word: r.tutor };
+    const t = r.t; if (!t) return null;   // freehand rows have no letters to tap
+    mctx.font = `${L.fontSize}px ${L.family}`;
+    let pre = '', word = '', hit = null;
+    for (const ch of LETTERS(t)) {
+      if (/^\s+$/.test(ch)) { if (hit) break; word = ''; pre += ch; continue; }
+      const x0 = L.textX + mctx.measureText(pre).width; pre += ch; word += ch;
+      const x1 = L.textX + mctx.measureText(pre).width;
+      if (!hit && x >= x0 - 2 && x <= x1 + 2 && /[\p{L}\p{M}\p{N}]/u.test(ch)) hit = { ak: ch };
+    }
+    if (hit) hit.word = cleanWord(word);
+    return hit;
+  }
+  function showLetterAt(ak, word, cx, cy) {
+    let anchor = $('tapAnchor');
+    if (!anchor) { anchor = document.createElement('div'); anchor.id = 'tapAnchor'; document.body.appendChild(anchor); }
+    anchor.style.left = `${cx}px`; anchor.style.top = `${cy + 14}px`;
+    if (DEVANAGARI.test(ak) && W$) {
+      const pts = W$.letterParts(word && word.includes(ak) ? word : ak);
+      const pt = pts.find((x) => x.ak === ak) || W$.letterParts(ak)[0];
+      const known = W$.local(word);
+      if (pt) showLetter(pt, word, anchor, known ? known.langs : (S.videoOn && S.videoLang ? [S.videoLang] : null));
+    } else showLetter({ ak, latin: true }, word, anchor, null);
+  }
+  // A quick finger tap on a letter opens its card (the Pencil always writes). A tap in Draw mode
+  // would leave a dot, so that dot is taken away again.
+  let tap = null;
+  inkC.addEventListener('pointerdown', (e) => {
+    tap = e.pointerType === 'touch' && e.isPrimary && !penBusy() ? { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), n: (ink[S.page] || []).length } : null;
+  });
+  window.addEventListener('pointerup', (e) => {
+    const t0 = tap; tap = null;
+    if (!t0 || e.pointerId !== t0.id || performance.now() - t0.t > 400 || Math.hypot(e.clientX - t0.x, e.clientY - t0.y) > 10 || touches.size) return;
+    const r = inkC.getBoundingClientRect(), hit = letterAt(e.clientX - r.left + SX, e.clientY - r.top + SY);
+    if (!hit) return;
+    const arr = ink[S.page] || [];
+    if (arr.length > t0.n && arr[arr.length - 1].by === 'touch') {
+      const st = arr.pop(), h = hist[S.page];
+      if (h && h.undo.length && h.undo[h.undo.length - 1].stroke === st) h.undo.pop();
+      drawInk(); updateButtons();
+    }
+    showLetterAt(hit.ak, hit.word, e.clientX, e.clientY);
+  }, true);
+
   // Tap anywhere else (or press Esc) to close the card.
   document.addEventListener('pointerdown', (e) => {
     const card = $('letterCard');
@@ -2633,8 +2727,9 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     gotoLine(i, { seek: true, play: true });
   }
   function stopVideo() {
-    S.videoOn = false; save();
+    S.videoOn = false; save(); syncTextBox();
     $('lineBar').hidden = true; $('pip').hidden = true;
+    if ($('videoDlg').open) renderVideoDlg();
     try { ytp && ytp.pauseVideo && ytp.pauseVideo(); } catch (_) {}
   }
   function gotoLine(i, { seek = false, play = false } = {}) {
@@ -2789,6 +2884,11 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
 
   // Test hook: only with #test in the URL, exposes letter geometry so automated tests can trace it.
   if (location.hash === '#test') window.__pad = {
+    // Middle of the 3rd letter on row 0 (or the first tutor copy), in sheet coordinates.
+    layout: () => { const r = pages[S.page][0], base = L.top + L.gapTop + L.ascPx - L.xPx * 0.5;
+      if (r.tutor) return { x: tutorXs(r.tutor, L.textX, null, L.tutorX)[0] + 20, y: base };
+      mctx.font = `${L.fontSize}px ${L.family}`; const ls = LETTERS(r.t); const a = mctx.measureText(ls.slice(0, 2).join('')).width, w = mctx.measureText(ls[2]).width;
+      return { x: L.textX + a + w / 2 - SX, y: base - SY }; },
     log: () => readLog(), finish: () => recordAttempt(), grade: () => gradePage(),
     model: () => modelGeom(),
     scroll: () => ({ SX, SY, rows: pages[S.page].length, CH: CH(), H }),
