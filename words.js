@@ -214,8 +214,12 @@
   function translitWord(word) {
     const us = units(word);
     dropSchwa(us);
+    return render(us);
+  }
+  // Romanize units from..to (the next unit still decides how a nasal dot sounds).
+  function render(us, from = 0, to = us.length) {
     let out = '';
-    for (let i = 0; i < us.length; i++) {
+    for (let i = from; i < to; i++) {
       const u = us[i];
       if (u.lit !== undefined) { out += u.lit; continue; }
       if (u.mark === 'visarga') { out += 'ḥ'; continue; }
@@ -229,6 +233,67 @@
       out += (u.c || '') + (u.deleted ? '' : u.v);
     }
     return out.normalize('NFC');
+  }
+
+  /* ---------- How each sound is said ---------- */
+  const HOW = {
+    // Vowels: the letter on its own and its sign after a consonant say the same sound.
+    'अ': '"a" in about: short and relaxed', 'आ': '"a" in father', 'इ': '"i" in bit', 'ई': '"ee" in see',
+    'उ': '"u" in put', 'ऊ': '"oo" in food', 'ऋ': '"ri" (Hindi) or "ru" (Marathi)', 'ए': '"a" in cake, without sliding into "ee"',
+    'ऐ': '"a" in cat (Hindi); "ai" in aisle (Marathi)', 'ओ': '"o" in go, without sliding into "oo"',
+    'औ': '"aw" in saw (Hindi); "ow" in cow (Marathi)', 'ऍ': '"a" in cat (English words)', 'ऑ': '"o" in hot (English words)',
+    'क': '"k" in skip: no puff of air', 'ख': '"k" with a puff of air, as in kite', 'ग': '"g" in go', 'घ': '"g" with a breathy puff, like "dog-house" said fast',
+    'ङ': '"ng" in sing', 'च': '"ch" in church, no puff of air (Marathi also says "ts" before a, o, u)', 'छ': '"ch" with a strong puff of air',
+    'ज': '"j" in jam (Marathi also says "dz" before a, o, u)', 'झ': '"j" with a breathy puff', 'ञ': '"ny" in canyon',
+    'ट': '"t" with the tongue tip curled back to the roof of the mouth', 'ठ': 'ट with a puff of air', 'ड': '"d" with the tongue tip curled back',
+    'ढ': 'ड with a breathy puff', 'ण': '"n" with the tongue tip curled back',
+    'त': '"t" with the tongue against the back of the top teeth, like Spanish "t"', 'थ': 'त with a puff of air (not "th" in think)',
+    'द': '"d" with the tongue against the top teeth, like Spanish "d"', 'ध': 'द with a breathy puff (not "th" in this)', 'न': '"n" in no',
+    'प': '"p" in spin: no puff of air', 'फ': '"p" with a puff of air, as in pin (many people say "f")', 'ब': '"b" in bat',
+    'भ': '"b" with a breathy puff, like "club-house" said fast', 'म': '"m" in man', 'य': '"y" in yes',
+    'र': 'a light tapped "r", like the "tt" in American "butter"', 'ल': '"l" in leaf', 'ळ': '"l" with the tongue tip curled back (Marathi)',
+    'व': 'between "v" and "w"', 'श': '"sh" in shoe', 'ष': '"sh" with the tongue curled back (most people say it like श)', 'स': '"s" in sun', 'ह': '"h" in hat',
+    'क़': '"k" from deep in the throat (Urdu and Persian words)', 'ख़': '"ch" in Scottish "loch"', 'ग़': 'a gargled "g", like French "r"',
+    'ज़': '"z" in zoo', 'ड़': 'tongue curled back, then flicked forward: a flapped "r"', 'ढ़': 'ड़ with a breathy puff', 'फ़': '"f" in fan',
+  };
+  const SIGN_OF = { 'ा': 'आ', 'ि': 'इ', 'ी': 'ई', 'ु': 'उ', 'ू': 'ऊ', 'ृ': 'ऋ', 'े': 'ए', 'ै': 'ऐ', 'ो': 'ओ', 'ौ': 'औ', 'ॅ': 'ऍ', 'ॉ': 'ऑ' };
+  const SPECIAL = {
+    'क्ष': '"ksh": क and ष together', 'ज्ञ': '"gy" in Hindi, "dny" in Marathi (said as one sound)', 'त्र': '"tr": त and र together', 'श्र': '"shr": श and र together',
+  };
+  // Each part of a letter, explained: consonants first, then the vowel, then any nasal or breath mark.
+  function howToSay(ak, silentA) {
+    const out = [], t = ak.normalize('NFC');
+    const sp = Object.keys(SPECIAL).find((k) => t.startsWith(k));
+    let rest = t;
+    if (sp) { out.push([sp, SPECIAL[sp]]); rest = t.slice(sp.length); }
+    let vowel = null, cons = !!sp;
+    for (let i = 0; i < rest.length; i++) {
+      let ch = rest[i];
+      if (rest[i + 1] === '़') { ch += '़'; i++; }
+      if (ch === '्') continue;
+      if (HOW[ch] && CONS[ch[0]]) { out.push([ch, HOW[ch]]); cons = true; }
+      else if (HOW[ch]) vowel = ch;
+      else if (SIGN_OF[ch]) vowel = SIGN_OF[ch];
+      else if (ch === 'ं') out.push(['ं', 'nasal dot: an "n" or "m" before the next letter, or the vowel said through the nose']);
+      else if (ch === 'ँ') out.push(['ँ', 'moon dot: the vowel is said through the nose']);
+      else if (ch === 'ः') out.push(['ः', 'a soft "h" breath after the vowel']);
+    }
+    const endsBare = t.endsWith('्');
+    if (vowel) out.splice(out.findIndex((x) => /^[ंँः]$/.test(x[0])) >= 0 ? out.findIndex((x) => /^[ंँः]$/.test(x[0])) : out.length, 0, [vowel, HOW[vowel]]);
+    else if (cons && !endsBare) out.push(['अ', silentA ? 'the "a" after it is silent here' : HOW['अ'] + ' (every consonant has it unless a sign changes it)']);
+    return out;
+  }
+  // A word split into letters, each with its sound in this word and on its own.
+  function letterParts(word) {
+    const parts = letters(word).filter((x) => DEVA.test(x));
+    const us = units(word.replace(/[^\u0900-\u097F]/g, '')); dropSchwa(us);
+    let i = 0;
+    return parts.map((ak) => {
+      const n = units(ak).length, from = i; i += n;
+      const silentA = us.slice(from, i).some((u) => u.deleted);
+      // On its own a letter keeps its "a" (क is "ka"), even where a word drops it.
+      return { ak, tr: render(us, from, i), alone: render(units(ak)), silentA, how: howToSay(ak, silentA) };
+    });
   }
   function translit(text) {
     const known = DICT.get(text);
@@ -373,11 +438,11 @@
     }
     return null;
   }
-  function speakTTS(text, langs) {
+  function speakTTS(text, langs, rate = 0.8) {
     if (!g.speechSynthesis) return null;
     const u = new SpeechSynthesisUtterance(text), v = voiceFor(langs);
     if (v) { u.voice = v; u.lang = v.lang; } else u.lang = langs && langs[0] === 'mr' ? 'mr-IN' : 'hi-IN';
-    u.rate = 0.8;
+    u.rate = rate;
     g.speechSynthesis.cancel(); g.speechSynthesis.speak(u);
     return v ? `Device voice: ${v.name} (${v.lang})` : 'Device voice (no Hindi voice found: see Settings → Accessibility → Spoken Content → Voices)';
   }
@@ -393,8 +458,8 @@
         } catch (_) {}
       }
     }
-    return speakTTS(word, langs) || 'No sound available on this device';
+    return speakTTS(word, langs, opts.rate) || 'No sound available on this device';
   }
 
-  g.WORDS = { LEVELS, PATH, DICT, LANG_NAME, translit, translitWord, letters, local, lookup, meaningText, langText, play, findRecording, custom, isDeva: (t) => DEVA.test(t) };
+  g.WORDS = { letterParts, howToSay, LEVELS, PATH, DICT, LANG_NAME, translit, translitWord, letters, local, lookup, meaningText, langText, play, findRecording, custom, isDeva: (t) => DEVA.test(t) };
 })(window);
