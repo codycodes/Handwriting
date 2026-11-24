@@ -176,12 +176,34 @@ body:not(.tutor) .tutor-only { display: none !important; }
 #wordBar[hidden] { display: none; }
 #wordChips { display: flex; gap: 6px; overflow-x: auto; flex: 1; min-width: 0; scrollbar-width: none; }
 #wordChips::-webkit-scrollbar { display: none; }
-.chip { flex: none; min-height: 38px; padding: 2px 12px 2px 8px; gap: 8px; max-width: 520px; }
+.chip { flex: none; max-width: 640px; }
 .chip svg { flex: none; stroke: var(--accent); }
 .chip .dw { font-family: "Kalam", sans-serif; font-size: 20px; line-height: 1; }
 .chip .tr { color: var(--accent); font-style: italic; }
 .chip .lg, .lgb { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 1px 5px; white-space: nowrap; }
 .chip .mn { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.chip { display: inline-flex; align-items: center; gap: 0; padding: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.chip > button { border: 0; background: transparent; min-height: 38px; }
+.chip .wbtn { padding: 2px 10px 2px 8px; gap: 8px; min-width: 0; }
+.chip .lets { display: inline-flex; gap: 2px; padding: 0 4px 0 6px; border-left: 1px solid var(--line); }
+.lt { font: inherit; min-height: 34px; padding: 0 6px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--text);
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; line-height: 1.05; cursor: pointer; }
+.lt b { font-family: "Kalam", sans-serif; font-size: 19px; font-weight: 400; }
+.lt small { font-size: 10.5px; color: var(--accent); font-style: italic; }
+.lt small.silent { color: var(--muted); }
+.lt:hover, .lt:focus-visible { border-color: var(--line); background: var(--paper); }
+.tbl .lt b { font-size: 24px; }
+#letterCard { position: fixed; z-index: 20; width: min(340px, calc(100vw - 32px)); background: var(--paper); color: var(--text); border: 1px solid var(--line);
+  border-radius: 12px; box-shadow: 0 10px 32px rgba(10, 20, 40, .22); padding: 12px 14px; font-size: 14px; }
+#letterCard[hidden] { display: none; }
+#letterCard .top { display: flex; align-items: center; gap: 12px; }
+#letterCard .big { font-family: "Kalam", sans-serif; font-size: 44px; line-height: 1; }
+#letterCard .say { margin-left: auto; }
+#letterCard .tr { color: var(--accent); font-style: italic; font-size: 18px; }
+#letterCard .sub { color: var(--muted); font-size: 12.5px; }
+#letterCard ul { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+#letterCard li { display: grid; grid-template-columns: 2.2em 1fr; gap: 6px; align-items: baseline; }
+#letterCard li b { font-family: "Kalam", sans-serif; font-size: 20px; font-weight: 400; text-align: center; }
 #soundNote { flex: 0 1 auto; font-size: 12px; color: var(--muted); max-width: 32%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #soundNote a { color: inherit; }
 
@@ -420,6 +442,7 @@ body.fs #fsbar { display: flex; }
   <button id="fsExit" aria-label="Exit full screen" title="Exit full screen"><svg viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button>
 </div>
 
+<div id="letterCard" role="dialog" aria-label="How to say this letter" hidden></div>
 <dialog id="wordsDlg" class="dlg" aria-labelledby="wordsTitle">
   <div class="dlg-head">
     <h2 id="wordsTitle">Learn</h2>
@@ -758,8 +781,9 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     if (!r || !r.tutor || !P) return null;
     const g = glyph(r.tutor); if (!g) return null;
     const pw = P.x1 - P.x0, ph = P.y1 - P.y0;
-    const k = Math.min((pw - 40) / g.w, (ph - 150) / 150, 4.2);
-    const top = P.y0 + 16 + (ph - 150 - 150 * k) / 2, base = top + 100 * k, x = P.x0 + (pw - g.w * k) / 2;
+    const head = window.WORDS && DEVANAGARI.test(r.tutor) ? 44 : 0;   // room for the letter's sound at the top
+    const k = Math.min((pw - 40) / g.w, (ph - 150 - head) / 150, 4.2);
+    const top = P.y0 + 16 + head + (ph - 150 - head - 150 * k) / 2, base = top + 100 * k, x = P.x0 + (pw - g.w * k) / 2;
     const strokes = g.s.map((s) => s.map((p) => toPx(p, x, base, k)));
     const lens = strokes.map((s) => s.reduce((t, p, i) => i ? t + Math.hypot(p[0] - s[i - 1][0], p[1] - s[i - 1][1]) : 0, 0));
     return { ch: r.tutor, strokes, lens, k, base, top };
@@ -812,6 +836,21 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     c.font = `${msg[1] === 'muted' ? 400 : 700} 14px ${css('--font-ui')}`; c.textAlign = 'left'; c.textBaseline = 'alphabetic';
     c.fillStyle = css(msg[1] === 'muted' ? '--muted' : `--grade-${msg[1]}`);
     wrapText(c, msg[0], P.x0 + 14, P.y1 - 34, P.x1 - P.x0 - 28, 18);
+    if (window.WORDS && DEVANAGARI.test(m.ch)) {
+      // How the letter sounds: its romanization, then how to say it.
+      const pt = window.WORDS.letterParts(m.ch)[0], how = pt ? pt.how[0][1] : '';
+      c.font = `700 15px ${css('--font-ui')}`; c.fillStyle = css('--accent');
+      const head = pt ? `${pt.alone} · ` : ''; c.fillText(head, P.x0 + 14, P.y0 + 24);
+      const hw = c.measureText(head).width;
+      c.font = `400 13px ${css('--font-ui')}`; c.fillStyle = css('--muted');
+      const words2 = how.split(' '); let line = '', y = P.y0 + 24, x0 = P.x0 + 14 + hw, maxW = P.x1 - P.x0 - 28;
+      for (const wd of words2) {
+        const t = line ? line + ' ' + wd : wd;
+        if (line && c.measureText(t).width > maxW - (y === P.y0 + 24 ? hw : 0)) { c.fillText(line, x0, y); line = wd; y += 17; x0 = P.x0 + 14; if (y > P.y0 + 41) break; }
+        else line = t;
+      }
+      if (y <= P.y0 + 41) c.fillText(line, x0, y);
+    }
     const w = Math.max(penW() * 1.15, m.k * 4.2), accent = css('--accent'), guide = css('--guide');
     // Grey model underneath.
     c.strokeStyle = guide; c.globalAlpha = 0.35; c.lineWidth = w;
@@ -1749,6 +1788,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     { deva: 1, t: 'Letters hang from the headline: their tops touch the dashed line.' },
     { deva: 1, t: 'Draw one straight headline across a whole word once its letters are done.' },
     { deva: 1, t: 'Matras above the line go up toward the top line; ु and ू drop below the baseline.' },
+    { deva: 1, t: 'Tap any letter under a word in the Meanings bar to hear it and see how to say it.' },
     { tutor: 1, t: 'Press Play on the big letter, then trace over it. It checks your stroke order and direction.' },
     { tutor: 1, t: 'Follow the numbered circles: each stroke starts at its number and goes the way the arrow points.' },
     { tutor: 1, t: 'With Grade on, each letter on the rows shows which stroke you wrote: green is right, ↺ means backwards.' },
@@ -1799,23 +1839,73 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     barSig = sig; $('soundNote').textContent = '';
     const box = $('wordChips'); box.innerHTML = '';
     for (const w of words.slice(0, 12)) {
-      const b = document.createElement('button'); b.className = 'chip'; b.title = `Hear ${w}`;
-      const letter = W$.letters(w).length === 1 && w.length <= 2 && !W$.DICT.has(w);
+      const chip = document.createElement('div'); chip.className = 'chip';
+      const b = document.createElement('button'); b.className = 'wbtn'; b.title = `Hear ${w}`;
+      const parts = W$.letterParts(w), letter = parts.length === 1 && !W$.DICT.has(w);
+      let langs = null;
       const fill = (e) => {
-        const m = letter ? 'the letter' : e ? W$.meaningText(e) : e === null ? 'no meaning found' : '…';
+        if (e) langs = e.langs;
+        const m = letter ? 'the letter: tap to hear it and see how to say it' : e ? W$.meaningText(e) : e === null ? 'no meaning found' : '…';
         b.innerHTML = `${SPEAKER}<span class="dw" lang="hi">${esc(w)}</span><span class="tr">${esc(W$.translit(w))}</span>`
           + (e && e.langs && e.langs.length ? `<span class="lg">${esc(W$.langText(e.langs))}</span>` : '')
           + `<span class="mn">${esc(m)}</span>`;
         if (e) b.title = `${w} · ${W$.translit(w)} · ${W$.meaningText(e)}`;
-        b.onclick = () => playWord(w, e ? e.langs : null);
       };
+      b.onclick = () => { if (letter) showLetter(parts[0], w, b, langs); else playWord(w, langs); };
+      chip.appendChild(b);
+      // Each letter of the word: tap one to hear it and see how it's said.
+      if (!letter) chip.appendChild(letterButtons(parts, w, () => langs));
       const known = W$.local(w);
       fill(known || (known === null ? null : undefined));
       if (known === undefined && !letter) W$.lookup(w).then((e) => { if (barSig === sig) fill(e); });
-      W$.findRecording(w, known ? known.langs : null).catch(() => {}); // get it ready for the tap
-      box.appendChild(b);
+      if (!letter) W$.findRecording(w, known ? known.langs : null).catch(() => {}); // get it ready for the tap
+      box.appendChild(chip);
     }
   }
+
+  /* ---------- Letters: tap one to hear it and see how it's said ---------- */
+  function letterButtons(parts, word, langsOf) {
+    const span = document.createElement('span'); span.className = 'lets';
+    for (const pt of parts) {
+      const lb = document.createElement('button'); lb.className = 'lt'; lb.lang = 'hi';
+      lb.title = `${pt.ak}: ${pt.alone}`;
+      lb.innerHTML = `<b>${esc(pt.ak)}</b><small${pt.silentA ? ' class="silent"' : ''}>${esc(pt.tr)}</small>`;
+      lb.addEventListener('click', (e) => { e.stopPropagation(); showLetter(pt, word, lb, langsOf()); });
+      span.appendChild(lb);
+    }
+    return span;
+  }
+  function sayLetter(pt, langs) {
+    const note = $('soundNote');
+    W$.play(pt.ak, langs, { voiceOnly: true, rate: 0.6 }).then((src) => { if (note) note.textContent = src || ''; });
+  }
+  function showLetter(pt, word, anchor, langs) {
+    sayLetter(pt, langs);
+    const card = $('letterCard');
+    // A modal dialog sits above the page, so the card has to live inside it to be seen.
+    const host = anchor.closest('dialog') || document.body;
+    if (card.parentElement !== host) host.appendChild(card);
+    const inWord = word && word !== pt.ak;
+    card.innerHTML = `<div class="top"><span class="big" lang="hi">${esc(pt.ak)}</span><div><div class="tr">${esc(pt.alone)}</div>`
+      + `<div class="sub">${inWord ? `in ${esc(word)}: <i>${esc(pt.tr)}</i>${pt.silentA ? ' (its "a" is silent)' : ''}` : 'on its own'}</div></div>`
+      + `<button class="say" aria-label="Hear it again">${SPEAKER}</button></div>`
+      + `<ul>${pt.how.map(([ch, h]) => `<li><b lang="hi">${esc(ch === 'अ' ? 'अ' : ch)}</b><span>${esc(h)}</span></li>`).join('')}</ul>`;
+    card.querySelector('.say').addEventListener('click', () => sayLetter(pt, langs));
+    card.hidden = false;
+    const r = anchor.getBoundingClientRect(), cw = card.offsetWidth, ch = card.offsetHeight;
+    const left = Math.min(Math.max(16, r.left + r.width / 2 - cw / 2), innerWidth - cw - 16);
+    const below = r.bottom + 8 + ch < innerHeight - 8;
+    card.style.left = `${left}px`; card.style.top = `${below ? r.bottom + 8 : Math.max(8, r.top - ch - 8)}px`;
+    card.dataset.for = pt.ak;
+  }
+  // Tap anywhere else (or press Esc) to close the card.
+  document.addEventListener('pointerdown', (e) => {
+    const card = $('letterCard');
+    if (!card.hidden && !card.contains(e.target) && !e.target.closest('.lt, .wbtn')) card.hidden = true;
+  }, true);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('letterCard').hidden = true; });
+  document.addEventListener('close', () => { $('letterCard').hidden = true; }, true);
+
   $('meanBtn').addEventListener('click', () => { S.meanings = S.meanings === false; barSig = ''; renderWordBar(); save(); });
 
   /* ---------- Practising a word or letter from the dialogs ---------- */
@@ -1869,13 +1959,20 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       // A phrase is scored word by word: show the average of its words' bests once all are written.
       const ws = e.w.split(/\s+/).map(cleanWord).filter(Boolean), bs = ws.map((w) => best.get(w));
       const b = bs.every((x) => x != null) ? Math.round(avg(bs)) : null;
-      tr.innerHTML = `<td><button class="say" aria-label="Hear ${esc(e.w)}">${SPEAKER}</button></td><td class="dw" lang="hi">${esc(e.w)}</td>`
+      tr.innerHTML = `<td><button class="say" aria-label="Hear ${esc(e.w)}">${SPEAKER}</button></td><td class="dw" lang="hi"></td>`
         + `<td class="tr">${esc(W$.translit(e.w))}</td><td>${(e.langs || []).map((l) => `<span class="lgb">${esc(W$.LANG_NAME[l] || l)}</span>`).join(' ')}</td>`
         + `<td class="mn">${esc(W$.meaningText(e) || '…')}</td><td class="num">${b != null ? b + '%' : '–'}</td><td><button class="go">Practice</button></td>`;
       tr.querySelector('.say').addEventListener('click', () => {
         W$.play(e.w, e.langs).then((src) => { $('wlNote').textContent = src || ''; });
       });
       tr.querySelector('.go').addEventListener('click', () => practice(e.w, 'deva'));
+      // The word as tappable letters, one group per word of a phrase.
+      const cell = tr.querySelector('td.dw');
+      e.w.split(/\s+/).filter(Boolean).forEach((part, i) => {
+        if (i) cell.append(' ');
+        const lets = letterButtons(W$.letterParts(part), part, () => e.langs);
+        lets.className = ''; cell.appendChild(lets);
+      });
       if (!e.m) W$.lookup(e.w).then((d) => { if (d) { tr.querySelector('.mn').textContent = W$.meaningText(d); tr.cells[3].innerHTML = d.langs.map((l) => `<span class="lgb">${esc(W$.LANG_NAME[l] || l)}</span>`).join(' '); } else tr.querySelector('.mn').textContent = ''; });
       tb.appendChild(tr);
     }
