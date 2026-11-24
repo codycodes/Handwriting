@@ -3,6 +3,11 @@ name: Deploy Penmanship Pad to GitHub Pages
 on:
   push:
     branches: [main]
+  # Pushes made by a workflow don't start other workflows, so deploy again after new recordings.
+  workflow_run:
+    workflows: ["Fetch Lingua Libre recordings"]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:

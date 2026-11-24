@@ -9,6 +9,9 @@ plays these first, so GitHub Pages serves them with no lookups and no API keys.
 
     python3 tools/fetch-lingualibre.py          # needs ffmpeg for the MP3s; then commit audio/
 
+Easiest: run it on GitHub instead (Actions → Fetch Lingua Libre recordings → Run workflow).
+That workflow commits audio/ for you, and the site redeploys afterwards.
+
 It lists every Hindi and Marathi file on Lingua Libre (a few dozen requests, slowly, as
 Wikimedia asks of anonymous clients) and matches words locally. Run it again after adding
 words: words already in audio/index.json are skipped (words with no recording are tried again).
@@ -124,11 +127,15 @@ def main():
             if not hit:
                 continue
             time.sleep(PAUSE)
-            raw = get(hit["url"])
-            (AUDIO / lang).mkdir(parents=True, exist_ok=True)
-            count[lang] += 1
-            name = f"{lang}/{count[lang]:04d}.mp3"
-            to_mp3(raw, AUDIO / name)
+            try:
+                raw = get(hit["url"])
+                (AUDIO / lang).mkdir(parents=True, exist_ok=True)
+                name = f"{lang}/{count[lang] + 1:04d}.mp3"
+                to_mp3(raw, AUDIO / name)
+                count[lang] += 1
+            except Exception as e:  # one bad file shouldn't stop the run; it's retried next time
+                print(f"  skipped {w} ({lang}): {e}")
+                continue
             got.append({"f": name, "lang": lang, "speaker": hit["speaker"], "page": hit["page"], "license": hit["license"]})
         index[w] = got
         print(f"[{n}/{len(todo)}] {w}: " + (", ".join(f"{g['lang']} by {g['speaker']}" for g in got) or "none"))
