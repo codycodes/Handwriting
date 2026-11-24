@@ -204,6 +204,8 @@ body:not(.tutor) .tutor-only { display: none !important; }
 #letterCard ul { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
 #letterCard li { display: grid; grid-template-columns: 2.2em 1fr; gap: 6px; align-items: baseline; }
 #letterCard li b { font-family: "Kalam", sans-serif; font-size: 20px; font-weight: 400; text-align: center; }
+svg.off { stroke: var(--muted) !important; opacity: .7; }
+.wbtn.nosound { cursor: default; }
 #soundNote { flex: 0 1 auto; font-size: 12px; color: var(--muted); max-width: 32%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #soundNote a { color: inherit; }
 
@@ -522,6 +524,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   let S = { ...defaults };
   try { Object.assign(S, JSON.parse(localStorage.getItem(STORE) || '{}')); } catch (_) {}
   if (S.paper === 'crossdot') S.paper = 'lines';
+  S.tool = 'pen';   // always start with the pen: the eraser never survives a reload
   // Older saves had a Pencil only on/off switch.
   if ('palm' in S) { if (!S.fingersSet || S.fingers === 'draw') S.fingers = S.palm ? 'off' : S.fingers; if (S.palmSet) S.fingersSet = true; delete S.palm; delete S.palmSet; }
   const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (_) {} };
@@ -1411,7 +1414,10 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   // While the Pencil is writing, hovering, or was just lifted, a touch is a resting palm:
   // it never draws, scrolls or counts toward a two-finger tap.
   const PEN_GRACE = 900;
-  const penBusy = () => (active && active.type === 'pen') || performance.now() - lastPenAt < PEN_GRACE;
+  // A Pencil stroke whose lift was never reported (it happens, e.g. lifting over the toolbar)
+  // stops counting as "writing" once the Pencil has been quiet for a moment.
+  const penWriting = () => !!active && active.type === 'pen' && performance.now() - lastPenAt < 1500;
+  const penBusy = () => penWriting() || performance.now() - lastPenAt < PEN_GRACE;
   let pan = null;      // finger scroll in progress: {id, x0, y0, sx0, sy0, lastX, lastY, lastT, vx, vy}
   // Scrolls the page. Pulling past the last row adds more rows, so you can keep going down.
   function setScroll(x, y) {
@@ -1478,7 +1484,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       // A palm that started scrolling the page stops as soon as the Pencil touches down.
       pan = null; cancelAnimationFrame(glide);
       // Only one Pencil exists: a pen stroke still marked active never got its pointerup. Keep it and move on.
-      if (active && active.type === 'pen' && active.id !== e.pointerId) finishActive(false);
+      if (active && active.type === 'pen') finishActive(false);
       // The Pencil always wins over a finger or palm stroke already in progress.
       if (active && active.type === 'touch') { active = null; drawInk(); }
     }
@@ -1614,7 +1620,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   for (const bar of [document.querySelector('header'), $('fsbar'), $('panelCtl'), $('panelShow'), $('navCtl')]) {
     bar.addEventListener('pointerdown', (e) => {
       // Fingers can always tap buttons, except a palm landing while the Pencil is mid-stroke.
-      blockClick = e.pointerType === 'touch' && !!active && active.type === 'pen';
+      blockClick = e.pointerType === 'touch' && penWriting();
     }, true);
     bar.addEventListener('click', (e) => {
       if (blockClick) { e.preventDefault(); e.stopPropagation(); blockClick = false; }
@@ -1666,6 +1672,8 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     seg.addEventListener('click', (e) => {
       const b = e.target.closest('button'); if (!b) return;
       const key = seg.dataset.key;
+      if (!key) return;   // the dialogs' own filter buttons
+      if (key === 'tool' && active) finishActive(false);   // never leave a stuck stroke or erase behind
       if (S[key] === b.dataset.v) return;
       if (CONTENT_KEYS.includes(key)) recordAttempt();   // score the page with the settings it was written with
       S[key] = b.dataset.v;
@@ -1813,6 +1821,10 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   const W$ = window.WORDS || null;
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const SPEAKER = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>';
+  const SPEAKER_OFF = '<svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M16 9l6 6M22 9l-6 6"/></svg>';
+  const NO_SOUND = 'No recording of this yet, and no Hindi voice on this device (Settings → Accessibility → Spoken Content → Voices → Hindi)';
+  // Re-check speakers once the saved recordings and the device's voices have loaded.
+  if (W$) W$.onSoundChange(() => { barSig = ''; renderWordBar(); if ($('wordsDlg').open) renderWords(); });
   const cleanWord = (w) => w.replace(/[^\p{L}\p{M}\p{N}]+/gu, '');
   function pageWords() {
     const out = [];
@@ -1823,10 +1835,10 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     }
     return out;
   }
-  async function playWord(w, langs) {
-    const note = $('soundNote'); note.textContent = 'Finding a recording…';
-    try { const src = await W$.play(w, langs); note.textContent = src || ''; }
-    catch (_) { note.textContent = 'Could not play this word'; }
+  function playWord(w, langs) {
+    const note = $('soundNote');
+    if (!W$.canPlay(w, langs)) { note.textContent = NO_SOUND; return; }
+    W$.playNow(w, langs).then((src) => { note.textContent = src || NO_SOUND; }, () => { note.textContent = 'Could not play this word'; });
   }
   let barSig = '';
   function renderWordBar() {
@@ -1840,16 +1852,18 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     const box = $('wordChips'); box.innerHTML = '';
     for (const w of words.slice(0, 12)) {
       const chip = document.createElement('div'); chip.className = 'chip';
-      const b = document.createElement('button'); b.className = 'wbtn'; b.title = `Hear ${w}`;
+      const b = document.createElement('button'); b.className = 'wbtn';
       const parts = W$.letterParts(w), letter = parts.length === 1 && !W$.DICT.has(w);
       let langs = null;
       const fill = (e) => {
         if (e) langs = e.langs;
         const m = letter ? 'the letter: tap to hear it and see how to say it' : e ? W$.meaningText(e) : e === null ? 'no meaning found' : '…';
-        b.innerHTML = `${SPEAKER}<span class="dw" lang="hi">${esc(w)}</span><span class="tr">${esc(W$.translit(w))}</span>`
+        const can = letter ? W$.canPlay(w, langs, { voiceOnly: true }) : W$.canPlay(w, langs);
+        b.classList.toggle('nosound', !can);
+        b.innerHTML = `${can ? SPEAKER : SPEAKER_OFF}<span class="dw" lang="hi">${esc(w)}</span><span class="tr">${esc(W$.translit(w))}</span>`
           + (e && e.langs && e.langs.length ? `<span class="lg">${esc(W$.langText(e.langs))}</span>` : '')
           + `<span class="mn">${esc(m)}</span>`;
-        if (e) b.title = `${w} · ${W$.translit(w)} · ${W$.meaningText(e)}`;
+        b.title = can ? (e ? `${w} · ${W$.translit(w)} · ${W$.meaningText(e)}` : `Hear ${w}`) : NO_SOUND;
       };
       b.onclick = () => { if (letter) showLetter(parts[0], w, b, langs); else playWord(w, langs); };
       chip.appendChild(b);
@@ -1877,7 +1891,8 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   }
   function sayLetter(pt, langs) {
     const note = $('soundNote');
-    W$.play(pt.ak, langs, { voiceOnly: true, rate: 0.6 }).then((src) => { if (note) note.textContent = src || ''; });
+    if (!W$.canPlay(pt.ak, langs, { voiceOnly: true })) { if (note) note.textContent = NO_SOUND; return; }
+    W$.playNow(pt.ak, langs, { voiceOnly: true, rate: 0.6 }).then((src) => { if (note) note.textContent = src || ''; });
   }
   function showLetter(pt, word, anchor, langs) {
     sayLetter(pt, langs);
@@ -1888,9 +1903,9 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     const inWord = word && word !== pt.ak;
     card.innerHTML = `<div class="top"><span class="big" lang="hi">${esc(pt.ak)}</span><div><div class="tr">${esc(pt.alone)}</div>`
       + `<div class="sub">${inWord ? `in ${esc(word)}: <i>${esc(pt.tr)}</i>${pt.silentA ? ' (its "a" is silent)' : ''}` : 'on its own'}</div></div>`
-      + `<button class="say" aria-label="Hear it again">${SPEAKER}</button></div>`
+      + (W$.canPlay(pt.ak, langs, { voiceOnly: true }) ? `<button class="say" aria-label="Hear it again">${SPEAKER}</button>` : `<button class="say" disabled title="${esc(NO_SOUND)}" aria-label="No sound available">${SPEAKER_OFF}</button>`) + `</div>`
       + `<ul>${pt.how.map(([ch, h]) => `<li><b lang="hi">${esc(ch === 'अ' ? 'अ' : ch)}</b><span>${esc(h)}</span></li>`).join('')}</ul>`;
-    card.querySelector('.say').addEventListener('click', () => sayLetter(pt, langs));
+    card.querySelector('.say:not([disabled])')?.addEventListener('click', () => sayLetter(pt, langs));
     card.hidden = false;
     const r = anchor.getBoundingClientRect(), cw = card.offsetWidth, ch = card.offsetHeight;
     const left = Math.min(Math.max(16, r.left + r.width / 2 - cw / 2), innerWidth - cw - 16);
@@ -1959,11 +1974,12 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       // A phrase is scored word by word: show the average of its words' bests once all are written.
       const ws = e.w.split(/\s+/).map(cleanWord).filter(Boolean), bs = ws.map((w) => best.get(w));
       const b = bs.every((x) => x != null) ? Math.round(avg(bs)) : null;
-      tr.innerHTML = `<td><button class="say" aria-label="Hear ${esc(e.w)}">${SPEAKER}</button></td><td class="dw" lang="hi"></td>`
+      const can = W$.canPlay(e.w, e.langs);
+      tr.innerHTML = `<td>${can ? `<button class="say" aria-label="Hear ${esc(e.w)}">${SPEAKER}</button>` : `<button class="say" disabled title="${esc(NO_SOUND)}" aria-label="No sound available">${SPEAKER_OFF}</button>`}</td><td class="dw" lang="hi"></td>`
         + `<td class="tr">${esc(W$.translit(e.w))}</td><td>${(e.langs || []).map((l) => `<span class="lgb">${esc(W$.LANG_NAME[l] || l)}</span>`).join(' ')}</td>`
         + `<td class="mn">${esc(W$.meaningText(e) || '…')}</td><td class="num">${b != null ? b + '%' : '–'}</td><td><button class="go">Practice</button></td>`;
       tr.querySelector('.say').addEventListener('click', () => {
-        W$.play(e.w, e.langs).then((src) => { $('wlNote').textContent = src || ''; });
+        if (can) W$.playNow(e.w, e.langs).then((src) => { $('wlNote').textContent = src || NO_SOUND; });
       });
       tr.querySelector('.go').addEventListener('click', () => practice(e.w, 'deva'));
       // The word as tappable letters, one group per word of a phrase.

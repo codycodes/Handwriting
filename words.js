@@ -303,7 +303,7 @@
 
   /* ---------- Splitting text into letters (aksharas) and words ---------- */
   // A Devanagari "letter" as written: consonants joined by virama, then a vowel sign and nasal marks.
-  const AKSHARA = /(?:[क-हक़-य़ॸ-ॿ]़?्‍?)*[क-हक़-य़ॸ-ॿ]़?[ा-ौॢॣ]?[ऀ-ः]*|[ऄ-औॠॡॲ-ॷ][ऀ-ः]*|./gsu;
+  const AKSHARA = /(?:[क-हक़-य़ॸ-ॿ]़?्‍?)*[क-हक़-य़ॸ-ॿ]़?(?:[ा-ौॢॣ]|्)?[ऀ-ः]*|[ऄ-औॠॡॲ-ॷ][ऀ-ः]*|./gsu;
   const DEVA = /[ऀ-ॿ]/;
   function letters(text) {
     if (DEVA.test(text)) return text.normalize('NFC').match(AKSHARA) || [];
@@ -440,11 +440,50 @@
   }
   function speakTTS(text, langs, rate = 0.8) {
     if (!g.speechSynthesis) return null;
-    const u = new SpeechSynthesisUtterance(text), v = voiceFor(langs);
+    const v = voiceFor(langs);
+    if (!v && voicesKnown()) return null;   // no Hindi or Marathi voice: an English voice would just mumble
+    const u = new SpeechSynthesisUtterance(text);
     if (v) { u.voice = v; u.lang = v.lang; } else u.lang = langs && langs[0] === 'mr' ? 'mr-IN' : 'hi-IN';
     u.rate = rate;
-    g.speechSynthesis.cancel(); g.speechSynthesis.speak(u);
-    return v ? `Device voice: ${v.name} (${v.lang})` : 'Device voice (no Hindi voice found: see Settings → Accessibility → Spoken Content → Voices)';
+    const ss = g.speechSynthesis;
+    if (ss.speaking || ss.pending) ss.cancel();
+    ss.speak(u);
+    return v ? `Device voice: ${v.name} (${v.lang})` : 'Device voice';
+  }
+
+  /* ---------- Is there a sound for this? (decided before the tap, so it can play right away) ---------- */
+  // Safari lists its voices a moment after the page loads; until then we can't tell, so we allow it.
+  const voicesKnown = () => !!g.speechSynthesis && g.speechSynthesis.getVoices().length > 0;
+  const hasVoice = (langs) => !!g.speechSynthesis && (!voicesKnown() || !!voiceFor(langs));
+  const listeners = [];
+  const changed = () => listeners.forEach((f) => { try { f(); } catch (_) {} });
+  try { g.speechSynthesis && g.speechSynthesis.addEventListener('voiceschanged', changed); } catch (_) {}
+  manifestP.then(changed);
+  // What a tap will play: {rec} a recording, {voice} the device voice, {lookup} search Lingua Libre first, or null.
+  function soundFor(word, langs, opts = {}) {
+    if (!opts.voiceOnly && manifest) {
+      const r = fromManifest(word, langs);
+      if (r) return { rec: r };
+      if (r === undefined) {   // not in the saved lists: maybe found live (custom words)
+        const c = cache['rec:' + word];
+        if (c) return { rec: c };
+        if (c === undefined) return { lookup: true };
+      }
+    }
+    return hasVoice(langs) ? { voice: true } : null;
+  }
+  const canPlay = (word, langs, opts) => !!soundFor(word, langs, opts);
+  // Starts the sound inside the tap itself (iPad blocks sound started later); resolves with its source.
+  function playNow(word, langs, opts = {}) {
+    const s0 = soundFor(word, langs, opts);
+    if (!s0) return Promise.resolve(null);
+    if (s0.lookup) return play(word, langs, opts);
+    if (s0.rec) {
+      const urls = s0.rec.urls || [s0.rec.url];
+      playSeq = urls.slice(1); player.src = urls[0];
+      return player.play().then(() => s0.rec.src, () => speakTTS(word, langs, opts.rate));
+    }
+    return Promise.resolve(speakTTS(word, langs, opts.rate));
   }
   // Plays the word; resolves with a note about where the sound came from.
   async function play(word, langs, opts = {}) {
@@ -458,8 +497,8 @@
         } catch (_) {}
       }
     }
-    return speakTTS(word, langs, opts.rate) || 'No sound available on this device';
+    return speakTTS(word, langs, opts.rate);
   }
 
-  g.WORDS = { letterParts, howToSay, LEVELS, PATH, DICT, LANG_NAME, translit, translitWord, letters, local, lookup, meaningText, langText, play, findRecording, custom, isDeva: (t) => DEVA.test(t) };
+  g.WORDS = { letterParts, howToSay, LEVELS, PATH, DICT, LANG_NAME, translit, translitWord, letters, local, lookup, meaningText, langText, play, findRecording, custom, isDeva: (t) => DEVA.test(t), playNow, canPlay, onSoundChange: (f) => listeners.push(f) };
 })(window);
