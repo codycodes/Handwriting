@@ -15,7 +15,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400&family=Atkinson+Hyperlegible:wght@400;700&family=Kalam:wght@400&family=Playwrite+US+Trad&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400&family=Atkinson+Hyperlegible:wght@400;700&family=Kalam:wght@400&family=Gotu&family=Baloo+2:wght@400&family=Playwrite+US+Trad&display=swap">
 <style>
 /* Layout: one-screen writing desk. A compact two-row toolbar sits above a full-bleed ruled sheet. */
 :root {
@@ -40,6 +40,7 @@
   --grade-off: #d6453a;     /* ink outside the letters */
   --grade-miss: #e0a11b;    /* parts of letters not traced */
   --grade-good: #2e8a57;
+  --font-deva: "Gotu", "Kalam", sans-serif;
   --font-ui: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
   --font-brand: "Playwrite US Trad", "Snell Roundhand", cursive;
   color-scheme: light;
@@ -84,6 +85,8 @@ body {
   position: absolute; left: 0; top: 0; width: 10px; height: 10px; margin: -5px 0 0 -5px;
   border-radius: 50%; border: 1.5px solid var(--accent); pointer-events: none; opacity: .8;
 }
+#selBox { position: absolute; z-index: 2; pointer-events: none; background: var(--accent-soft); border: 2px solid var(--accent); border-radius: 8px; opacity: .55; }
+#selBox[hidden] { display: none; }
 #cursor.erase { width: 28px; height: 28px; margin: -14px 0 0 -14px; border-style: dashed; }
 header { display: flex; flex-direction: column; gap: 8px; padding-bottom: 10px; }
 .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -179,7 +182,7 @@ body:not(.tutor) .tutor-only { display: none !important; }
 #wordChips::-webkit-scrollbar { display: none; }
 .chip { flex: none; max-width: 640px; }
 .chip svg { flex: none; stroke: var(--accent); }
-.chip .dw { font-family: "Kalam", sans-serif; font-size: 20px; line-height: 1; }
+.chip .dw { font-family: var(--font-deva); font-size: 20px; line-height: 1; }
 .chip .tr { color: var(--accent); font-style: italic; }
 .chip .lg, .lgb { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 1px 5px; white-space: nowrap; }
 .chip .mn { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
@@ -189,7 +192,7 @@ body:not(.tutor) .tutor-only { display: none !important; }
 .chip .lets { display: inline-flex; gap: 2px; padding: 0 4px 0 6px; border-left: 1px solid var(--line); }
 .lt { font: inherit; min-height: 34px; padding: 0 6px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--text);
   display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; line-height: 1.05; cursor: pointer; }
-.lt b { font-family: "Kalam", sans-serif; font-size: 19px; font-weight: 400; }
+.lt b { font-family: var(--font-deva); font-size: 19px; font-weight: 400; }
 .lt small { font-size: 10.5px; color: var(--accent); font-style: italic; }
 .lt small.silent { color: var(--muted); }
 .lt:hover, .lt:focus-visible { border-color: var(--line); background: var(--paper); }
@@ -199,12 +202,13 @@ body:not(.tutor) .tutor-only { display: none !important; }
 #letterCard[hidden] { display: none; }
 #letterCard .lc-go { margin-top: 12px; gap: 8px; }
 #letterCard .lc-src { margin-top: 8px; font-size: 11.5px; }
-#letterCard .lc-head .lc-back { display: inline-flex; gap: 2px; padding: 0 8px 0 4px; font-family: "Kalam", var(--font-ui); font-size: 15px; color: var(--accent);
+#letterCard .lc-head .lc-back { display: inline-flex; gap: 2px; padding: 0 8px 0 4px; font-family: var(--font-deva); font-size: 15px; color: var(--accent);
   border: 1px solid var(--line); background: var(--paper); border-radius: 8px; }
 #letterCard .lc-head .lc-back svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2.4; }
-#letterCard .lc-word { font: inherit; font-family: "Kalam", sans-serif; font-size: 15px; color: var(--accent); background: none; border: 0; border-bottom: 1px dashed var(--accent);
+#letterCard .lc-word { font: inherit; font-family: var(--font-deva); font-size: 15px; color: var(--accent); background: none; border: 0; border-bottom: 1px dashed var(--accent);
   border-radius: 0; padding: 0; min-height: 0; cursor: pointer; }
 #letterCard .lc-meaning { margin-top: 8px; font-size: 15px; }
+#letterCard .big.phrase { font-size: 28px; line-height: 1.25; }
 #letterCard .lc-letters { margin-top: 10px; }
 #letterCard .lc-letters .lets { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 4px; }
 #letterCard .lc-letters .lt b { font-size: 24px; }
@@ -223,19 +227,19 @@ body:not(.tutor) .tutor-only { display: none !important; }
 #letterCard .lc-ex { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
 #letterCard .lc-ex > div { width: 100%; }
 #letterCard .ex { min-height: 34px; font-size: 13px; gap: 5px; padding: 0 8px; }
-#letterCard .ex b { font-family: "Kalam", sans-serif; font-weight: 400; font-size: 18px; }
+#letterCard .ex b { font-family: var(--font-deva); font-weight: 400; font-size: 18px; }
 #letterCard .ex i { color: var(--accent); }
 #letterCard .ex span { color: var(--muted); }
 #letterCard .lc-go button { min-height: 36px; }
 #tapAnchor { position: fixed; width: 1px; height: 1px; pointer-events: none; }
 #letterCard .top { display: flex; align-items: center; gap: 12px; }
-#letterCard .big { font-family: "Kalam", sans-serif; font-size: 44px; line-height: 1; }
+#letterCard .big { font-family: var(--font-deva); font-size: 44px; line-height: 1; }
 #letterCard .say { margin-left: auto; }
 #letterCard .tr { color: var(--accent); font-style: italic; font-size: 18px; }
 #letterCard .sub { color: var(--muted); font-size: 12.5px; }
 #letterCard ul { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
 #letterCard li { display: grid; grid-template-columns: 2.2em 1fr; gap: 6px; align-items: baseline; }
-#letterCard li b { font-family: "Kalam", sans-serif; font-size: 20px; font-weight: 400; text-align: center; }
+#letterCard li b { font-family: var(--font-deva); font-size: 20px; font-weight: 400; text-align: center; }
 svg.off { stroke: var(--muted) !important; opacity: .7; }
 .wbtn.nosound { cursor: default; }
 /* Where a sound came from: a small tip above the button you tapped, gone after a few seconds */
@@ -284,18 +288,18 @@ svg.off { stroke: var(--muted) !important; opacity: .7; }
 #lineBar { flex-wrap: nowrap; gap: 8px; background: var(--panel); border: 1px solid var(--accent); border-radius: 10px; padding: 4px; }
 #lineBar[hidden] { display: none; }
 #lbText { flex: 1; min-width: 0; padding: 0 4px; }
-#lbText .hi { font-family: "Kalam", sans-serif; font-size: 19px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#lbText .hi { font-family: var(--font-deva); font-size: 19px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #lbText .en { font-size: 14px; color: var(--muted); line-height: 1.3; }
 #lbText .en i { color: var(--accent); }
 #lbPos { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-#vdLines td.hi { font-family: "Kalam", sans-serif; font-size: 19px; line-height: 1.35; }
+#vdLines td.hi { font-family: var(--font-deva); font-size: 19px; line-height: 1.35; }
 #vdLines td .en { font-family: var(--font-ui); font-size: 13.5px; color: var(--muted); }
 #vdLines tr.cur td { background: var(--accent-soft); }
 #vdLines tbody tr { cursor: pointer; }
 label.file { display: inline-flex; align-items: center; min-height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); cursor: pointer; font-size: 14px; }
 .dlg-body input[type=url], .dlg-body input[type=text], .dlg-head select, .dlg-body select { font: inherit; font-size: 16px; color: var(--text); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
 #trOut .big { font-size: 20px; line-height: 1.4; }
-#trOut .big[lang=hi] { font-family: "Kalam", sans-serif; font-size: 24px; }
+#trOut .big[lang=hi] { font-family: var(--font-deva); font-size: 24px; }
 #trOut .tr { color: var(--accent); font-style: italic; margin-top: 2px; }
 #trOut .row { margin-top: 10px; }
 @media (max-width: 700px) { #pip { width: 260px; } #lbTranslate { display: none; } }
@@ -315,7 +319,7 @@ body.compact .pager { gap: 6px; flex: none; }
 @media (max-width: 900px) { #ctlBtn span { display: none; } }
 #qTool svg { width: 18px; height: 18px; }
 #backBtn { color: var(--accent); border-color: var(--accent); font-weight: 700; gap: 2px; padding: 0 10px 0 6px; }
-#backBtn span { font-family: "Kalam", var(--font-ui); font-weight: 400; max-width: 9em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+#backBtn span { font-family: var(--font-deva); font-weight: 400; max-width: 9em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 #ctlBtn[aria-expanded="true"], #compactBtn[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
 /* Dialogs (Words, Progress) */
 .dlg { width: min(980px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); padding: 0; border: 1px solid var(--line); border-radius: 14px;
@@ -339,7 +343,7 @@ button.primary { background: var(--accent); color: var(--paper); border-color: v
 .tbl th { text-align: left; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 400; padding: 6px 8px; border-bottom: 1px solid var(--line); position: sticky; top: -14px; background: var(--paper); }
 .tbl td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
 .tbl .num { text-align: right; }
-.tbl .dw { font-family: "Kalam", sans-serif; font-size: 24px; line-height: 1.2; }
+.tbl .dw { font-family: var(--font-deva); font-size: 24px; line-height: 1.2; }
 .tbl .tr { color: var(--accent); font-style: italic; }
 #wlTable td.dw { min-width: 4em; }
 #wlTable td.mn { min-width: 12em; }
@@ -448,6 +452,12 @@ body.fs #fsbar { display: flex; }
   <div class="row tools">
     <div class="group"><span class="label">Style</span>
       <div class="seg" data-key="style"><button data-v="cursive">Cursive</button><button data-v="print">Print</button><button data-v="devanagari" lang="hi">देवनागरी</button></div></div>
+    <div class="group"><span class="label">देवनागरी font</span>
+      <div class="seg" data-key="devaFont" title="How Devanagari letters look on the page">
+        <button data-v="upright" title="Upright, standard letter shapes (Gotu)" style="font-family:Gotu">अक्षर</button>
+        <button data-v="rounded" title="Rounded, like children's books (Baloo 2)" style="font-family:'Baloo 2'">अक्षर</button>
+        <button data-v="hand" title="Slanted handwriting (Kalam)" style="font-family:Kalam">अक्षर</button>
+      </div></div>
     <div class="group"><span class="label">Guide</span>
       <div class="seg" data-key="guide"><button data-v="outline">Outline</button><button data-v="dotted">Dotted</button><button data-v="faded">Faded</button></div></div>
     <div class="group"><span class="label">Practice</span>
@@ -547,6 +557,7 @@ body.fs #fsbar { display: flex; }
   </div>
   <button id="panelShow" class="ui" hidden title="Show the big letter">Aa<svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
   <div id="cursor" hidden></div>
+  <div id="selBox" hidden></div>
   <div id="hint">Pencil only is on: fingers won't draw</div>
 </main>
 <div id="fsbar">
@@ -679,11 +690,14 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   this.arcTo(x, y + h, x, y, r); this.arcTo(x, y, x + w, y, r); this.closePath();
 };
 (() => {
-  // Kalam is in every stack so Devanagari typed into Cursive/Print still renders.
+  // Devanagari font: Upright (Gotu, standard letter shapes), Rounded (Baloo 2) or Handwriting
+  // (Kalam, slanted). It's in every stack so Devanagari typed into Cursive/Print renders too.
+  const DEVA_FONTS = { upright: '"Gotu"', rounded: '"Baloo 2"', hand: '"Kalam"' };
+  const devaFam = () => DEVA_FONTS[S.devaFont] || DEVA_FONTS.upright;
   const FAMILIES = {
-    cursive: '"Playwrite US Trad", "Kalam", "Snell Roundhand", cursive',
-    print: '"Andika", "Kalam", "Comic Sans MS", system-ui, sans-serif',
-    devanagari: '"Kalam", "Kohinoor Devanagari", "Devanagari Sangam MN", sans-serif',
+    get cursive() { return `"Playwrite US Trad", ${devaFam()}, "Kalam", "Snell Roundhand", cursive`; },
+    get print() { return `"Andika", ${devaFam()}, "Kalam", "Comic Sans MS", system-ui, sans-serif`; },
+    get devanagari() { return `${devaFam()}, "Kalam", "Kohinoor Devanagari", "Devanagari Sangam MN", sans-serif`; },
   };
   const X_HEIGHT = { s: 20, m: 30, l: 44, xl: 62 }; // x-height in CSS px
   const SLANT = 15 * Math.PI / 180;           // slant line angle from vertical
@@ -695,7 +709,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     text: 'Cody codes',
     style: 'cursive', guide: 'outline', mode: 'trace', size: 'l',
     tool: 'pen', color: 'ink', fingers: 'draw', fingersSet: false, page: 0, theme: 'auto',
-    paper: 'lines', grade: false, marks: false, tutorSet: 'lower', panel: true, tips: true, tipI: 0,
+    paper: 'lines', grade: false, marks: false, tutorSet: 'lower', panel: true, tips: true, tipI: 0, devaFont: 'upright',
     meanings: true, wordLevel: 'l1',
   };
   let S = { ...defaults };
@@ -714,6 +728,8 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     else root.setAttribute('data-theme', S.theme);
   }
   applyTheme();
+  function applyDevaFont() { document.documentElement.style.setProperty('--font-deva', `${devaFam()}, "Kalam", sans-serif`); }
+  applyDevaFont();
 
   const $ = (id) => document.getElementById(id);
   const sheet = $('sheet'), bg = $('bg'), inkC = $('ink'), gradeC = $('grade'), demoC = $('demo');
@@ -1576,7 +1592,44 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   }
 
   /* ---------- History ---------- */
-  function record(action) { const h = hist[S.page]; h.undo.push(action); h.redo.length = 0; pageDirty = true; updateButtons(); }
+  function record(action) { const h = hist[S.page]; h.undo.push(action); h.redo.length = 0; pageDirty = true; restoreWanted = false; updateButtons(); saveInkSoon(); }
+
+  /* ---------- Your writing is kept across reloads ---------- */
+  // Saved for the last few texts, each with the layout it was written on (text, mode, size, the
+  // sheet's size…), so it only comes back where it lines up with the letters.
+  const INK = 'penmanship-pad:ink';
+  const inkSig = () => [S.text, S.mode, S.style, S.size, S.mode === 'tutor' ? S.tutorSet : '', S.fingers === 'scroll', S.panel !== false, S.devaFont, Math.round(W), Math.round(H)].join('|');
+  // inkFor: the layout the writing on screen belongs to, noted as you write. (When the text changes,
+  // S.text is already the new one by the time the old page is put away.)
+  let inkTimer = 0, restoreWanted = true, inkFor = null;
+  function saveInkSoon() { if (W && L) inkFor = inkSig(); clearTimeout(inkTimer); inkTimer = setTimeout(saveInk, 600); }
+  function saveInk() {
+    clearTimeout(inkTimer);
+    if (!W || !L || !inkFor) return;
+    const sig = inkFor, has = ink.some((pg) => pg && pg.length);
+    let store; try { store = JSON.parse(localStorage.getItem(INK) || '[]'); } catch (_) { store = []; }
+    if (!Array.isArray(store)) store = [];
+    store = store.filter((x) => x.sig !== sig);
+    if (has) {
+      const pack = (st) => ({ c: st.color, w: +st.w.toFixed(2), b: st.by, p: st.panel ? 1 : 0, pts: st.pts.map((q) => [+q[0].toFixed(1), +q[1].toFixed(1), +(q[2] ?? 0.5).toFixed(2)]) });
+      store.unshift({ sig, t: Date.now(), page: S.page, extra: extra.slice(), ink: ink.map((pg) => (pg || []).map(pack)) });
+    }
+    store = store.slice(0, 6);
+    for (;;) { try { localStorage.setItem(INK, JSON.stringify(store)); break; } catch (_) { if (!store.length) break; store.pop(); } }
+  }
+  function restoreInk() {
+    let store; try { store = JSON.parse(localStorage.getItem(INK) || '[]'); } catch (_) { return false; }
+    const hit = Array.isArray(store) && store.find((x) => x.sig === inkSig());
+    if (!hit) return false;
+    inkFor = hit.sig;
+    ink = hit.ink.map((pg) => pg.map((st) => ({ color: st.c, w: st.w, by: st.b, at: 0, panel: !!st.p, pts: st.pts })));
+    hist = ink.map((pg) => ({ undo: pg.map((st) => ({ type: 'add', stroke: st })), redo: [] }));   // so Undo works on it
+    extra = hit.extra || [];
+    S.page = hit.page || 0;
+    return true;
+  }
+  addEventListener('pagehide', saveInk);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) saveInk(); });
   function apply(action, reverse) {
     const arr = ink[S.page];
     if (action.type === 'add') {
@@ -1588,8 +1641,8 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       if (reverse) arr.push(...action.strokes); else arr.length = 0;
     }
   }
-  function undo() { const h = hist[S.page], a = h.undo.pop(); if (!a) return; apply(a, true); h.redo.push(a); drawInk(); updateButtons(); }
-  function redo() { const h = hist[S.page], a = h.redo.pop(); if (!a) return; apply(a, false); h.undo.push(a); drawInk(); updateButtons(); }
+  function undo() { const h = hist[S.page], a = h.undo.pop(); if (!a) return; apply(a, true); h.redo.push(a); drawInk(); updateButtons(); saveInkSoon(); }
+  function redo() { const h = hist[S.page], a = h.redo.pop(); if (!a) return; apply(a, false); h.undo.push(a); drawInk(); updateButtons(); saveInkSoon(); }
 
   /* ---------- Input ---------- */
   let active = null;               // {id, stroke | erased}
@@ -1608,9 +1661,10 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   const penWriting = () => !!active && active.type === 'pen' && performance.now() - lastPenAt < 1500;
   const penBusy = () => penWriting() || performance.now() - lastPenAt < PEN_GRACE;
   let pan = null;      // finger scroll in progress: {id, x0, y0, sx0, sy0, lastX, lastY, lastT, vx, vy}
+  let pan2 = null;     // two-finger drag: {cur: id -> [x, y], mx0, my0, sx0, sy0, moved}
   // Scrolls the page. Pulling past the last row adds more rows, so you can keep going down.
-  function setScroll(x, y) {
-    if (y > CH() - H + 1 && S.fingers === 'scroll') {
+  function setScroll(x, y, grow = S.fingers === 'scroll') {
+    if (y > CH() - H + 1 && grow) {
       while (CH() - H < y && pages[S.page].length < 400) { pages[S.page].push(moreRow(pages[S.page])); extra[S.page] = (extra[S.page] || 0) + 1; }
     }
     const nx = Math.max(0, Math.min(L.CW - W, x)), ny = Math.max(0, Math.min(CH() - H, y));
@@ -1688,6 +1742,16 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       if (touches.size === 2) twoTap = { t: performance.now(), ok: true };
       if (touches.size > 2 && twoTap) twoTap.ok = false;
       if (penBusy()) { if (twoTap) twoTap.ok = false; return; }
+      // Two fingers drag the page, whatever one finger does. (A finger already writing a while
+      // ago means the second one is a palm: keep writing instead.)
+      if (touches.size === 2 && !(active && active.type === 'touch' && active.stroke && !isYoung(active.stroke))) {
+        if (active && active.type === 'touch') { active = null; drawInk(); }
+        pan = null; cancelAnimationFrame(glide);
+        const pts = [...touches.values()], cur = new Map([...touches].map(([id, t]) => [id, [t.x, t.y]]));
+        pan2 = { cur, mx0: (pts[0].x + pts[1].x) / 2, my0: (pts[0].y + pts[1].y) / 2, sx0: SX, sy0: SY, moved: false };
+        for (const id of touches.keys()) try { inkC.setPointerCapture(id); } catch (_) {}
+        return;
+      }
       if (S.fingers === 'scroll' && touches.size === 1) {
         cancelAnimationFrame(glide);
         pan = { id: e.pointerId, x0: e.clientX, y0: e.clientY, sx0: SX, sy0: SY, lastX: e.clientX, lastY: e.clientY, lastT: performance.now(), vx: 0, vy: 0 };
@@ -1723,6 +1787,14 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   }
 
   function onMove(e) {
+    if (pan2 && pan2.cur.has(e.pointerId)) {
+      e.preventDefault();
+      pan2.cur.set(e.pointerId, [e.clientX, e.clientY]);
+      const ps = [...pan2.cur.values()], mx = (ps[0][0] + ps[1][0]) / 2, my = (ps[0][1] + ps[1][1]) / 2;
+      if (!pan2.moved && Math.hypot(mx - pan2.mx0, my - pan2.my0) > 10) { pan2.moved = true; if (twoTap) twoTap.ok = false; }
+      if (pan2.moved) setScroll(pan2.sx0 - (mx - pan2.mx0), pan2.sy0 - (my - pan2.my0), true);
+      return;
+    }
     if (pan && e.pointerId === pan.id) {
       e.preventDefault();
       const now = performance.now(), dt = Math.max(1, now - pan.lastT);
@@ -1770,6 +1842,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   }
 
   function onUp(e) {
+    if (pan2 && pan2.cur.has(e.pointerId)) pan2 = null;
     if (pan && e.pointerId === pan.id) { if (performance.now() - pan.lastT < 80) glideFrom(pan.vx, pan.vy); pan = null; }
     if (touches.has(e.pointerId)) {
       touches.delete(e.pointerId);
@@ -1791,7 +1864,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   window.addEventListener('pointercancel', onUp, true);
   // Pointer up/cancel on the window ends strokes; losing capture or focus doesn't, since Safari
   // can do either mid-stroke.
-  window.addEventListener('blur', () => { touches.clear(); twoTap = null; pan = null; });
+  window.addEventListener('blur', () => { touches.clear(); twoTap = null; pan = null; pan2 = null; });
   // Stop iOS from turning long presses and double taps into selection or zoom.
   inkC.addEventListener('pointerleave', (e) => { if (!active) cursor.hidden = true; });
   for (const ev of ['touchstart', 'touchmove']) sheet.addEventListener(ev, (e) => { if (!e.target.closest('.ui')) e.preventDefault(); }, { passive: false });
@@ -1820,7 +1893,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   const textEl = $('text'), preset = $('preset');
   const CONTENT_KEYS = ['style', 'mode', 'size'];
 
-  function resetInk() { recordAttempt(); ink = []; hist = []; extra = []; S.page = 0; SX = SY = 0; }
+  function resetInk() { recordAttempt(); saveInk(); ink = []; hist = []; extra = []; S.page = 0; SX = SY = 0; restoreWanted = true; inkFor = null; }
 
   const PEN_SVG = '<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>';
   const ERASER_SVG = '<svg viewBox="0 0 24 24"><path d="M20 20H8l-5-5 10-10 8 8-6 6"/><path d="M7 10l7 7"/></svg>';
@@ -1856,7 +1929,12 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     else hint.hidden = true;
   }
 
-  function render() { drawBg(); drawInk(); syncDemo(); placeScrollbar(); updateButtons(); showTip(); renderWordBar(); syncTextBox(); save(); }
+  function render() {
+    // Bring back saved writing for this text and layout (once the sheet has its size).
+    // Keeps trying while the layout settles (the tip bar appearing changes the sheet's height),
+    // until it's restored or you start writing.
+    if (restoreWanted && W && !ink.some((pg) => pg && pg.length) && restoreInk()) { restoreWanted = false; computeLayout(); }
+    drawBg(); drawInk(); syncDemo(); placeScrollbar(); updateButtons(); showTip(); renderWordBar(); syncTextBox(); save(); }
 
   async function relayout(clear) {
     if (clear) resetInk();
@@ -1883,6 +1961,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
         relayout(false);   // Scroll keeps text on one line; the others wrap it
       }
       else if (key === 'theme') { applyTheme(); render(); }
+      else if (key === 'devaFont') { applyDevaFont(); relayout(false); }
       else updateButtons(), save();
     });
   });
@@ -2027,6 +2106,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     { deva: 1, t: 'Write the body of the letter first, then the vertical line, then the headline (शिरोरेखा) last.' },
     { deva: 1, t: 'Letters hang from the headline: their tops touch the dashed line.' },
     { deva: 1, t: 'Draw one straight headline across a whole word once its letters are done.' },
+    { deva: 1, t: 'The line on top (शिरोरेखा) is one stroke, left to right, after the letters: it is what joins them into a word. One line per word.' },
     { deva: 1, t: 'Matras above the line go up toward the top line; ु and ू drop below the baseline.' },
     { deva: 1, t: 'Tap any letter under a word in the Meanings bar to hear it and see how to say it.' },
     { tutor: 1, t: 'Press Play on the big letter, then trace over it. It checks your stroke order and direction.' },
@@ -2155,7 +2235,9 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     return out;
   }
   // Draws the letter from the same stroke data as Tutor, stroke by stroke, with numbered starts.
-  function animateStrokes(cv, keys) {
+  // joinHeadline (a Devanagari word): each letter's own headline is left out and one line is drawn
+  // across the whole word at the end, left to right, the way it's written.
+  function animateStrokes(cv, keys, joinHeadline) {
     cancelAnimationFrame(cv._raf);
     const c = cv.getContext('2d'), dprC = window.devicePixelRatio || 1, Wc = cv.clientWidth || 300, Hc = cv.clientHeight || 110;
     cv.width = Math.round(Wc * dprC); cv.height = Math.round(Hc * dprC);
@@ -2166,8 +2248,20 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     const gap = 18, totW = gs.reduce((t, g) => t + g.w, 0) + gap * (gs.length - 1);
     const K = Math.min((Hc - 8) / (y1 - y0), (Wc - 24) / totW);
     const ox0 = (Wc - totW * K) / 2, oy = 4 - y0 * K;
-    const strokes = []; let ox = ox0;
-    for (const g of gs) { for (const st of g.s) strokes.push(st.map((q) => [ox + q[0] * K, oy + q[1] * K])); ox += (g.w + gap) * K; }
+    const strokes = []; let ox = ox0, hl0 = Infinity, hl1 = -Infinity;
+    const isHead = (st) => st.length > 1 && st.every((q) => Math.abs(q[1] - 50) < 1.5) && Math.abs(st[st.length - 1][0] - st[0][0]) > 6;
+    for (const g of gs) {
+      for (const st of g.s) {
+        if (joinHeadline && isHead(st)) { for (const q of st) { hl0 = Math.min(hl0, ox + q[0] * K); hl1 = Math.max(hl1, ox + q[0] * K); } continue; }
+        strokes.push(st.map((q) => [ox + q[0] * K, oy + q[1] * K]));
+      }
+      ox += (g.w + gap) * K;
+    }
+    if (joinHeadline && hl1 > hl0) {
+      // Gaps between letters close up under the one long line.
+      const n = Math.max(2, Math.round((hl1 - hl0) / 3)), y = oy + 50 * K;
+      strokes.push(Array.from({ length: n + 1 }, (_, i) => [hl0 + ((hl1 - hl0) * i) / n, y]));
+    }
     const lens = strokes.map((s2) => s2.reduce((t, q, i) => (i ? t + Math.hypot(q[0] - s2[i - 1][0], q[1] - s2[i - 1][1]) : 0), 0));
     const wPen = Math.max(3, K * 5), accent = css('--accent'), guide = css('--guide'), t0 = performance.now();
     const frame = (now) => {
@@ -2224,6 +2318,17 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     const below = r.bottom + 8 + ch < innerHeight - 8;
     card.style.left = `${left}px`; card.style.top = `${below ? r.bottom + 8 : Math.max(8, r.top - ch - 8)}px`;
   }
+  // Open the card on a word or phrase (from press-and-slide on the page).
+  function showWord(w, anchor, langs) {
+    const card = $('letterCard'), host = anchor.closest('dialog') || document.body;
+    if (card.parentElement !== host) { host.appendChild(card); card.dataset.pinned = ''; }
+    cardStack = [{ type: 'word', w, langs }];
+    renderCard();
+    if (card.dataset.pinned) { keepOnScreen(card); return; }
+    const r = anchor.getBoundingClientRect(), cw = card.offsetWidth, ch = card.offsetHeight;
+    card.style.left = `${Math.min(Math.max(16, r.left - cw / 2), innerWidth - cw - 16)}px`;
+    card.style.top = `${r.bottom + 8 + ch < innerHeight - 8 ? r.bottom + 8 : Math.max(8, r.top - ch - 8)}px`;
+  }
   function cardOpen(view) { cardStack.push(view); renderCard(); keepOnScreen($('letterCard')); $('letterCard').scrollTop = 0; }
   function cardBack() { if (cardStack.length > 1) { cardStack.pop(); renderCard(); keepOnScreen($('letterCard')); } }
   function cardHead() {
@@ -2236,11 +2341,11 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   // A letter with a sign or mark the stroke animation doesn't draw (ो, ि, ं …).
   const hasSigns = (ak) => strokeParts(ak).join('').replace(/\u094D/g, '') !== ak.replace(/\u094D/g, '');
   const strokeBox = (parts, note) => parts.length ? `<div class="lc-strokes"><canvas></canvas><div class="row"><button class="lc-replay">Replay strokes</button><span class="muted small">${note}</span></div></div>` : '';
-  function wireCard(card, parts) {
+  function wireCard(card, parts, joinHeadline) {
     card.querySelector('.lc-close').addEventListener('click', () => { card.hidden = true; card.dataset.pinned = ''; });
     card.querySelector('.lc-back')?.addEventListener('click', cardBack);
     const cv = card.querySelector('.lc-strokes canvas');
-    if (cv) { animateStrokes(cv, parts); card.querySelector('.lc-replay').addEventListener('click', () => animateStrokes(cv, parts)); }
+    if (cv) { animateStrokes(cv, parts, joinHeadline); card.querySelector('.lc-replay').addEventListener('click', () => animateStrokes(cv, parts, joinHeadline)); }
     card.hidden = false;
   }
   function renderCard() {
@@ -2274,18 +2379,22 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     const card = $('letterCard'), w = v.w, deva = DEVANAGARI.test(w);
     const known = W$ && W$.local(w), langs = (known && known.langs) || v.langs || null;
     const letters = deva && W$ ? W$.letterParts(w) : [...LETTERS(w)].map((ak) => ({ ak, latin: true }));
-    const parts = letters.flatMap((l) => (l.latin && S.style === 'cursive' ? [] : strokeParts(l.ak)));
+    const multi = /\s/.test(w.trim());
+    // A phrase: tap one of its words for that word's own trace (each word has its own headline).
+    const parts = multi ? [] : letters.flatMap((l) => (l.latin && S.style === 'cursive' ? [] : strokeParts(l.ak)));
     let html = cardHead();
-    html += `<div class="top"><span class="big"${deva ? ' lang="hi"' : ` style="font-family:${esc(L.family)}"`}>${esc(w)}</span><div>`
+    html += `<div class="top"><span class="big${multi ? ' phrase' : ''}"${deva ? ' lang="hi"' : ` style="font-family:${esc(L.family)}"`}>${esc(w)}</span><div>`
       + (deva ? `<div class="tr">${esc(W$.translit(w))}</div>` : '') + `<div class="sub lc-langs">${known && known.langs ? esc(W$.langText(known.langs)) : ''}</div></div>`
       + (deva ? (W$.canPlay(w, langs) ? `<button class="say" aria-label="Hear the word">${SPEAKER}</button>` : `<button class="say" disabled title="${esc(NO_SOUND)}" aria-label="No sound available">${SPEAKER_OFF}</button>`) : '') + `</div>`;
+    const phrase = /\s/.test(w.trim());
     if (deva) html += `<div class="lc-meaning">${known ? esc(W$.meaningText(known)) : '<span class="muted">Looking up the meaning…</span>'}</div>`;
+    if (deva && phrase) html += `<div class="lc-ex"><div class="muted small">Its words: tap one</div>${w.trim().split(/\s+/).map((x, i) => `<button class="ex pw" data-i="${i}"><b lang="hi">${esc(x)}</b> <i>${esc(W$.translit(x))}</i></button>`).join('')}</div>`;
     html += `<div class="lc-letters"><div class="muted small">Its letters: tap one</div><div class="lets"></div></div>`;
-    html += strokeBox(parts, `the whole word, letter by letter${deva && letters.some((l) => hasSigns(l.ak)) ? '; vowel signs and marks go on after each letter' : ''}`);
+    html += strokeBox(parts, deva ? `the letters first, then <b>one headline across the whole word, left to right</b>${letters.some((l) => hasSigns(l.ak)) ? '; vowel signs and marks go on after each letter' : ''}` : 'the whole word, letter by letter');
     html += `<div class="row lc-go"><button class="primary lc-practice">Practice this word</button><span class="muted small">a row to trace</span></div>`;
     html += '<div class="lc-src muted small" aria-live="polite"></div>';
     card.innerHTML = html;
-    wireCard(card, parts);
+    wireCard(card, parts, deva && parts.length > 1);
     const box = card.querySelector('.lc-letters .lets');
     for (const l of letters) {
       const b = document.createElement('button'); b.className = 'lt'; if (deva) b.lang = 'hi';
@@ -2298,7 +2407,13 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     card.querySelector('.say:not([disabled])')?.addEventListener('click', say);
     if (deva && W$.canPlay(w, langs)) say();
     card.querySelector('.lc-practice').addEventListener('click', () => { card.hidden = true; if (S.mode === 'tutor') S.mode = 'trace'; practice(w, deva ? 'deva' : S.style); });
-    if (deva && known === undefined) W$.lookup(w).then((d) => {
+    card.querySelectorAll('.pw').forEach((b) => b.addEventListener('click', () => cardOpen({ type: 'word', w: w.trim().split(/\s+/)[+b.dataset.i], langs })));
+    // A phrase not in the lists: machine translation (single words go to the dictionary first).
+    if (deva && phrase && !known) translate(w, `${(langs && langs[0]) || S.videoLang || 'hi'}|en`).then((r) => {
+      if (cardStack[cardStack.length - 1] !== v) return;
+      const m = card.querySelector('.lc-meaning'); if (m) m.innerHTML = r.text ? `${esc(r.text)} <span class="muted small">(machine translation)</span>` : `<span class="muted">${esc(r.error || 'No translation')}</span>`;
+    });
+    else if (deva && known === undefined) W$.lookup(w).then((d) => {
       if (cardStack[cardStack.length - 1] !== v) return;
       const m = card.querySelector('.lc-meaning'); if (m) m.textContent = d ? W$.meaningText(d) : 'No meaning found';
       const lg = card.querySelector('.lc-langs'); if (lg && d) lg.textContent = W$.langText(d.langs);
@@ -2390,6 +2505,55 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       if (pt) showLetter(pt, word, anchor, known ? known.langs : (S.videoOn && S.videoLang ? [S.videoLang] : null));
     } else showLetter({ ak, latin: true }, word, anchor, null);
   }
+  // Press and hold a letter with a finger, then slide across: the letters you cover are highlighted,
+  // and lifting opens the card with their meaning. Holding without sliding opens the whole word.
+  let sel = null, selDone = false;
+  inkC.addEventListener('pointerdown', (e) => {
+    selDone = false;
+    if (e.pointerType !== 'touch' || !e.isPrimary || penBusy()) return;
+    const rr = inkC.getBoundingClientRect(), x = e.clientX - rr.left + SX, y = e.clientY - rr.top + SY;
+    const row = Math.floor((y - L.top) / L.pitch), boxes = letterBoxes(row);
+    if (!boxes.length || !letterAt(x, y)) return;
+    const s0 = { id: e.pointerId, x0: e.clientX, y0: e.clientY, row, boxes, i0: -1, i1: -1, on: false };
+    s0.timer = setTimeout(() => {
+      if (sel !== s0) return;
+      // It's a hold: undo whatever the finger started (a dot, a scroll) and start selecting.
+      if (active && active.type === 'touch') { active = null; drawInk(); }
+      pan = null; s0.on = true; tap = null;
+      const i = nearestBox(s0.boxes, s0.x0 - rr.left + SX); s0.i0 = s0.i1 = i; showSel(s0);
+    }, 330);
+    sel = s0;
+  }, true);
+  const nearestBox = (boxes, x) => { let bi = 0, bd = Infinity; boxes.forEach((b, i) => { const d = x < b.x0 ? b.x0 - x : x > b.x1 ? x - b.x1 : 0; if (d < bd) { bd = d; bi = i; } }); return bi; };
+  function showSel(s0) {
+    const box = $('selBox'), a = s0.boxes[Math.min(s0.i0, s0.i1)], z = s0.boxes[Math.max(s0.i0, s0.i1)];
+    const top = L.top + s0.row * L.pitch + L.gapTop * 0.5 - SY;
+    Object.assign(box.style, { left: `${a.x0 - SX - 3}px`, top: `${top}px`, width: `${z.x1 - a.x0 + 6}px`, height: `${L.ascPx + L.descPx + L.gapTop}px` });
+    box.hidden = false;
+  }
+  window.addEventListener('pointermove', (e) => {
+    if (!sel || e.pointerId !== sel.id) return;
+    if (!sel.on) { if (Math.hypot(e.clientX - sel.x0, e.clientY - sel.y0) > 10) { clearTimeout(sel.timer); sel = null; } return; }
+    e.preventDefault();
+    const rr = inkC.getBoundingClientRect();
+    sel.i1 = nearestBox(sel.boxes, e.clientX - rr.left + SX); showSel(sel);
+  }, true);
+  window.addEventListener('pointerup', (e) => {
+    if (!sel || e.pointerId !== sel.id) return;
+    const s0 = sel; sel = null; clearTimeout(s0.timer);
+    if (!s0.on) return;
+    selDone = true; $('selBox').hidden = true;
+    const a = Math.min(s0.i0, s0.i1), z = Math.max(s0.i0, s0.i1);
+    let text;
+    if (a === z) text = s0.boxes[a].word;   // held without sliding: the whole word
+    else { const picked = s0.boxes.slice(a, z + 1); text = picked.map((b, i) => (i && b.word !== picked[i - 1].word ? ' ' : '') + b.ak).join(''); }
+    const anchor = $('tapAnchor') || Object.assign(document.body.appendChild(document.createElement('div')), { id: 'tapAnchor' });
+    anchor.style.left = `${e.clientX}px`; anchor.style.top = `${e.clientY + 14}px`;
+    const known = W$ && W$.local(text);
+    showWord(text, anchor, known ? known.langs : (S.videoOn && S.videoLang ? [S.videoLang] : null));
+  }, true);
+  window.addEventListener('pointercancel', (e) => { if (sel && e.pointerId === sel.id) { clearTimeout(sel.timer); sel = null; $('selBox').hidden = true; } }, true);
+
   // A quick finger tap on a letter opens its card (the Pencil always writes). A tap in Draw mode
   // would leave a dot, so that dot is taken away again.
   let tap = null;
@@ -2398,6 +2562,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   });
   window.addEventListener('pointerup', (e) => {
     const t0 = tap; tap = null;
+    if (selDone) return;
     if (!t0 || e.pointerId !== t0.id || performance.now() - t0.t > 400 || Math.hypot(e.clientX - t0.x, e.clientY - t0.y) > 10 || touches.size) return;
     const r = inkC.getBoundingClientRect(), hit = letterAt(e.clientX - r.left + SX, e.clientY - r.top + SY);
     if (!hit) return;
@@ -3192,6 +3357,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
 
   // Test hook: only with #test in the URL, exposes letter geometry so automated tests can trace it.
   if (location.hash === '#test') window.__pad = {
+    inkSig: () => inkSig(),
     signs: (a) => hasSigns(a),
     // Each letter's span on a row, as the tap test works it out.
     segs: (i) => { const r = pages[S.page][i], out = []; const y0 = L.top + i * L.pitch;
