@@ -10,6 +10,7 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
 
 ## Features
 - **Cursive** (Playwrite US Trad, a font made for teaching handwriting), **Print** (Andika), and **देवनागरी / Devanagari** (Kalam)
+- Text sizes **S, M, L and XL**
 - Ruled lines: ascender line, dashed midline (the headline for Devanagari), baseline, descender line, and a red margin
 - Tracing guides drawn as **Outline** (default), **Dotted**, or **Faded** letters
 - Example words to start with: *Cody codes*, *cool*, *hello*, *coffee*, and more, plus alphabets and Devanagari (नमस्ते, कोडी कोड्स, consonants, vowels and numerals)
@@ -37,6 +38,7 @@ On iPad, open it in Safari, then tap **Share → Add to Home Screen** to use it 
   Freehand rows (Trace + copy, and the last row of Repeat & fade) are compared with the line above, lined up with where you started writing.
 - **Scroll:** set Fingers to **Scroll** (or tap **Scroll** on the page) and long text like *Happy 70th birthday, Dad* stays on one line; drag with a finger to see the rest. Drag up past the last row to add more rows. A flick keeps the page gliding. The Pencil always writes
 - **On-page buttons:** the bottom-right corner of the page has the Scroll switch and the page arrows
+- **Fewer controls:** the **⌃** button at the top right tucks everything into the one top bar, which keeps the text box, Examples, Undo, a Pen/Eraser switch, and **Controls**. **Controls** opens the full toolbar as a panel over the page (tap the page to close it), so the page gets about 90% of the screen. **⌄** brings the full toolbar back. The choice is remembered
 - **Full screen:** the corner button hides the toolbar so the sheet fills the screen like a plain page. A small floating bar keeps Undo and Exit (Esc also exits). If Safari drops its own full screen (for example after a swipe near the top edge), the app stays in full-screen layout until you tap Exit. For no Safari bars at all, use **Add to Home Screen**
 - **Tips:** a tip bar under the toolbar with advice on grip, posture, letter sizes and stroke order, chosen for the script and mode you're using. Flip through with the arrows, or hide it with × (the **Tips** button brings it back)
 - Pressure-sensitive ink, eraser, undo/redo, clear, and 3 ink colors

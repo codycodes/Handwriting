@@ -288,6 +288,22 @@ label.file { display: inline-flex; align-items: center; min-height: 36px; paddin
 #trOut .tr { color: var(--accent); font-style: italic; margin-top: 2px; }
 #trOut .row { margin-top: 10px; }
 @media (max-width: 700px) { #pip { width: 260px; } #lbTranslate { display: none; } }
+/* Compact: only the top bar stays; the rest of the controls open as a panel over the page. */
+header { position: relative; }
+body:not(.compact) .compact-only { display: none !important; }
+body.compact .row.tools { display: none; }
+body.compact.ctl-open .row.tools { display: flex; position: absolute; z-index: 12; top: calc(100% - 4px); left: 0; right: 0; padding: 10px 12px 12px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 14px 40px rgba(10, 20, 40, .25); max-height: 60vh; overflow: auto; }
+body.compact #tipBar { display: none; }
+body.compact header { padding-bottom: 6px; gap: 6px; }
+body.compact .brand { display: none; }
+body.compact header > .row:first-child { flex-wrap: nowrap; gap: 8px; }
+body.compact #text { flex: 1 1 120px; }
+body.compact #preset, body.compact #tutorSet { flex: 0 1 150px; }
+body.compact .pager { gap: 6px; flex: none; }
+@media (max-width: 900px) { #ctlBtn span { display: none; } }
+#qTool svg { width: 18px; height: 18px; }
+#ctlBtn[aria-expanded="true"], #compactBtn[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
 /* Dialogs (Words, Progress) */
 .dlg { width: min(980px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); padding: 0; border: 1px solid var(--line); border-radius: 14px;
   background: var(--paper); color: var(--text); box-shadow: 0 20px 60px rgba(10, 20, 40, .3); overflow: hidden; }
@@ -408,6 +424,10 @@ body.fs #fsbar { display: flex; }
       <option value="text">Custom text (type it in the box)</option>
     </select>
     <div class="pager">
+      <button id="qUndo" class="compact-only" aria-label="Undo" title="Undo"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></svg></button>
+      <button id="qTool" class="compact-only" aria-label="Pen or eraser" title="Pen or eraser"></button>
+      <button id="ctlBtn" class="compact-only" aria-expanded="false" title="Show all the controls"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Controls</span></button>
+      <button id="compactBtn" aria-label="Fewer controls" title="Tuck the controls into this one bar"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button>
       <button id="fsBtn" aria-label="Full screen" title="Full screen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     </div>
   </div>
@@ -421,7 +441,7 @@ body.fs #fsbar { display: flex; }
     <div class="group"><span class="label">Paper</span>
       <div class="seg" data-key="paper"><button data-v="lines">Lines</button><button data-v="slant" title="Slant lines to keep letters leaning the same way">Slant</button><button data-v="grid" title="Squared paper">Grid</button></div></div>
     <div class="group"><span class="label">Size</span>
-      <div class="seg" data-key="size"><button data-v="s">S</button><button data-v="m">M</button><button data-v="l">L</button></div></div>
+      <div class="seg" data-key="size"><button data-v="s">S</button><button data-v="m">M</button><button data-v="l">L</button><button data-v="xl" title="Extra large">XL</button></div></div>
     <div class="group"><span class="label">Tool</span>
       <div class="seg" data-key="tool">
         <button data-v="pen" aria-label="Pen"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></button>
@@ -651,7 +671,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     print: '"Andika", "Kalam", "Comic Sans MS", system-ui, sans-serif',
     devanagari: '"Kalam", "Kohinoor Devanagari", "Devanagari Sangam MN", sans-serif',
   };
-  const X_HEIGHT = { s: 20, m: 30, l: 44 }; // x-height in CSS px
+  const X_HEIGHT = { s: 20, m: 30, l: 44, xl: 62 }; // x-height in CSS px
   const SLANT = 15 * Math.PI / 180;           // slant line angle from vertical
   const STORE = 'penmanship-pad:v2';
   const DEVANAGARI = /[ऀ-ॿ]/;
@@ -1788,6 +1808,8 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
 
   function resetInk() { recordAttempt(); ink = []; hist = []; extra = []; S.page = 0; SX = SY = 0; }
 
+  const PEN_SVG = '<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>';
+  const ERASER_SVG = '<svg viewBox="0 0 24 24"><path d="M20 20H8l-5-5 10-10 8 8-6 6"/><path d="M7 10l7 7"/></svg>';
   function updateButtons() {
     document.body.classList.toggle('tutor', S.mode === 'tutor');
     $('tutorSet').value = S.tutorSet;
@@ -1808,6 +1830,10 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
 
     $('gradeBtn').setAttribute('aria-pressed', String(!!S.grade));
     $('marksBtn').setAttribute('aria-pressed', String(!!S.marks));
+    $('qUndo').disabled = $('undo').disabled;
+    $('qTool').innerHTML = S.tool === 'eraser' ? ERASER_SVG : PEN_SVG;
+    $('qTool').title = S.tool === 'eraser' ? 'Eraser (tap for the pen)' : 'Pen (tap for the eraser)';
+    $('qTool').classList.toggle('toggle', true); $('qTool').setAttribute('aria-pressed', String(S.tool === 'eraser'));
     $('boxesBtn').setAttribute('aria-pressed', String(!!S.boxes));
     const hint = $('hint');
     if (S.fingers === 'off') { hint.textContent = "Fingers off: only the Pencil writes"; hint.hidden = false; }
@@ -1942,6 +1968,24 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   // The app's full screen page stays up anyway; only the Exit button (or Esc) leaves it.
 
   $('marksBtn').addEventListener('click', () => { S.marks = !S.marks; render(); });
+  /* ---------- Compact controls ---------- */
+  function applyCompact() {
+    document.body.classList.toggle('compact', !!S.compact);
+    $('compactBtn').innerHTML = S.compact ? '<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>' : '<svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg>';
+    $('compactBtn').title = S.compact ? 'Show all the controls again' : 'Tuck the controls into this one bar';
+    $('compactBtn').setAttribute('aria-label', S.compact ? 'More controls' : 'Fewer controls');
+    if (!S.compact) setCtlOpen(false);
+  }
+  function setCtlOpen(on) { document.body.classList.toggle('ctl-open', on); $('ctlBtn').setAttribute('aria-expanded', String(on)); }
+  $('compactBtn').addEventListener('click', () => { S.compact = !S.compact; save(); applyCompact(); });
+  $('ctlBtn').addEventListener('click', () => setCtlOpen(!document.body.classList.contains('ctl-open')));
+  $('qUndo').addEventListener('click', undo);
+  $('qTool').addEventListener('click', () => { if (active) finishActive(false); S.tool = S.tool === 'eraser' ? 'pen' : 'eraser'; updateButtons(); save(); });
+  // Tap or write anywhere outside the open panel to close it.
+  document.addEventListener('pointerdown', (e) => {
+    if (document.body.classList.contains('ctl-open') && !e.target.closest('.row.tools, #ctlBtn')) setCtlOpen(false);
+  }, true);
+  applyCompact();
   $('boxesBtn').addEventListener('click', () => { S.boxes = !S.boxes; render(); });
   $('gradeBtn').addEventListener('click', () => { S.grade = !S.grade; drawGrade(); updateButtons(); save(); });
   document.addEventListener('keydown', (e) => {
