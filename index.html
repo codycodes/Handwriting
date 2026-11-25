@@ -198,6 +198,8 @@ body:not(.tutor) .tutor-only { display: none !important; }
   border-radius: 12px; box-shadow: 0 10px 32px rgba(10, 20, 40, .22); padding: 12px 14px; font-size: 14px; }
 #letterCard[hidden] { display: none; }
 #letterCard .lc-go { margin-top: 12px; gap: 8px; }
+#letterCard .lc-src { margin-top: 8px; font-size: 11.5px; }
+#letterCard .lc-src:empty { display: none; }
 #letterCard { padding-top: 0; touch-action: none; max-height: calc(100vh - 16px); overflow: auto; }
 #letterCard.dragging { opacity: .9; }
 #letterCard .lc-head { display: flex; align-items: center; gap: 6px; margin: 0 -14px 8px; padding: 4px 4px 4px 10px; border-bottom: 1px solid var(--line);
@@ -2125,9 +2127,12 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     }
     return span;
   }
-  function sayLetter(pt, langs, anchor) {
-    if (!W$.canPlay(pt.ak, langs, { voiceOnly: true })) { soundTip(anchor, NO_SOUND); return; }
-    W$.playNow(pt.ak, langs, { voiceOnly: true, rate: 0.6 }).then((src) => soundTip(anchor, src));
+  // A letter's sound note goes inside its card (a tip over the page would cover your writing).
+  function sayLetter(pt, langs) {
+    const note = (t) => { const el = $('letterCard').querySelector('.lc-src'); if (el) el.textContent = t || ''; };
+    if (!W$.canPlay(pt.ak, langs, { voiceOnly: true })) { note(NO_SOUND); return; }
+    note('');
+    W$.playNow(pt.ak, langs, { voiceOnly: true, rate: 0.6 }).then(note);
   }
   // The parts of a letter that have stroke order: the whole thing (क्ष), or its pieces (स्ते: स, त).
   function strokeParts(ak) {
@@ -2193,7 +2198,6 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     return out;
   }
   function showLetter(pt, word, anchor, langs) {
-    if (!pt.latin) sayLetter(pt, langs, anchor);
     const card = $('letterCard');
     // A modal dialog sits above the page, so the card has to live inside it to be seen.
     const host = anchor.closest('dialog') || document.body;
@@ -2215,10 +2219,12 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     const ex = pt.latin ? [] : examplesFor(pt.ak);
     if (ex.length) html += `<div class="lc-ex"><div class="muted small">Words with ${esc(ex.label || pt.ak)}</div>${ex.map((e, i) => `<button class="ex" data-i="${i}"><b lang="hi">${esc(e.w)}</b> <i>${esc(W$.translit(e.w))}</i> <span>${esc(W$.meaningText(e).split(/[;·(]/)[0].trim())}</span></button>`).join('')}</div>`;
     html += `<div class="row lc-go"><button class="primary lc-practice">Practice this letter</button><span class="muted small">${tutorable ? 'in Tutor, stroke by stroke' : 'a row of it to trace'}</span></div>`;
+    if (!pt.latin) html += '<div class="lc-src muted small" aria-live="polite"></div>';
     card.innerHTML = html;
+    if (!pt.latin) sayLetter(pt, langs);
     card.querySelector('.lc-close').addEventListener('click', () => { card.hidden = true; card.dataset.pinned = ''; });
     card.querySelector('.lc-practice').addEventListener('click', () => { card.hidden = true; practiceLetter(pt.ak, pt.latin); });
-    card.querySelector('.say:not([disabled])')?.addEventListener('click', (ev) => sayLetter(pt, langs, ev.currentTarget));
+    card.querySelector('.say:not([disabled])')?.addEventListener('click', () => sayLetter(pt, langs));
     card.querySelectorAll('.ex').forEach((b) => b.addEventListener('click', () => { const e = ex[+b.dataset.i]; card.hidden = true; if (S.mode === 'tutor') S.mode = 'trace'; practice(e.w, 'deva'); }));
     card.hidden = false;
     const cv = card.querySelector('.lc-strokes canvas');
