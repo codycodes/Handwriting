@@ -424,7 +424,8 @@
   // tap keeps them allowed after the lookup finishes.
   function unlock() {
     try { if (!player.src || player.src === SILENT) { player.src = SILENT; player.play().catch(() => {}); } } catch (_) {}
-    try { if (g.speechSynthesis && !unlock.done) { g.speechSynthesis.speak(new SpeechSynthesisUtterance('')); unlock.done = true; } } catch (_) {}
+    // A silent space (an empty one can leave Safari's speech stuck).
+    try { if (g.speechSynthesis && !unlock.done) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; keep = u; g.speechSynthesis.speak(u); unlock.done = true; } } catch (_) {}
   }
   function voiceFor(langs) {
     if (!g.speechSynthesis) return null;
@@ -438,18 +439,44 @@
     }
     return null;
   }
+  // Speaks with the device's voice; resolves with a note once it has really started (or why it didn't).
+  // Safari's speech goes quiet in a few known ways, each handled here:
+  //  - speaking straight after cancel() is often dropped: wait a moment after cancelling
+  //  - an utterance nobody holds on to can be thrown away before it plays: keep a reference
+  //  - after switching apps it can stay paused: resume() first
+  //  - a recording still playing can block it: pause the player
+  //  - if it still hasn't started after 1.5s, try once more, then say so (Silent Mode mutes it)
+  let keep = null;
+  const SILENT_NOTE = 'The iPad voice didn\u2019t start. If Silent Mode is on (Control Center → bell), the voice is muted; recordings still play.';
   function speakTTS(text, langs, rate = 0.8) {
-    if (!g.speechSynthesis) return null;
-    const v = voiceFor(langs);
-    if (!v && voicesKnown()) return null;   // no Hindi or Marathi voice: an English voice would just mumble
-    const u = new SpeechSynthesisUtterance(text);
-    if (v) { u.voice = v; u.lang = v.lang; } else u.lang = langs && langs[0] === 'mr' ? 'mr-IN' : 'hi-IN';
-    u.rate = rate;
     const ss = g.speechSynthesis;
-    if (ss.speaking || ss.pending) ss.cancel();
-    ss.speak(u);
-    return v ? `Device voice: ${v.name} (${v.lang})` : 'Device voice';
+    if (!ss) return Promise.resolve(null);
+    if (!voiceFor(langs) && voicesKnown()) return Promise.resolve(null);   // no Hindi or Marathi voice: an English one would just mumble
+    try { if (!player.paused) player.pause(); } catch (_) {}
+    playSeq = [];
+    return new Promise((resolve) => {
+      let done = false;
+      const finish = (note) => { if (!done) { done = true; resolve(note); } };
+      const attempt = (n) => {
+        const v = voiceFor(langs);   // look it up fresh: Safari replaces its voice objects now and then
+        const u = new SpeechSynthesisUtterance(text);
+        if (v) { u.voice = v; u.lang = v.lang; } else u.lang = langs && langs[0] === 'mr' ? 'mr-IN' : 'hi-IN';
+        u.rate = rate; keep = u;
+        const label = v ? `Device voice: ${v.name} (${v.lang})` : 'Device voice';
+        u.onstart = () => finish(label);
+        u.onerror = (e) => { if (e.error === 'interrupted' || e.error === 'canceled') return; if (n === 0) retry(); else finish(SILENT_NOTE); };
+        const go = () => { try { if (ss.paused) ss.resume(); ss.speak(u); } catch (_) { finish(null); } };
+        if (ss.speaking || ss.pending) { ss.cancel(); setTimeout(go, 90); } else go();
+        const timer = setTimeout(() => { if (!done) (n === 0 ? retry() : finish(SILENT_NOTE)); }, 1500);
+        u.onend = () => { clearTimeout(timer); finish(label); };
+        let retried = false;
+        function retry() { if (retried || done) return; retried = true; clearTimeout(timer); try { ss.cancel(); ss.resume(); } catch (_) {} setTimeout(() => attempt(1), 120); }
+      };
+      attempt(0);
+    });
   }
+  // Coming back to the app: Safari can leave speech paused.
+  try { document.addEventListener('visibilitychange', () => { if (!document.hidden && g.speechSynthesis && g.speechSynthesis.paused) g.speechSynthesis.resume(); }); } catch (_) {}
 
   /* ---------- Is there a sound for this? (decided before the tap, so it can play right away) ---------- */
   // Safari lists its voices a moment after the page loads; until then we can't tell, so we allow it.
