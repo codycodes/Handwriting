@@ -199,6 +199,15 @@ body:not(.tutor) .tutor-only { display: none !important; }
 #letterCard[hidden] { display: none; }
 #letterCard .lc-go { margin-top: 12px; gap: 8px; }
 #letterCard .lc-src { margin-top: 8px; font-size: 11.5px; }
+#letterCard .lc-head .lc-back { display: inline-flex; gap: 2px; padding: 0 8px 0 4px; font-family: "Kalam", var(--font-ui); font-size: 15px; color: var(--accent);
+  border: 1px solid var(--line); background: var(--paper); border-radius: 8px; }
+#letterCard .lc-head .lc-back svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2.4; }
+#letterCard .lc-word { font: inherit; font-family: "Kalam", sans-serif; font-size: 15px; color: var(--accent); background: none; border: 0; border-bottom: 1px dashed var(--accent);
+  border-radius: 0; padding: 0; min-height: 0; cursor: pointer; }
+#letterCard .lc-meaning { margin-top: 8px; font-size: 15px; }
+#letterCard .lc-letters { margin-top: 10px; }
+#letterCard .lc-letters .lets { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 4px; }
+#letterCard .lc-letters .lt b { font-size: 24px; }
 #letterCard .lc-src:empty { display: none; }
 #letterCard { padding-top: 0; touch-action: none; max-height: calc(100vh - 16px); overflow: auto; }
 #letterCard.dragging { opacity: .9; }
@@ -305,6 +314,8 @@ body.compact #preset, body.compact #tutorSet { flex: 0 1 150px; }
 body.compact .pager { gap: 6px; flex: none; }
 @media (max-width: 900px) { #ctlBtn span { display: none; } }
 #qTool svg { width: 18px; height: 18px; }
+#backBtn { color: var(--accent); border-color: var(--accent); font-weight: 700; gap: 2px; padding: 0 10px 0 6px; }
+#backBtn span { font-family: "Kalam", var(--font-ui); font-weight: 400; max-width: 9em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 #ctlBtn[aria-expanded="true"], #compactBtn[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
 /* Dialogs (Words, Progress) */
 .dlg { width: min(980px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); padding: 0; border: 1px solid var(--line); border-radius: 14px;
@@ -426,6 +437,7 @@ body.fs #fsbar { display: flex; }
       <option value="text">Custom text (type it in the box)</option>
     </select>
     <div class="pager">
+      <button id="backBtn" hidden title="Back to what you were writing"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg><span>Back</span></button>
       <button id="qUndo" class="compact-only" aria-label="Undo" title="Undo"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></svg></button>
       <button id="qTool" class="compact-only" aria-label="Pen or eraser" title="Pen or eraser"></button>
       <button id="ctlBtn" class="compact-only" aria-expanded="false" title="Show all the controls"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Controls</span></button>
@@ -2197,44 +2209,100 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     const out = found.slice(0, 4); out.label = label;
     return out;
   }
+  // The letter card is a small navigator: a letter, a word, a letter in that word… with Back.
+  let cardStack = [];
   function showLetter(pt, word, anchor, langs) {
     const card = $('letterCard');
     // A modal dialog sits above the page, so the card has to live inside it to be seen.
     const host = anchor.closest('dialog') || document.body;
     if (card.parentElement !== host) { host.appendChild(card); card.dataset.pinned = ''; }
-    const inWord = word && word !== pt.ak;
-    const tutorable = tutorFor(pt.ak, pt.latin);
-    const parts = pt.latin && S.style === 'cursive' ? [] : strokeParts(pt.ak);
-    const fam = pt.latin ? L.family : 'Kalam, sans-serif';
-    let html = `<div class="lc-head" title="Drag to move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h.01M15 5h.01M9 12h.01M15 12h.01M9 19h.01M15 19h.01"/></svg>`
-      + `<span>${card.dataset.pinned ? 'Tap other letters: this card stays here' : 'Drag to move · it then stays put while you tap letters'}</span>`
-      + `<button class="lc-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`;
-    if (pt.latin) html += `<div class="top"><span class="big" style="font-family:${esc(fam)}">${esc(pt.ak)}</span><div class="sub">${inWord ? `in “${esc(word)}”` : 'on its own'}</div></div>`;
-    else html += `<div class="top"><span class="big" lang="hi">${esc(pt.ak)}</span><div><div class="tr">${esc(pt.alone)}</div>`
-      + `<div class="sub">${inWord ? `in ${esc(word)}: <i>${esc(pt.tr)}</i>${pt.silentA ? ' (its "a" is silent)' : ''}` : 'on its own'}</div></div>`
-      + (W$.canPlay(pt.ak, langs, { voiceOnly: true }) ? `<button class="say" aria-label="Hear it again">${SPEAKER}</button>` : `<button class="say" disabled title="${esc(NO_SOUND)}" aria-label="No sound available">${SPEAKER_OFF}</button>`) + `</div>`;
-    if (parts.length) html += `<div class="lc-strokes"><canvas></canvas><div class="row"><button class="lc-replay">Replay strokes</button>`
-      + `<span class="muted small">${parts.length > 1 ? `${esc(parts.join(' + '))}, in order` : 'how the pen moves'}${pt.latin ? ' (print)' : ''}${parts.join('') !== pt.ak.replace(/[^\p{L}]/gu, '') && !pt.latin ? '; vowel signs go on after' : ''}</span></div></div>`;
-    if (!pt.latin) html += `<ul>${pt.how.map(([ch, h]) => `<li><b lang="hi">${esc(ch)}</b><span>${esc(h)}</span></li>`).join('')}</ul>`;
-    const ex = pt.latin ? [] : examplesFor(pt.ak);
-    if (ex.length) html += `<div class="lc-ex"><div class="muted small">Words with ${esc(ex.label || pt.ak)}</div>${ex.map((e, i) => `<button class="ex" data-i="${i}"><b lang="hi">${esc(e.w)}</b> <i>${esc(W$.translit(e.w))}</i> <span>${esc(W$.meaningText(e).split(/[;·(]/)[0].trim())}</span></button>`).join('')}</div>`;
-    html += `<div class="row lc-go"><button class="primary lc-practice">Practice this letter</button><span class="muted small">${tutorable ? 'in Tutor, stroke by stroke' : 'a row of it to trace'}</span></div>`;
-    if (!pt.latin) html += '<div class="lc-src muted small" aria-live="polite"></div>';
-    card.innerHTML = html;
-    if (!pt.latin) sayLetter(pt, langs);
-    card.querySelector('.lc-close').addEventListener('click', () => { card.hidden = true; card.dataset.pinned = ''; });
-    card.querySelector('.lc-practice').addEventListener('click', () => { card.hidden = true; practiceLetter(pt.ak, pt.latin); });
-    card.querySelector('.say:not([disabled])')?.addEventListener('click', () => sayLetter(pt, langs));
-    card.querySelectorAll('.ex').forEach((b) => b.addEventListener('click', () => { const e = ex[+b.dataset.i]; card.hidden = true; if (S.mode === 'tutor') S.mode = 'trace'; practice(e.w, 'deva'); }));
-    card.hidden = false;
-    const cv = card.querySelector('.lc-strokes canvas');
-    if (cv) { animateStrokes(cv, parts); card.querySelector('.lc-replay').addEventListener('click', () => animateStrokes(cv, parts)); }
+    cardStack = [{ type: 'letter', pt, word, langs }];
+    renderCard();
     if (card.dataset.pinned) { keepOnScreen(card); return; }   // you moved it: it stays where you put it
     const r = anchor.getBoundingClientRect(), cw = card.offsetWidth, ch = card.offsetHeight;
     const left = Math.min(Math.max(16, r.left + r.width / 2 - cw / 2), innerWidth - cw - 16);
     const below = r.bottom + 8 + ch < innerHeight - 8;
     card.style.left = `${left}px`; card.style.top = `${below ? r.bottom + 8 : Math.max(8, r.top - ch - 8)}px`;
-    card.dataset.for = pt.ak;
+  }
+  function cardOpen(view) { cardStack.push(view); renderCard(); keepOnScreen($('letterCard')); $('letterCard').scrollTop = 0; }
+  function cardBack() { if (cardStack.length > 1) { cardStack.pop(); renderCard(); keepOnScreen($('letterCard')); } }
+  function cardHead() {
+    const card = $('letterCard'), prev = cardStack[cardStack.length - 2];
+    const back = prev ? `<button class="lc-back" title="Back to ${esc(prev.type === 'word' ? prev.w : prev.pt.ak)}"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>${esc(prev.type === 'word' ? prev.w : prev.pt.ak)}</button>` : '';
+    return `<div class="lc-head" title="Drag to move"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h.01M15 5h.01M9 12h.01M15 12h.01M9 19h.01M15 19h.01"/></svg>${back}`
+      + `<span>${card.dataset.pinned ? 'Stays here while you tap letters' : 'Drag to move'}</span>`
+      + `<button class="lc-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`;
+  }
+  // A letter with a sign or mark the stroke animation doesn't draw (ो, ि, ं …).
+  const hasSigns = (ak) => strokeParts(ak).join('').replace(/\u094D/g, '') !== ak.replace(/\u094D/g, '');
+  const strokeBox = (parts, note) => parts.length ? `<div class="lc-strokes"><canvas></canvas><div class="row"><button class="lc-replay">Replay strokes</button><span class="muted small">${note}</span></div></div>` : '';
+  function wireCard(card, parts) {
+    card.querySelector('.lc-close').addEventListener('click', () => { card.hidden = true; card.dataset.pinned = ''; });
+    card.querySelector('.lc-back')?.addEventListener('click', cardBack);
+    const cv = card.querySelector('.lc-strokes canvas');
+    if (cv) { animateStrokes(cv, parts); card.querySelector('.lc-replay').addEventListener('click', () => animateStrokes(cv, parts)); }
+    card.hidden = false;
+  }
+  function renderCard() {
+    const v = cardStack[cardStack.length - 1]; if (!v) return;
+    if (v.type === 'word') return renderWordCard(v);
+    const { pt, word, langs } = v, card = $('letterCard');
+    const inWord = word && word !== pt.ak;
+    const tutorable = tutorFor(pt.ak, pt.latin);
+    const parts = pt.latin && S.style === 'cursive' ? [] : strokeParts(pt.ak);
+    let html = cardHead();
+    if (pt.latin) html += `<div class="top"><span class="big" style="font-family:${esc(L.family)}">${esc(pt.ak)}</span><div class="sub">${inWord ? `in “${esc(word)}”` : 'on its own'}</div></div>`;
+    else html += `<div class="top"><span class="big" lang="hi">${esc(pt.ak)}</span><div><div class="tr">${esc(pt.alone)}</div>`
+      + `<div class="sub">${inWord ? `in <button class="lc-word" title="Open the word">${esc(word)}</button>: <i>${esc(pt.tr)}</i>${pt.silentA ? ' (its "a" is silent)' : ''}` : 'on its own'}</div></div>`
+      + (W$.canPlay(pt.ak, langs, { voiceOnly: true }) ? `<button class="say" aria-label="Hear it again">${SPEAKER}</button>` : `<button class="say" disabled title="${esc(NO_SOUND)}" aria-label="No sound available">${SPEAKER_OFF}</button>`) + `</div>`;
+    html += strokeBox(parts, `${parts.length > 1 ? `${esc(parts.join(' + '))}, in order` : 'how the pen moves'}${pt.latin ? ' (print)' : ''}${!pt.latin && hasSigns(pt.ak) ? '; vowel signs go on after' : ''}`);
+    if (!pt.latin) html += `<ul>${pt.how.map(([ch, h]) => `<li><b lang="hi">${esc(ch)}</b><span>${esc(h)}</span></li>`).join('')}</ul>`;
+    const ex = pt.latin ? [] : examplesFor(pt.ak);
+    if (ex.length) html += `<div class="lc-ex"><div class="muted small">Words with ${esc(ex.label || pt.ak)}: tap one to see it</div>${ex.map((e, i) => `<button class="ex" data-i="${i}"><b lang="hi">${esc(e.w)}</b> <i>${esc(W$.translit(e.w))}</i> <span>${esc(W$.meaningText(e).split(/[;·(]/)[0].trim())}</span></button>`).join('')}</div>`;
+    html += `<div class="row lc-go"><button class="primary lc-practice">Practice this letter</button><span class="muted small">${tutorable ? 'in Tutor, stroke by stroke' : 'a row of it to trace'}</span></div>`;
+    if (!pt.latin) html += '<div class="lc-src muted small" aria-live="polite"></div>';
+    card.innerHTML = html;
+    wireCard(card, parts);
+    if (!pt.latin) sayLetter(pt, langs);
+    card.querySelector('.lc-practice').addEventListener('click', () => { card.hidden = true; practiceLetter(pt.ak, pt.latin); });
+    card.querySelector('.say:not([disabled])')?.addEventListener('click', () => sayLetter(pt, langs));
+    card.querySelector('.lc-word')?.addEventListener('click', () => cardOpen({ type: 'word', w: word, langs }));
+    card.querySelectorAll('.ex').forEach((b) => b.addEventListener('click', () => { const e = ex[+b.dataset.i]; cardOpen({ type: 'word', w: e.w, langs: e.langs }); }));
+  }
+  // A word in the card: meaning, language, sound, its letters (tap one), and its strokes.
+  function renderWordCard(v) {
+    const card = $('letterCard'), w = v.w, deva = DEVANAGARI.test(w);
+    const known = W$ && W$.local(w), langs = (known && known.langs) || v.langs || null;
+    const letters = deva && W$ ? W$.letterParts(w) : [...LETTERS(w)].map((ak) => ({ ak, latin: true }));
+    const parts = letters.flatMap((l) => (l.latin && S.style === 'cursive' ? [] : strokeParts(l.ak)));
+    let html = cardHead();
+    html += `<div class="top"><span class="big"${deva ? ' lang="hi"' : ` style="font-family:${esc(L.family)}"`}>${esc(w)}</span><div>`
+      + (deva ? `<div class="tr">${esc(W$.translit(w))}</div>` : '') + `<div class="sub lc-langs">${known && known.langs ? esc(W$.langText(known.langs)) : ''}</div></div>`
+      + (deva ? (W$.canPlay(w, langs) ? `<button class="say" aria-label="Hear the word">${SPEAKER}</button>` : `<button class="say" disabled title="${esc(NO_SOUND)}" aria-label="No sound available">${SPEAKER_OFF}</button>`) : '') + `</div>`;
+    if (deva) html += `<div class="lc-meaning">${known ? esc(W$.meaningText(known)) : '<span class="muted">Looking up the meaning…</span>'}</div>`;
+    html += `<div class="lc-letters"><div class="muted small">Its letters: tap one</div><div class="lets"></div></div>`;
+    html += strokeBox(parts, `the whole word, letter by letter${deva && letters.some((l) => hasSigns(l.ak)) ? '; vowel signs and marks go on after each letter' : ''}`);
+    html += `<div class="row lc-go"><button class="primary lc-practice">Practice this word</button><span class="muted small">a row to trace</span></div>`;
+    html += '<div class="lc-src muted small" aria-live="polite"></div>';
+    card.innerHTML = html;
+    wireCard(card, parts);
+    const box = card.querySelector('.lc-letters .lets');
+    for (const l of letters) {
+      const b = document.createElement('button'); b.className = 'lt'; if (deva) b.lang = 'hi';
+      b.innerHTML = `<b>${esc(l.ak)}</b>${deva ? `<small${l.silentA ? ' class="silent"' : ''}>${esc(l.tr)}</small>` : ''}`;
+      b.addEventListener('click', () => cardOpen({ type: 'letter', pt: l, word: w, langs }));
+      box.appendChild(b);
+    }
+    const note = (t) => { const el = card.querySelector('.lc-src'); if (el) el.textContent = t || ''; };
+    const say = () => W$.playNow(w, langs).then((src) => note(src || NO_SOUND));
+    card.querySelector('.say:not([disabled])')?.addEventListener('click', say);
+    if (deva && W$.canPlay(w, langs)) say();
+    card.querySelector('.lc-practice').addEventListener('click', () => { card.hidden = true; if (S.mode === 'tutor') S.mode = 'trace'; practice(w, deva ? 'deva' : S.style); });
+    if (deva && known === undefined) W$.lookup(w).then((d) => {
+      if (cardStack[cardStack.length - 1] !== v) return;
+      const m = card.querySelector('.lc-meaning'); if (m) m.textContent = d ? W$.meaningText(d) : 'No meaning found';
+      const lg = card.querySelector('.lc-langs'); if (lg && d) lg.textContent = W$.langText(d.langs);
+    });
   }
   function keepOnScreen(el) {
     el.style.left = `${Math.max(4, Math.min(innerWidth - el.offsetWidth - 4, el.offsetLeft))}px`;
@@ -2253,7 +2321,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       card.style.left = `${e.clientX - d.dx}px`; card.style.top = `${e.clientY - d.dy}px`; keepOnScreen(card);
     });
     const end = (e) => { if (!d || e.pointerId !== d.id) return; d = null; card.classList.remove('dragging'); card.dataset.pinned = '1';
-      const span = card.querySelector('.lc-head span'); if (span) span.textContent = 'Tap other letters: this card stays here'; };
+      const span = card.querySelector('.lc-head span'); if (span) span.textContent = 'Stays here while you tap letters'; };
     card.addEventListener('pointerup', end); card.addEventListener('pointercancel', end);
   })();
   // Practise one letter: in Tutor if it has stroke order, otherwise a row of it to trace.
@@ -2261,6 +2329,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   const tutorFor = (ak, latin) => !(latin && S.style === 'cursive') && (!!glyph(ak) || [...LETTERS(ak)].some((c) => glyph(c)));
   function practiceLetter(ak, latin) {
     const hasStrokes = tutorFor(ak, latin);
+    pushBack();
     if (hasStrokes) {
       recordAttempt();
       S.mode = 'tutor'; S.tutorSet = 'text';
@@ -2270,7 +2339,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       relayout(true);
     } else {
       if (S.mode === 'tutor') S.mode = 'trace';
-      practice(Array(6).fill(ak).join(' '), latin ? S.style : 'deva');
+      practice(Array(6).fill(ak).join(' '), latin ? S.style : 'deva', { noBack: true });
     }
   }
   // The letter under a point on the page: from the guide letters of the row there.
@@ -2352,7 +2421,35 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   $('meanBtn').addEventListener('click', () => { S.meanings = S.meanings === false; barSig = ''; renderWordBar(); save(); });
 
   /* ---------- Practising a word or letter from the dialogs ---------- */
-  function practice(text, font) {
+  /* ---------- Back: return to what you were writing before ---------- */
+  // Anything that replaces the page (Practice from a card, Learn, Progress, Translate) saves what was
+  // there first; the Back button in the top bar restores it, several steps deep.
+  const backStack = [];
+  const snapshot = () => ({ text: S.text, mode: S.mode, style: S.style, tutorSet: S.tutorSet, page: S.page });
+  function pushBack() {
+    const s0 = snapshot(), top = backStack[backStack.length - 1];
+    if (top && top.text === s0.text && top.mode === s0.mode && top.style === s0.style && top.tutorSet === s0.tutorSet) return;
+    backStack.push(s0); if (backStack.length > 12) backStack.shift();
+    showBack();
+  }
+  function showBack() {
+    const b = $('backBtn'), top = backStack[backStack.length - 1];
+    b.hidden = !top;
+    if (top) { const t = top.mode === 'tutor' && top.tutorSet !== 'text' ? (STK && STK.sets[top.tutorSet] ? STK.sets[top.tutorSet].label : 'Tutor') : top.text; b.title = `Back to: ${t}`; b.querySelector('span').textContent = t.length > 14 ? t.slice(0, 13) + '…' : t; }
+  }
+  async function goBack() {
+    const b = backStack.pop(); if (!b) return;
+    recordAttempt();
+    Object.assign(S, { text: b.text, mode: b.mode, style: b.style, tutorSet: b.tutorSet });
+    textEl.value = b.text;
+    await relayout(true);
+    S.page = Math.min(b.page || 0, pages.length - 1); render();
+    showBack();
+  }
+  $('backBtn').addEventListener('click', goBack);
+
+  function practice(text, font, opts = {}) {
+    if (!opts.noBack) pushBack();
     recordAttempt();
     const deva = DEVANAGARI.test(text);
     if (S.mode === 'tutor') {
@@ -2456,6 +2553,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   function startStep(st) {
     recordAttempt();
     if (st.tutor) {
+      pushBack();
       S.mode = 'tutor'; S.tutorSet = st.tutor; S.style = 'devanagari';
       document.querySelectorAll('dialog[open]').forEach((d) => d.close());
       relayout(true); return;
@@ -2939,7 +3037,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     const l = vLines[vIdx];
     saveVideoPos(vIdx);
     if (S.mode === 'tutor') S.mode = 'trace';
-    if (S.text !== l.text) practice(l.text, 'deva');
+    if (S.text !== l.text) practice(l.text, 'deva', { noBack: true });
     showLine();
     stoppedAt = -1;
     if (seek && l.t != null) ytSeek(l.t, play);
@@ -3094,6 +3192,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
 
   // Test hook: only with #test in the URL, exposes letter geometry so automated tests can trace it.
   if (location.hash === '#test') window.__pad = {
+    signs: (a) => hasSigns(a),
     // Each letter's span on a row, as the tap test works it out.
     segs: (i) => { const r = pages[S.page][i], out = []; const y0 = L.top + i * L.pitch;
       for (let x = L.textX; x < W; x += 2) { const h = letterAt(x, y0 + L.pitch / 2); if (h && (!out.length || out[out.length - 1].v !== h.ak)) out.push({ v: h.ak, x0: x - SX, x1: x - SX, y0: y0 - SY, h: L.pitch }); else if (h) out[out.length - 1].x1 = x - SX; }
