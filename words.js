@@ -124,6 +124,79 @@
     ] },
   ];
 
+
+  // Marathi handwriting levels (मराठी लेखन): the alphabet with ळ, ऍ and ऑ, then बाराखडी (each
+  // consonant with the twelve vowel signs, as Marathi schools teach it), then Marathi words in the
+  // usual order of vowel signs, ळ words, joined letters and short sentences.
+  const MR_LEVELS = [
+    { id: 'mrB', name: 'बाराखडी · barakhadi', hint: 'One consonant with each vowel sign in turn: क का कि की कु कू के कै को कौ कं कः. Write the letter, then add the sign.', words: [
+      ['क का कि की कु कू के कै को कौ कं कः', 'mr', 'बाराखडी of क: क with each vowel sign in turn'],
+      ['ख खा खि खी खु खू खे खै खो खौ खं खः', 'mr', 'बाराखडी of ख: ख with each vowel sign in turn'],
+      ['ग गा गि गी गु गू गे गै गो गौ गं गः', 'mr', 'बाराखडी of ग: ग with each vowel sign in turn'],
+      ['घ घा घि घी घु घू घे घै घो घौ घं घः', 'mr', 'बाराखडी of घ: घ with each vowel sign in turn'],
+      ['च चा चि ची चु चू चे चै चो चौ चं चः', 'mr', 'बाराखडी of च: च with each vowel sign in turn'],
+      ['ज जा जि जी जु जू जे जै जो जौ जं जः', 'mr', 'बाराखडी of ज: ज with each vowel sign in turn'],
+      ['त ता ति ती तु तू ते तै तो तौ तं तः', 'mr', 'बाराखडी of त: त with each vowel sign in turn'],
+      ['द दा दि दी दु दू दे दै दो दौ दं दः', 'mr', 'बाराखडी of द: द with each vowel sign in turn'],
+      ['न ना नि नी नु नू ने नै नो नौ नं नः', 'mr', 'बाराखडी of न: न with each vowel sign in turn'],
+      ['प पा पि पी पु पू पे पै पो पौ पं पः', 'mr', 'बाराखडी of प: प with each vowel sign in turn'],
+      ['ब बा बि बी बु बू बे बै बो बौ बं बः', 'mr', 'बाराखडी of ब: ब with each vowel sign in turn'],
+      ['म मा मि मी मु मू मे मै मो मौ मं मः', 'mr', 'बाराखडी of म: म with each vowel sign in turn'],
+      ['र रा रि री रु रू रे रै रो रौ रं रः', 'mr', 'बाराखडी of र: र with each vowel sign in turn'],
+      ['ल ला लि ली लु लू ले लै लो लौ लं लः', 'mr', 'बाराखडी of ल: ल with each vowel sign in turn'],
+      ['व वा वि वी वु वू वे वै वो वौ वं वः', 'mr', 'बाराखडी of व: व with each vowel sign in turn'],
+      ['स सा सि सी सु सू से सै सो सौ सं सः', 'mr', 'बाराखडी of स: स with each vowel sign in turn'],
+      ['ह हा हि ही हु हू हे है हो हौ हं हः', 'mr', 'बाराखडी of ह: ह with each vowel sign in turn'],
+      ['ळ ळा ळि ळी ळु ळू ळे ळै ळो ळौ ळं ळः', 'mr', 'बाराखडी of ळ: ळ with each vowel sign in turn'],
+    ] },
+    { id: 'mr1', name: 'मराठी 1 · no vowel signs', hint: 'Plain letters side by side, the inherent "a" only. Marathi uses ळ a lot.', words: [
+      ['घर', 'mr', 'house, home'], ['कमळ', 'mr', 'lotus'], ['नळ', 'mr', 'tap, water pipe'], ['जग', 'mr', 'world'],
+      ['वड', 'mr', 'banyan tree'], ['सण', 'mr', 'festival'], ['कळस', 'mr', 'temple spire; climax'], ['मध', 'mr', 'honey'],
+      ['फळ', 'mr', 'fruit'], ['बळ', 'mr', 'strength'], ['जवळ', 'mr', 'near'], ['सरळ', 'mr', 'straight'],
+      ['पण', 'mr', 'but'], ['चल', 'mr', "come on, let's go"], ['ढग', 'mr', 'cloud'], ['वजन', 'mr', 'weight'],
+    ] },
+    { id: 'mr2', name: 'मराठी 2 · ा (ā)', hint: 'Adds the ā sign: a vertical line after the letter.', words: [
+      ['शाळा', 'mr', 'school'], ['डाळ', 'mr', 'lentils (dal)'], ['हात', 'mr', 'hand'], ['गाव', 'mr', 'village'],
+      ['पाय', 'mr', 'foot, leg'], ['काका', 'mr', "uncle (father's brother)"], ['नाव', 'mr', 'name'], ['आता', 'mr', 'now'],
+      ['दादा', 'mr', 'elder brother'], ['बाबा', 'mr', 'father, dad'], ['काळा', 'mr', 'black'], ['बाळ', 'mr', 'baby'],
+      ['सकाळ', 'mr', 'morning'], ['भात', 'mr', 'cooked rice'], ['ताट', 'mr', 'plate (thali)'], ['आभाळ', 'mr', 'sky'],
+    ] },
+    { id: 'mr3', name: 'मराठी 3 · ि ी (i, ī)', hint: 'Short ि is written before the letter; long ी after it.', words: [
+      ['पाणी', 'mr', 'water'], ['आई', 'mr', 'mother'], ['ताई', 'mr', 'elder sister'], ['मीठ', 'mr', 'salt'],
+      ['बहीण', 'mr', 'sister'], ['गाडी', 'mr', 'car, vehicle'], ['नाही', 'mr', 'no, not'], ['मिरची', 'mr', 'chilli'],
+      ['निळा', 'mr', 'blue'], ['पिवळा', 'mr', 'yellow'], ['दिवस', 'mr', 'day'], ['नदी', 'mr', 'river'],
+      ['खिडकी', 'mr', 'window'], ['किती', 'mr', 'how much, how many'], ['वीज', 'mr', 'lightning; electricity'],
+    ] },
+    { id: 'mr4', name: 'मराठी 4 · ु ू (u, ū)', hint: 'Both hang below the letter: ु curls one way, ू the other.', words: [
+      ['मुलगा', 'mr', 'boy, son'], ['मुलगी', 'mr', 'girl, daughter'], ['पूल', 'mr', 'bridge'], ['सून', 'mr', 'daughter-in-law'],
+      ['फूल', 'mr', 'flower'], ['दूध', 'mr', 'milk'], ['ऊन', 'mr', 'sunshine'], ['गुरु', 'mr', 'teacher'],
+      ['दुकान', 'mr', 'shop'], ['सुई', 'mr', 'needle'], ['उशी', 'mr', 'pillow'], ['भूक', 'mr', 'hunger'], ['झाडू', 'mr', 'broom'],
+    ] },
+    { id: 'mr5', name: 'मराठी 5 · े ै ो ौ (e, ai, o, au)', hint: 'Signs on top of the headline, and ो ौ after the letter.', words: [
+      ['दोन', 'mr', 'two'], ['खेळ', 'mr', 'game, sport'], ['पोळी', 'mr', 'flatbread (chapati)'], ['घोडा', 'mr', 'horse'],
+      ['केळे', 'mr', 'banana'], ['मोर', 'mr', 'peacock'], ['तेल', 'mr', 'oil'], ['देश', 'mr', 'country'],
+      ['पैसा', 'mr', 'money'], ['एक', 'mr', 'one'], ['होय', 'mr', 'yes'], ['लोक', 'mr', 'people'],
+      ['वेळ', 'mr', 'time'], ['डोळा', 'mr', 'eye'], ['कोण', 'mr', 'who'], ['मोठा', 'mr', 'big'], ['सोने', 'mr', 'gold'],
+    ] },
+    { id: 'mr6', name: 'मराठी 6 · ं ः (nasal sounds)', hint: 'A dot (anusvara) above for a nasal sound; ः for a breath.', words: [
+      ['आंबा', 'mr', 'mango'], ['शंभर', 'mr', 'hundred'], ['मांजर', 'mr', 'cat'], ['चांगला', 'mr', 'good'],
+      ['रंग', 'mr', 'colour'], ['सुंदर', 'mr', 'beautiful'], ['पंखा', 'mr', 'fan'], ['दुःख', 'mr', 'sorrow, pain'],
+      ['मुंबई', 'mr', 'Mumbai'], ['गंमत', 'mr', 'fun'], ['मुंगी', 'mr', 'ant'], ['थंडी', 'mr', 'cold (weather)'],
+    ] },
+    { id: 'mr7', name: 'मराठी 7 · जोडाक्षरे (joined letters)', hint: 'Conjuncts: two consonants written together; the first one often loses its vertical line.', words: [
+      ['नमस्कार', 'mr', 'hello (formal greeting)'], ['धन्यवाद', 'mr', 'thank you'], ['पुस्तक', 'mr', 'book'], ['मित्र', 'mr', 'friend'],
+      ['प्रेम', 'mr', 'love'], ['स्वागत', 'mr', 'welcome'], ['महाराष्ट्र', 'mr', 'Maharashtra'], ['गोष्ट', 'mr', 'story'],
+      ['अभ्यास', 'mr', 'study'], ['शिक्षक', 'mr', 'teacher'], ['ज्ञान', 'mr', 'knowledge'], ['पत्र', 'mr', 'letter (mail)'],
+      ['स्वच्छ', 'mr', 'clean'], ['प्रश्न', 'mr', 'question'], ['उद्या', 'mr', 'tomorrow'], ['लग्न', 'mr', 'wedding'],
+    ] },
+    { id: 'mrS', name: 'मराठी वाक्ये · sentences', hint: 'Short Marathi sentences to write in one go.', words: [
+      ['माझे नाव कोडी आहे', 'mr', 'My name is Cody.'], ['मला मराठी शिकायचे आहे', 'mr', 'I want to learn Marathi.'],
+      ['तुम्ही कसे आहात?', 'mr', 'How are you? (polite)'], ['मी ठीक आहे', 'mr', 'I am fine.'],
+      ['शुभ सकाळ', 'mr', 'Good morning.'], ['पुन्हा भेटू', 'mr', 'See you again.'], ['हे किती आहे?', 'mr', 'How much is this?'],
+      ['मला भूक लागली आहे', 'mr', 'I am hungry.'], ['खूप छान', 'mr', 'Very nice.'], ['मला समजले नाही', 'mr', "I didn't understand."],
+      ['हळू बोला', 'mr', 'Please speak slowly.'],
+    ] },
+  ];
   // The learning path: letters first, then words, then films and culture. Each step is done once
   // most of its items are mastered (see index.html); the next one is suggested after that.
   const PATH = [
@@ -136,6 +209,19 @@
     { id: 'culture', name: 'Bollywood & culture', steps: ['phr', 'cul', 'bw'].map((id) => ({ id, level: id })) },
   ];
 
+  // Marathi track: Marathi letters (with ळ, ऍ, ऑ), बाराखडी, Marathi words, then Marathi-only lines
+  // from the culture lists (filled in below).
+  const MR_PATH = [
+    { id: 'letters', name: 'मुळाक्षरे · letters', steps: [
+      { id: 'swarMr', name: 'स्वर · vowels', tutor: 'swarMr' },
+      { id: 'vyanjanMr', name: 'व्यंजन · consonants', tutor: 'vyanjanMr' },
+      { id: 'ank', name: 'अंक · numerals', tutor: 'ank' },
+    ] },
+    { id: 'words', name: 'बाराखडी & words', steps: ['mrB', 'mr1', 'mr2', 'mr3', 'mr4', 'mr5', 'mr6', 'mr7'].map((id) => ({ id, level: id })) },
+    { id: 'culture', name: 'वाक्ये & culture', steps: ['mrS', 'mrC'].map((id) => ({ id, level: id })) },
+  ];
+  const PATHS = { both: PATH, mr: MR_PATH };
+
   // Words used elsewhere in the app (example texts) that aren't in a level.
   const EXTRA = [
     ['कोडी', 'hi mr', 'Cody (the name, written in Devanagari)'], ['कोड्स', 'hi mr', 'codes (English "codes" written in Devanagari)'],
@@ -145,6 +231,10 @@
   const LANG_NAME = { hi: 'Hindi', mr: 'Marathi' };
   const DICT = new Map();
   const entry = (w) => ({ w: w[0], langs: w[1].split(' '), m: w[2], tr: w[3] || null });
+  // Marathi culture: the Marathi lines from the phrase, film and festival lists.
+  const mrC = { id: 'mrC', name: 'मराठी संस्कृती · culture', hint: 'Marathi greetings, festival wishes and film lines.',
+    words: LEVELS.filter((l) => ['phr', 'bw', 'cul'].includes(l.id)).flatMap((l) => l.words).filter((w) => w[1].split(' ').includes('mr')) };
+  LEVELS.push(...MR_LEVELS, mrC);
   for (const lv of LEVELS) lv.words = lv.words.map((w) => { const e = entry(w); if (!DICT.has(e.w)) DICT.set(e.w, e); return e; });
   for (const w of EXTRA) { const e = entry(w); if (!DICT.has(e.w)) DICT.set(e.w, e); }
 
@@ -527,5 +617,5 @@
     return speakTTS(word, langs, opts.rate);
   }
 
-  g.WORDS = { letterParts, howToSay, LEVELS, PATH, DICT, LANG_NAME, translit, translitWord, letters, local, lookup, meaningText, langText, play, findRecording, custom, isDeva: (t) => DEVA.test(t), playNow, canPlay, onSoundChange: (f) => listeners.push(f) };
+  g.WORDS = { letterParts, howToSay, LEVELS, PATH, PATHS, DICT, LANG_NAME, translit, translitWord, letters, local, lookup, meaningText, langText, play, findRecording, custom, isDeva: (t) => DEVA.test(t), playNow, canPlay, onSoundChange: (f) => listeners.push(f) };
 })(window);

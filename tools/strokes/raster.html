@@ -1,0 +1,21 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam&family=Gotu&family=Andika&family=Playwrite+US+Trad&display=swap">
+</head><body><canvas id="c"></canvas><script>
+async function raster(fam, chars, deva, K, OX){ OX = OX || 20;
+  await document.fonts.load(`100px "${fam}"`, chars.join('')); await document.fonts.ready;
+  const c = document.getElementById('c'), x = c.getContext('2d');
+  x.font = `100px "${fam}"`;
+  const xh = (deva ? x.measureText('कगमनत') : x.measureText('xvwz')).actualBoundingBoxAscent;
+  const fs = 50*K/xh*100, out = {};
+  c.width = (180+OX)*K; c.height = 220*K;  // x: -20..180 units, y: -40..180
+  for (const ch of chars){
+    x.setTransform(1,0,0,1,0,0); x.clearRect(0,0,c.width,c.height);
+    x.font = `${fs}px "${fam}"`; x.fillStyle='#000'; x.textBaseline='alphabetic';
+    x.fillText(ch, OX*K, 140*K);
+    const d = x.getImageData(0,0,c.width,c.height).data; let bits = '';
+    const rows=[]; for(let y=0;y<c.height;y++){ let r=''; for(let i=0;i<c.width;i++) r += d[(y*c.width+i)*4+3]>110?'1':'0'; rows.push(r);} 
+    out[ch] = { adv: x.measureText(ch).width/K, rows };
+  }
+  return { K, ox: OX, out };
+}
+</script></body></html>

@@ -145,6 +145,11 @@ button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke
 #navCtl button { min-height: 44px; min-width: 44px; justify-content: center; }
 #navCtl #pageLabel { min-width: 56px; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
 #score { max-width: min(620px, 62%); line-height: 1.45; }
+.outline-btn[aria-pressed="true"] .slash { display: none; }
+.outline-btn[aria-pressed="false"] { color: var(--muted); }
+#strokeTip { position: absolute; z-index: 3; pointer-events: none; padding: 3px 9px; border-radius: 10px; font: 700 13px var(--font-ui);
+  background: var(--paper); border: 1.5px solid currentColor; box-shadow: 0 2px 8px rgba(20, 30, 50, .14); transition: opacity .35s; white-space: nowrap; }
+#strokeTip.fade { opacity: 0; }
 #score .crit { color: var(--muted); font-size: 12.5px; }
 #score .crit b { color: var(--text); font-size: 12.5px; }
 #score .trend { font-size: 12.5px; }
@@ -430,6 +435,7 @@ body.fs #fsbar { display: flex; }
     <select id="tutorSet" class="tutor-only" aria-label="Letters to learn">
       <optgroup label="English">
         <option value="lower">a–z  lowercase</option>
+        <option value="cursiveLower">a–z  cursive</option>
         <option value="upper">A–Z  capitals</option>
         <option value="digits">0–9  numbers</option>
       </optgroup>
@@ -438,10 +444,15 @@ body.fs #fsbar { display: flex; }
         <option value="vyanjan">व्यंजन · consonants</option>
         <option value="ank">अंक · numerals</option>
       </optgroup>
+      <optgroup label="मराठी · Marathi">
+        <option value="swarMr">स्वर · vowels with ऍ ऑ</option>
+        <option value="vyanjanMr">व्यंजन · consonants with ळ</option>
+      </optgroup>
       <option value="text">Custom text (type it in the box)</option>
     </select>
     <div class="pager">
       <button id="backBtn" hidden title="Back to what you were writing"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg><span>Back</span></button>
+      <button id="outlineBtn" class="toggle outline-btn" aria-pressed="true" title="Show or hide the letter outlines. Hidden, you write from memory and are graded on the letters' shape wherever you write them."><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="slash" d="M4 4l16 16"/></svg><span>Outlines</span></button>
       <button id="qUndo" class="compact-only" aria-label="Undo" title="Undo"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></svg></button>
       <button id="qTool" class="compact-only" aria-label="Pen or eraser" title="Pen or eraser"></button>
       <button id="ctlBtn" class="compact-only" aria-expanded="false" title="Show all the controls"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Controls</span></button>
@@ -541,9 +552,11 @@ body.fs #fsbar { display: flex; }
   <canvas id="ink"></canvas>
   <canvas id="grade"></canvas>
   <div id="score" hidden></div>
+  <div id="strokeTip" hidden aria-live="polite"></div>
   <div id="scrollbar" hidden></div>
   <div id="vscrollbar" hidden></div>
   <div id="navCtl" class="ui">
+    <button id="outlineBtn2" class="toggle outline-btn" aria-pressed="true" aria-label="Outlines" title="Show or hide the letter outlines"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="slash" d="M4 4l16 16"/></svg></button>
     <button id="scrollBtn" class="toggle" aria-pressed="false" title="Finger scrolls the page (the Pencil still writes). Tap to turn scrolling on or off."><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg><span>Scroll</span></button>
     <span class="navpages">
       <button id="prev" aria-label="Previous page"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
@@ -569,6 +582,7 @@ body.fs #fsbar { display: flex; }
 <dialog id="wordsDlg" class="dlg" aria-labelledby="wordsTitle">
   <div class="dlg-head">
     <h2 id="wordsTitle">Learn</h2>
+    <div class="seg" id="trackSeg" role="group" aria-label="Which path"><button data-v="both" title="Hindi and Marathi together">हिंदी + मराठी</button><button data-v="mr" lang="mr" title="Marathi handwriting levels: ळ, ऍ ऑ, बाराखडी and Marathi words">मराठी</button></div>
     <select id="wlLevel" aria-label="Word level"></select>
     <span class="spacer"></span>
     <button id="wlPractice" class="primary">Practice all</button>
@@ -710,7 +724,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     style: 'cursive', guide: 'outline', mode: 'trace', size: 'l',
     tool: 'pen', color: 'ink', fingers: 'draw', fingersSet: false, page: 0, theme: 'auto',
     paper: 'lines', grade: false, marks: false, tutorSet: 'lower', panel: true, tips: true, tipI: 0, devaFont: 'upright',
-    meanings: true, wordLevel: 'l1',
+    meanings: true, wordLevel: 'l1', outlines: true, track: 'both',
   };
   let S = { ...defaults };
   try { Object.assign(S, JSON.parse(localStorage.getItem(STORE) || '{}')); } catch (_) {}
@@ -854,7 +868,9 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
 
   /* ---------- Tutor: letter data ---------- */
   const STK = window.STROKES || null;
-  const glyph = (ch) => STK && (STK.latin[ch] || STK.deva[ch]);
+  // Cursive letters have their own strokes; capitals and digits fall back to print in cursive.
+  const cursiveGlyph = (ch) => STK && STK.cursive && S.style === 'cursive' ? STK.cursive[ch] : null;
+  const glyph = (ch) => STK && (cursiveGlyph(ch) || STK.latin[ch] || STK.deva[ch]);
   const tutorScript = () => {
     if (!STK) return 'latin';
     if (S.tutorSet === 'text') return DEVANAGARI.test(S.text) ? 'deva' : 'latin';
@@ -968,6 +984,38 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     return [`Right order and direction for all ${total} stroke${total > 1 ? 's' : ''}`, 'good'];
   }
 
+  /* ---------- Shape on its own: position and size don't matter ---------- */
+  // Each stroke against the letter's stroke it matched, and the whole letter's form against the
+  // model's. Both are moved to the same centre and scaled to the same size first, so a letter
+  // written off the guide (or with the outlines hidden) still gets a fair shape score.
+  function normCloud(pts) {
+    let cx = 0, cy = 0; for (const p of pts) { cx += p[0]; cy += p[1]; } cx /= pts.length; cy /= pts.length;
+    let r = 0; for (const p of pts) r += (p[0] - cx) ** 2 + (p[1] - cy) ** 2; r = Math.sqrt(r / pts.length) || 1;
+    return pts.map((p) => [(p[0] - cx) / r, (p[1] - cy) / r]);
+  }
+  // Points spread evenly along a set of strokes (longer strokes get more).
+  function strokeCloud(strokes, n = 72) {
+    const lens = strokes.map(polyLen), tot = lens.reduce((a, b) => a + b, 0) || 1;
+    return strokes.flatMap((s, i) => resample(s, Math.max(3, Math.round((n * lens[i]) / tot))));
+  }
+  const mean = (xs) => xs.reduce((t, v) => t + v, 0) / xs.length;
+  const chamfer = (A, B) => A.reduce((t, a) => { let m = Infinity; for (const b of B) { const d = (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2; if (d < m) m = d; } return t + Math.sqrt(m); }, 0) / A.length;
+  const cloudDist = (A, B) => { const a = normCloud(A), b = normCloud(B); return (chamfer(a, b) + chamfer(b, a)) / 2; };
+  // 1 for the same form, about 0.75 for a careful hand-made copy, low for a different letter.
+  const formScore = (d) => clamp01(1 - Math.max(0, d - 0.05) / 0.2);
+  function letterForm(user, expected) {
+    if (!user.length) return null;
+    return formScore(cloudDist(strokeCloud(user), strokeCloud(expected)));
+  }
+  // One stroke against the model stroke: same centre and size, either direction (direction is
+  // checked separately). Dots and very short strokes are left out.
+  function strokeShape(u, e, unit) {
+    if (polyLen(e) < unit * 0.3 || polyLen(u) < 3) return null;
+    const U = normCloud(resample(u, 32)), E = normCloud(resample(e, 32));
+    const d = Math.min(meanDist(U, E), meanDist(U, E.slice().reverse()));
+    return clamp01(1 - Math.max(0, d - 0.06) / 0.45);
+  }
+
   /* ---------- Tutor: animated demo ---------- */
   // The model letter at the top of each page is drawn here: grey, then traced over stroke
   // by stroke in order, with a numbered badge at each stroke's start and an arrow for direction.
@@ -1028,7 +1076,11 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     const mine = (ink[S.page] || []).filter(inPanel).map((st) => st.pts.map((q) => [q[0], q[1]]));
     const chk = mine.length ? strokeCheck(mine, m.strokes, 50 * m.k) : null;
     let msg = [`${m.strokes.length} stroke${m.strokes.length > 1 ? 's' : ''}. Watch, then trace over the big letter`, 'muted'];
-    if (chk) msg = checkMessage(chk, m.strokes.length);
+    if (chk) {
+      msg = checkMessage(chk, m.strokes.length);
+      const sh = chk.per.map((p, j) => (p.i >= 0 ? strokeShape(mine[j], m.strokes[p.i], 50 * m.k) : null)).filter((v) => v != null);
+      if (sh.length) msg = [`${msg[0]} · shape ${Math.round(100 * mean(sh))}%`, msg[1]];
+    }
     c.font = `${msg[1] === 'muted' ? 400 : 700} 14px ${css('--font-ui')}`; c.textAlign = 'left'; c.textBaseline = 'alphabetic';
     c.fillStyle = css(msg[1] === 'muted' ? '--muted' : `--grade-${msg[1]}`);
     wrapText(c, msg[0], P.x0 + 14, P.y1 - 34, P.x1 - P.x0 - 28, 18);
@@ -1105,7 +1157,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   function playDemo() { demo.t0 = performance.now(); drawDemo(demo.t0); }
   function syncDemo() {
     const r = pages[S.page] && pages[S.page][0];
-    const key = S.mode === 'tutor' && r && r.tutor ? `${S.page}:${r.tutor}:${S.tutorSet}` : null;
+    const key = S.mode === 'tutor' && r && r.tutor ? `${S.page}:${r.tutor}:${S.tutorSet}:${S.style}` : null;
     if (key && key !== demo.key) { demo.key = key; playDemo(); }
     else { demo.key = key; drawDemo(performance.now()); }
   }
@@ -1179,7 +1231,8 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       hline(c, base, rule, 1.8);
       hline(c, base + L.descPx, soft, 1, [2, 5]);
       if (S.boxes) drawLetterBoxes(c, i, base);
-      if (r.t) drawGuideText(c, r.t, L.textX, base, r.a);
+      if (S.outlines === false) { /* outlines hidden: write from memory */ }
+      else if (r.t) drawGuideText(c, r.t, L.textX, base, r.a);
       else if (r.tutor && !r.free) drawTutorGuide(c, r.tutor, tutorXs(r.tutor, L.textX, null, L.tutorX), base, r.a);
     });
     c.beginPath(); c.strokeStyle = css('--margin'); c.lineWidth = 1.5;
@@ -1321,7 +1374,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     return expect ? clamp01(expect / mine.length) : null;
   }
   const CRIT = [
-    ['shape', 'Shape', 0.45], ['path', 'Stroke path', 0.15], ['smooth', 'Smooth lines', 0.1],
+    ['shape', 'Tracing', 0.45], ['form', 'Overall shape', 0.15], ['path', 'Stroke path', 0.15], ['smooth', 'Smooth lines', 0.1],
     ['straight', 'Straight lines', 0.1], ['size', 'Size & baseline', 0.12], ['connected', 'Connected', 0.08],
   ];
   // Overall score: Shape times the weighted geometric mean of the other criteria, so the
@@ -1351,7 +1404,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     const offHex = css('--grade-off'), missHex = css('--grade-miss');
     const off = rgb(offHex), miss = rgb(missHex);
     const font = `${L.fontSize}px ${L.family}`;
-    const layoutSig = [S.page, L.fontSize, L.textX, L.tutorX, L.CW, L.pitch, S.mode, S.style, S.size, offHex, missHex].join('|');
+    const layoutSig = [S.page, L.fontSize, L.textX, L.tutorX, L.CW, L.pitch, S.mode, S.style, S.size, S.outlines !== false, offHex, missHex].join('|');
     // Rows whose ink hasn't changed reuse their last result, so grading stays quick as the page fills up.
     const results = rows.map((r, i) => {
       const mine = byRow[i];
@@ -1371,12 +1424,14 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       const over = new ImageData(gw, bh), od = over.data;
       const y0 = L.top + i * L.pitch, base = y0 + L.gapTop + L.ascPx;
       let x = L.textX, text, order = null;
-      const straight = [], segs = [];   // segs: each letter's span on the row, for per-letter scores
+      const straight = [], segs = [], forms = [];   // segs: each letter's span on the row, for per-letter scores
+      // Outlines hidden: you can't see where the letters are, so they're lined up with your writing.
+      const blind = S.outlines === false;
       if (r.tutor) {
         // Compare with the copies of the letter your writing spans (freehand rows start where you started).
         const g = glyph(r.tutor), k = tk();
         const [inkL, inkR] = inkExtent(mine);
-        const xs = r.free ? tutorXs(r.tutor, inkL - glyphMinX(g) * k, inkR + g.w * k * 0.5)
+        const xs = r.free || blind ? tutorXs(r.tutor, inkL - glyphMinX(g) * k, inkR + g.w * k * 0.5)
                           : tutorXs(r.tutor, L.textX, inkR + g.w * k * 0.5, L.tutorX);
         // Stroke order and direction for each copy you wrote: strokes go to the nearest copy.
         const adv = (g.w + 26) * k, groups = xs.map(() => []);
@@ -1391,15 +1446,19 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
           const user = grp.map((st) => st.pts.map((q) => [q[0], q[1]]));
           const exp = g.s.map((st) => st.map((q) => toPx(q, xs[j], base, k)));
           const chk = strokeCheck(user, exp, L.xPx);
-          segs.push({ v: r.tutor, x0: xs[j], x1: xs[j] + g.w * k, path: chk.ok });
+          // Overall shape: the whole letter's form, and each stroke's own shape, wherever you wrote it.
+          const sh = chk.per.map((pp, u) => (pp.i >= 0 ? strokeShape(user[u], exp[pp.i], L.xPx) : null)).filter((v) => v != null);
+          const lf = letterForm(user, exp), form = sh.length ? (lf + mean(sh)) / 2 : lf;
+          forms.push(form);
+          segs.push({ v: r.tutor, x0: xs[j], x1: xs[j] + g.w * k, path: chk.ok, form });
           order.ok += chk.ok; order.n++; order.marks.push({ user, chk, exp });
           chk.per.forEach((pp, u) => { if (pp.i >= 0 && isStraight(exp[pp.i])) { const v = straightness(user[u]); if (v != null) straight.push(v); } });
         });
         // Only the copies you actually wrote on count toward coverage.
         const usedXs = xs.filter((_, j) => groups[j].length);
         text = (c, grow) => { c.lineWidth = penW() + grow; for (const x0 of usedXs) for (const s of g.s) { strokePath(c, s, x0, base); c.stroke(); } };
-      } else if (!r.t) {
-        // Freehand row: line the letters up with where your writing starts.
+      } else if (!r.t || blind) {
+        // Freehand row (or outlines hidden): line the letters up with where your writing starts.
         mctx.font = font;
         const glyphLeft = L.textX - mctx.measureText(target).actualBoundingBoxLeft;
         const inkLeft = inkExtent(mine)[0];
@@ -1457,6 +1516,27 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
       // Shape: F1 of the two, squared, so only careful writing gets close to 100%.
       crit.shape = on + cov ? ((2 * on * cov) / (on + cov)) ** 2 : 0;
       if (order && order.n) crit.path = order.ok / order.n;
+      if (forms.length) crit.form = mean(forms);
+      else if (ix1 > ix0 && iy1 > iy0) {
+        // Text rows: move and resize your writing onto the letters it spans, then see how well
+        // it covers them and stays on them: the form of your writing, wherever and however big.
+        const pad = Math.round((ix1 - ix0) * 0.1), cx0 = Math.max(0, ix0 - pad), cx1 = Math.min(gw - 1, ix1 + pad);
+        let tx0 = gw, tx1 = -1, uy0 = bh, uy1 = -1;
+        for (let j = 0; j < A.length; j++) if (A[j]) { const xx = j % gw, yy = (j / gw) | 0; if (xx < cx0 || xx > cx1) continue; if (xx < tx0) tx0 = xx; if (xx > tx1) tx1 = xx; if (yy < uy0) uy0 = yy; if (yy > uy1) uy1 = yy; }
+        if (tx1 > tx0 && uy1 > uy0) {
+          const sx = Math.min(2, Math.max(0.5, (tx1 - tx0) / (ix1 - ix0))), sy = Math.min(2, Math.max(0.5, (uy1 - uy0) / (iy1 - iy0)));
+          const fit = (grow) => maskOf(gw, bh, y0, (c) => { c.transform(sx, 0, 0, sy, (tx0 - ix0 * sx) / GK, (uy0 - iy0 * sy) / GK + y0 * (1 - sy)); inkPath(c, mine, grow); });
+          const F = fit(0), Ft = fit(tol1 * 2), Fl = fit(tol2 * 2);
+          let fa = 0, faH = 0, fn = 0, fnH = 0;
+          for (let j = 0; j < A.length; j++) {
+            const xx = j % gw;
+            if (A[j] && xx >= tx0 && xx <= tx1) { fa++; faH += Ft[j] ? 1 : Fl[j] ? 0.25 : 0; }
+            if (F[j]) { fn++; fnH += At[j] ? 1 : Al[j] ? 0.25 : 0; }
+          }
+          const o2 = fn ? fnH / fn : 0, c2 = fa ? faH / fa : 0;
+          if (fa && fn) crit.form = o2 + c2 ? ((2 * o2 * c2) / (o2 + c2)) ** 2 : 0;
+        }
+      }
       crit.smooth = smoothness(mine);
       if (straight.length) crit.straight = straight.reduce((t, v) => t + v, 0) / straight.length;
       if (ty1 > ty0) {
@@ -1476,6 +1556,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
         if (!written(j)) return;
         const c = { ...letterCrit, shape: shapeOf(sa[j], saH[j], sn[j], snH[j]) };
         if (sg.path != null) c.path = sg.path;
+        if (sg.form != null) c.form = sg.form;
         items.push({ k: 'L', v: sg.v, score: overall(c), crit: c });
       });
       if (!r.tutor) {
@@ -1830,12 +1911,54 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   }
 
   // Ends the active stroke or erase and records it for undo.
+  // Right after you lift the pen in Tutor: which stroke that was, and how close its shape is
+  // (its form alone: where you wrote it and how big don't count here).
+  let strokeTipTimer = 0;
+  function strokeTip(s) {
+    const tip = $('strokeTip');
+    if (S.mode !== 'tutor' || !L || s.pts.length < 2) return;
+    const u = s.pts.map((q) => [q[0], q[1]]);
+    let exp = null, byPlace = true;
+    if (inPanel(s)) { const m = modelGeom(); if (m) exp = m.strokes; }
+    else {
+      const my = u.reduce((t, q) => t + q[1], 0) / u.length, i = Math.floor((my - L.top) / L.pitch), r = pages[S.page] && pages[S.page][i];
+      if (!r || !r.tutor) return;
+      const g = glyph(r.tutor), k = tk(), base = L.top + i * L.pitch + L.gapTop + L.ascPx, mx = u.reduce((t, q) => t + q[0], 0) / u.length;
+      let x0;
+      if (r.free || S.outlines === false) {
+        // No guide to write on: line the letter up with this copy's ink so far (strokes nearby).
+        const near = ink[S.page].filter((st) => !inPanel(st) && st.pts.length && Math.abs(st.pts.reduce((t, q) => t + q[0], 0) / st.pts.length - mx) < g.w * k * 0.9
+          && Math.floor((st.pts.reduce((t, q) => t + q[1], 0) / st.pts.length - L.top) / L.pitch) === i);
+        x0 = inkExtent(near.length ? near : [s])[0] - glyphMinX(g) * k;
+        byPlace = near.length > 1;   // one stroke alone can't place the letter: go by shape
+      } else {
+        const xs = tutorXs(r.tutor, L.textX, null, L.tutorX);
+        x0 = xs.reduce((b, x) => (Math.abs(x + g.w * k / 2 - mx) < Math.abs(b + g.w * k / 2 - mx) ? x : b), xs[0]);
+      }
+      exp = g.s.map((st) => st.map((q) => toPx(q, x0, base, k)));
+    }
+    if (!exp) return;
+    let i = -1, sc = null, rev = false;
+    if (byPlace) { const c = strokeCheck([u], exp, L.xPx).per[0]; i = c.i; rev = c.status === 'reversed'; if (i >= 0) sc = strokeShape(u, exp[i], L.xPx); }
+    if (i < 0 || sc == null) exp.forEach((e, j) => { const v = strokeShape(u, e, L.xPx); if (v != null && (sc == null || v > sc + 0.02)) { sc = v; i = j; } });
+    if (i < 0 || sc == null) return;
+    if (!byPlace) { const U = resample(u, 24), E = resample(exp[i], 24), nU = normCloud(U), nE = normCloud(E); rev = polyLen(exp[i]) > L.xPx * 0.3 && meanDist(nU, nE.slice().reverse()) < meanDist(nU, nE); }
+    const pct = Math.round(sc * 100);
+    tip.textContent = `Stroke ${i + 1}: shape ${pct}%${rev ? ' · goes the other way' : ''}`;
+    tip.style.color = css(rev || pct < 60 ? '--grade-off' : pct < 80 ? '--grade-miss' : '--grade-good');
+    const end = u[u.length - 1], sr = sheet.getBoundingClientRect();
+    tip.hidden = false; tip.classList.remove('fade');
+    tip.style.left = `${Math.max(4, Math.min(sr.width - tip.offsetWidth - 4, end[0] - SX + 12))}px`;
+    tip.style.top = `${Math.max(4, Math.min(sr.height - 30, end[1] - SY - 34))}px`;
+    clearTimeout(strokeTipTimer); strokeTipTimer = setTimeout(() => { tip.classList.add('fade'); strokeTipTimer = setTimeout(() => { tip.hidden = true; }, 400); }, 2200);
+  }
   function finishActive(cancelled) {
     if (!active) return;
     if (active.erased) { cursor.hidden = true; if (active.erased.length) record({ type: 'erase', items: active.erased }); }
     else if (!cancelled || active.stroke.pts.length > 2) {
       const s = active.stroke;
       ink[S.page].push(s); record({ type: 'add', stroke: s });
+      strokeTip(s);
     }
     active = null;
     drawInk();
@@ -1912,12 +2035,14 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     $('scrollBtn').setAttribute('aria-pressed', String(S.fingers === 'scroll'));
     document.body.classList.toggle('tutor-text', S.mode === 'tutor' && S.tutorSet === 'text');
     document.querySelectorAll('.seg').forEach((seg) => {
+      if (!seg.dataset.key) return;   // the dialogs' own buttons keep their state
       seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(S[seg.dataset.key] === b.dataset.v)));
     });
 
     $('gradeBtn').setAttribute('aria-pressed', String(!!S.grade));
     $('marksBtn').setAttribute('aria-pressed', String(!!S.marks));
     $('qUndo').disabled = $('undo').disabled;
+    for (const id of ['outlineBtn', 'outlineBtn2']) $(id).setAttribute('aria-pressed', String(S.outlines !== false));
     $('qTool').innerHTML = S.tool === 'eraser' ? ERASER_SVG : PEN_SVG;
     $('qTool').title = S.tool === 'eraser' ? 'Eraser (tap for the pen)' : 'Pen (tap for the eraser)';
     $('qTool').classList.toggle('toggle', true); $('qTool').setAttribute('aria-pressed', String(S.tool === 'eraser'));
@@ -2034,11 +2159,13 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     const deva = S.style === 'devanagari', setDeva = STK.sets[S.tutorSet]?.script === 'deva';
     if (deva && !setDeva) S.tutorSet = 'swar';
     if (!deva && setDeva) S.tutorSet = 'lower';
+    if (S.tutorSet === 'cursiveLower' && S.style !== 'cursive') S.tutorSet = 'lower';
   }
   $('tutorSet').addEventListener('change', () => {
     S.tutorSet = $('tutorSet').value;
     const sc = STK && STK.sets[S.tutorSet]?.script;
-    if (sc === 'deva') S.style = 'devanagari'; else if (sc === 'latin' && S.style === 'devanagari') S.style = 'print';
+    const want = STK && STK.sets[S.tutorSet]?.style;
+    if (sc === 'deva') S.style = 'devanagari'; else if (want) S.style = want; else if (sc === 'latin' && S.style === 'devanagari') S.style = 'print';
     relayout(true);
   });
   $('panelPlay').addEventListener('click', playDemo);
@@ -2073,6 +2200,10 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   $('compactBtn').addEventListener('click', () => { S.compact = !S.compact; save(); applyCompact(); });
   $('ctlBtn').addEventListener('click', () => setCtlOpen(!document.body.classList.contains('ctl-open')));
   $('qUndo').addEventListener('click', undo);
+  // Outlines on or off: hidden, you write from memory; grading lines the letters up with your writing.
+  const toggleOutlines = () => { S.outlines = S.outlines === false; save(); rowCache.clear(); render(); updateButtons(); };
+  $('outlineBtn').addEventListener('click', toggleOutlines);
+  $('outlineBtn2').addEventListener('click', toggleOutlines);
   $('qTool').addEventListener('click', () => { if (active) finishActive(false); S.tool = S.tool === 'eraser' ? 'pen' : 'eraser'; updateButtons(); save(); });
   // Tap or write anywhere outside the open panel to close it.
   document.addEventListener('pointerdown', (e) => {
@@ -2354,13 +2485,13 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     const { pt, word, langs } = v, card = $('letterCard');
     const inWord = word && word !== pt.ak;
     const tutorable = tutorFor(pt.ak, pt.latin);
-    const parts = pt.latin && S.style === 'cursive' ? [] : strokeParts(pt.ak);
+    const parts = pt.latin && S.style === 'cursive' && !cursiveGlyph(pt.ak) ? [] : strokeParts(pt.ak);
     let html = cardHead();
     if (pt.latin) html += `<div class="top"><span class="big" style="font-family:${esc(L.family)}">${esc(pt.ak)}</span><div class="sub">${inWord ? `in “${esc(word)}”` : 'on its own'}</div></div>`;
     else html += `<div class="top"><span class="big" lang="hi">${esc(pt.ak)}</span><div><div class="tr">${esc(pt.alone)}</div>`
       + `<div class="sub">${inWord ? `in <button class="lc-word" title="Open the word">${esc(word)}</button>: <i>${esc(pt.tr)}</i>${pt.silentA ? ' (its "a" is silent)' : ''}` : 'on its own'}</div></div>`
       + (W$.canPlay(pt.ak, langs, { voiceOnly: true }) ? `<button class="say" aria-label="Hear it again">${SPEAKER}</button>` : `<button class="say" disabled title="${esc(NO_SOUND)}" aria-label="No sound available">${SPEAKER_OFF}</button>`) + `</div>`;
-    html += strokeBox(parts, `${parts.length > 1 ? `${esc(parts.join(' + '))}, in order` : 'how the pen moves'}${pt.latin ? ' (print)' : ''}${!pt.latin && hasSigns(pt.ak) ? '; vowel signs go on after' : ''}`);
+    html += strokeBox(parts, `${parts.length > 1 ? `${esc(parts.join(' + '))}, in order` : 'how the pen moves'}${pt.latin ? (cursiveGlyph(pt.ak) ? ' (cursive)' : ' (print)') : ''}${!pt.latin && hasSigns(pt.ak) ? '; vowel signs go on after' : ''}`);
     if (!pt.latin) html += `<ul>${pt.how.map(([ch, h]) => `<li><b lang="hi">${esc(ch)}</b><span>${esc(h)}</span></li>`).join('')}</ul>`;
     const ex = pt.latin ? [] : examplesFor(pt.ak);
     if (ex.length) html += `<div class="lc-ex"><div class="muted small">Words with ${esc(ex.label || pt.ak)}: tap one to see it</div>${ex.map((e, i) => `<button class="ex" data-i="${i}"><b lang="hi">${esc(e.w)}</b> <i>${esc(W$.translit(e.w))}</i> <span>${esc(W$.meaningText(e).split(/[;·(]/)[0].trim())}</span></button>`).join('')}</div>`;
@@ -2381,7 +2512,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     const letters = deva && W$ ? W$.letterParts(w) : [...LETTERS(w)].map((ak) => ({ ak, latin: true }));
     const multi = /\s/.test(w.trim());
     // A phrase: tap one of its words for that word's own trace (each word has its own headline).
-    const parts = multi ? [] : letters.flatMap((l) => (l.latin && S.style === 'cursive' ? [] : strokeParts(l.ak)));
+    const parts = multi ? [] : letters.flatMap((l) => (l.latin && S.style === 'cursive' && !cursiveGlyph(l.ak) ? [] : strokeParts(l.ak)));
     let html = cardHead();
     html += `<div class="top"><span class="big${multi ? ' phrase' : ''}"${deva ? ' lang="hi"' : ` style="font-family:${esc(L.family)}"`}>${esc(w)}</span><div>`
       + (deva ? `<div class="tr">${esc(W$.translit(w))}</div>` : '') + `<div class="sub lc-langs">${known && known.langs ? esc(W$.langText(known.langs)) : ''}</div></div>`
@@ -2440,8 +2571,8 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     card.addEventListener('pointerup', end); card.addEventListener('pointercancel', end);
   })();
   // Practise one letter: in Tutor if it has stroke order, otherwise a row of it to trace.
-  // Tutor's English letters are print, so a cursive letter gets a cursive row to trace instead.
-  const tutorFor = (ak, latin) => !(latin && S.style === 'cursive') && (!!glyph(ak) || [...LETTERS(ak)].some((c) => glyph(c)));
+  // Cursive letters without their own strokes (capitals, digits) get a cursive row to trace instead.
+  const tutorFor = (ak, latin) => !(latin && S.style === 'cursive' && !cursiveGlyph(ak)) && (!!glyph(ak) || [...LETTERS(ak)].some((c) => glyph(c)));
   function practiceLetter(ak, latin) {
     const hasStrokes = tutorFor(ak, latin);
     pushBack();
@@ -2648,11 +2779,16 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
     for (const e of readLog()) if (e.k === k) best.set(e.v, Math.max(best.get(e.v) ?? 0, e.a));
     return best;
   }
+  // Which learning path: Hindi & Marathi together, or the Marathi handwriting levels.
+  const curPath = () => (W$.PATHS && W$.PATHS[S.track]) || W$.PATH;
   function renderWords() {
-    const sel = $('wlLevel');
-    const grp = (ids, label) => `<optgroup label="${label}">${W$.LEVELS.filter((l) => ids.includes(l.id)).map((l) => `<option value="${l.id}">${esc(l.name)}</option>`).join('')}</optgroup>`;
-    const culture = W$.PATH.find((p) => p.id === 'culture').steps.map((x) => x.level);
-    sel.innerHTML = grp(W$.LEVELS.map((l) => l.id).filter((id) => !culture.includes(id)), '2 · Words') + grp(culture, '3 · Bollywood & culture')
+    const sel = $('wlLevel'), path = curPath();
+    // Keep the word list on this path's levels (or one of your own lists).
+    const lvIds = path.flatMap((sg) => sg.steps).filter((st) => st.level).map((st) => st.level);
+    if (!lvIds.includes(S.wordLevel) && !customLists().some((c) => c.id === S.wordLevel)) S.wordLevel = lvIds[0];
+    document.querySelectorAll('#trackSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === (S.track || 'both'))));
+    const grp = (ids, label) => `<optgroup label="${esc(label)}">${ids.map((id) => W$.LEVELS.find((l) => l.id === id)).filter(Boolean).map((l) => `<option value="${l.id}">${esc(l.name)}</option>`).join('')}</optgroup>`;
+    sel.innerHTML = path.map((sg, i) => [sg, i]).filter(([sg]) => sg.steps.some((st) => st.level)).map(([sg, i]) => grp(sg.steps.filter((st) => st.level).map((st) => st.level), `${i + 1} · ${sg.name}`)).join('')
       + (customLists().length ? `<optgroup label="Your lists">${customLists().map((l) => `<option value="${esc(l.id)}">${esc(l.name)}</option>`).join('')}</optgroup>` : '');
     renderPath();
     const list = currentList(); sel.value = list.id;
@@ -2703,7 +2839,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
   }
   function pathState() {
     const m = mastery(); let next = null;
-    const stages = W$.PATH.map((sg) => ({ ...sg, steps: sg.steps.map((st) => {
+    const stages = curPath().map((sg) => ({ ...sg, steps: sg.steps.map((st) => {
       const items = stepItems(st), left = items.filter((it) => !it.keys.every((k) => (m.get(k) ?? 0) >= MASTER));
       const ok = items.length - left.length, frac = items.length ? ok / items.length : 0;
       const lv = st.level && W$.LEVELS.find((l) => l.id === st.level);
@@ -2758,6 +2894,14 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
 
   $('wordsBtn').addEventListener('click', () => { if (!W$) return; renderWords(); $('wlImport').hidden = true; $('wordsDlg').showModal(); });
   $('wlLevel').addEventListener('change', () => { S.wordLevel = $('wlLevel').value; save(); renderWords(); });
+  $('trackSeg').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b || b.dataset.v === S.track) return;
+    S.track = b.dataset.v;
+    // Start the word list on the new path's first word level.
+    const lv = curPath().flatMap((sg) => sg.steps).find((st) => st.level);
+    if (lv) S.wordLevel = lv.level;
+    save(); renderWords();
+  });
   $('wlPractice').addEventListener('click', () => {
     const list = currentList(), st = !list.custom && pathState().stages.flatMap((sg) => sg.steps).find((x) => x.level === list.id);
     if (st) { st.left = []; startStep(st); } else practice(list.words.map((e) => e.w).join(' '), 'deva');
